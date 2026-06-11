@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package Tampilan;
+import View.menuDashboard;
+import View.menuAnggota;
 
 /**
  *
@@ -16,6 +18,21 @@ public class MenuUtama extends javax.swing.JFrame {
      */
     public MenuUtama() {
         initComponents();
+        pUtama.setLayout(new java.awt.BorderLayout());
+        BpnlDashboard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BpnlAnggota.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BpnlAnggota.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            BpnlAnggotaMouseClicked(evt);
+        }
+    });
+    }
+    
+    public void showPanel(javax.swing.JPanel panel){
+        pUtama.removeAll();
+        pUtama.add(panel, java.awt.BorderLayout.CENTER);
+        pUtama.repaint();
+        pUtama.revalidate();
     }
 
     /**
@@ -33,27 +50,38 @@ public class MenuUtama extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
+        BpnlDashboard = new javax.swing.JPanel();
         IconDashboard = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
+        BpnlAnggota = new javax.swing.JPanel();
         IconDashboard1 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jPanel5 = new javax.swing.JPanel();
+        BpnlBuku = new javax.swing.JPanel();
         IconDashboard2 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
+        BpnlKategori = new javax.swing.JPanel();
         IconDashboard3 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jPanel7 = new javax.swing.JPanel();
+        BpnlPenerbit = new javax.swing.JPanel();
         IconDashboard4 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jPanel8 = new javax.swing.JPanel();
+        BpnlPetugas = new javax.swing.JPanel();
         IconDashboard5 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jPanel9 = new javax.swing.JPanel();
+        BpnlPeminjaman = new javax.swing.JPanel();
         IconDashboard6 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        BpnlPengembalian = new javax.swing.JPanel();
+        IconDashboard7 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        BpnlLprPinjam = new javax.swing.JPanel();
+        IconDashboard8 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        BpnlLprPengembalian = new javax.swing.JPanel();
+        IconDashboard9 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
         pKanan = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         pDasar = new javax.swing.JPanel();
@@ -93,59 +121,71 @@ public class MenuUtama extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(102, 102, 102));
         jLabel3.setText("MASTER DATA");
 
+        BpnlDashboard.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BpnlDashboardMouseClicked(evt);
+            }
+        });
+
         IconDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel4.setText("Dashboard");
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout BpnlDashboardLayout = new javax.swing.GroupLayout(BpnlDashboard);
+        BpnlDashboard.setLayout(BpnlDashboardLayout);
+        BpnlDashboardLayout.setHorizontalGroup(
+            BpnlDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlDashboardLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(IconDashboard)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel4)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+        BpnlDashboardLayout.setVerticalGroup(
+            BpnlDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlDashboardLayout.createSequentialGroup()
+                .addGroup(BpnlDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlDashboardLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(IconDashboard))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGroup(BpnlDashboardLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel4)))
                 .addGap(10, 10, 10))
         );
+
+        BpnlAnggota.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BpnlAnggotaMouseClicked(evt);
+            }
+        });
 
         IconDashboard1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel5.setText("Anggota");
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout BpnlAnggotaLayout = new javax.swing.GroupLayout(BpnlAnggota);
+        BpnlAnggota.setLayout(BpnlAnggotaLayout);
+        BpnlAnggotaLayout.setHorizontalGroup(
+            BpnlAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlAnggotaLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(IconDashboard1)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel5)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+        BpnlAnggotaLayout.setVerticalGroup(
+            BpnlAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlAnggotaLayout.createSequentialGroup()
+                .addGroup(BpnlAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlAnggotaLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(IconDashboard1))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGroup(BpnlAnggotaLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel5)))
                 .addGap(10, 10, 10))
@@ -156,25 +196,25 @@ public class MenuUtama extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel6.setText("Buku");
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        javax.swing.GroupLayout BpnlBukuLayout = new javax.swing.GroupLayout(BpnlBuku);
+        BpnlBuku.setLayout(BpnlBukuLayout);
+        BpnlBukuLayout.setHorizontalGroup(
+            BpnlBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlBukuLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(IconDashboard2)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel6)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+        BpnlBukuLayout.setVerticalGroup(
+            BpnlBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlBukuLayout.createSequentialGroup()
+                .addGroup(BpnlBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlBukuLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(IconDashboard2))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addGroup(BpnlBukuLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel6)))
                 .addGap(10, 10, 10))
@@ -183,27 +223,27 @@ public class MenuUtama extends javax.swing.JFrame {
         IconDashboard3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel7.setText("Peminjaman");
+        jLabel7.setText("Kategori");
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        javax.swing.GroupLayout BpnlKategoriLayout = new javax.swing.GroupLayout(BpnlKategori);
+        BpnlKategori.setLayout(BpnlKategoriLayout);
+        BpnlKategoriLayout.setHorizontalGroup(
+            BpnlKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlKategoriLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(IconDashboard3)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel7)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
+        BpnlKategoriLayout.setVerticalGroup(
+            BpnlKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlKategoriLayout.createSequentialGroup()
+                .addGroup(BpnlKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlKategoriLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(IconDashboard3))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
+                    .addGroup(BpnlKategoriLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel7)))
                 .addGap(10, 10, 10))
@@ -212,27 +252,27 @@ public class MenuUtama extends javax.swing.JFrame {
         IconDashboard4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel8.setText("Pengembalian");
+        jLabel8.setText("Penerbit");
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
+        javax.swing.GroupLayout BpnlPenerbitLayout = new javax.swing.GroupLayout(BpnlPenerbit);
+        BpnlPenerbit.setLayout(BpnlPenerbitLayout);
+        BpnlPenerbitLayout.setHorizontalGroup(
+            BpnlPenerbitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlPenerbitLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(IconDashboard4)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel8)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
+        BpnlPenerbitLayout.setVerticalGroup(
+            BpnlPenerbitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlPenerbitLayout.createSequentialGroup()
+                .addGroup(BpnlPenerbitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlPenerbitLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(IconDashboard4))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
+                    .addGroup(BpnlPenerbitLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel8)))
                 .addGap(10, 10, 10))
@@ -243,25 +283,25 @@ public class MenuUtama extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel9.setText("Petugas");
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
+        javax.swing.GroupLayout BpnlPetugasLayout = new javax.swing.GroupLayout(BpnlPetugas);
+        BpnlPetugas.setLayout(BpnlPetugasLayout);
+        BpnlPetugasLayout.setHorizontalGroup(
+            BpnlPetugasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlPetugasLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(IconDashboard5)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel9)
-                .addContainerGap(109, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
+        BpnlPetugasLayout.setVerticalGroup(
+            BpnlPetugasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlPetugasLayout.createSequentialGroup()
+                .addGroup(BpnlPetugasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlPetugasLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(IconDashboard5))
-                    .addGroup(jPanel8Layout.createSequentialGroup()
+                    .addGroup(BpnlPetugasLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel9)))
                 .addGap(10, 10, 10))
@@ -270,29 +310,124 @@ public class MenuUtama extends javax.swing.JFrame {
         IconDashboard6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel10.setText("Kelas");
+        jLabel10.setText("Peminjaman");
 
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
+        javax.swing.GroupLayout BpnlPeminjamanLayout = new javax.swing.GroupLayout(BpnlPeminjaman);
+        BpnlPeminjaman.setLayout(BpnlPeminjamanLayout);
+        BpnlPeminjamanLayout.setHorizontalGroup(
+            BpnlPeminjamanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlPeminjamanLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(IconDashboard6)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel10)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel9Layout.createSequentialGroup()
+        BpnlPeminjamanLayout.setVerticalGroup(
+            BpnlPeminjamanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlPeminjamanLayout.createSequentialGroup()
+                .addGroup(BpnlPeminjamanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlPeminjamanLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(IconDashboard6))
-                    .addGroup(jPanel9Layout.createSequentialGroup()
+                    .addGroup(BpnlPeminjamanLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel10)))
+                .addGap(10, 10, 10))
+        );
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel11.setText("TRANSAKSI");
+
+        IconDashboard7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel12.setText("Pengembalian");
+
+        javax.swing.GroupLayout BpnlPengembalianLayout = new javax.swing.GroupLayout(BpnlPengembalian);
+        BpnlPengembalian.setLayout(BpnlPengembalianLayout);
+        BpnlPengembalianLayout.setHorizontalGroup(
+            BpnlPengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlPengembalianLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(IconDashboard7)
+                .addGap(28, 28, 28)
+                .addComponent(jLabel12)
+                .addGap(60, 60, 60))
+        );
+        BpnlPengembalianLayout.setVerticalGroup(
+            BpnlPengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlPengembalianLayout.createSequentialGroup()
+                .addGroup(BpnlPengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlPengembalianLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(IconDashboard7))
+                    .addGroup(BpnlPengembalianLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel12)))
+                .addGap(10, 10, 10))
+        );
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel13.setText("LAPORAN");
+
+        IconDashboard8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel14.setText("Peminjaman");
+
+        javax.swing.GroupLayout BpnlLprPinjamLayout = new javax.swing.GroupLayout(BpnlLprPinjam);
+        BpnlLprPinjam.setLayout(BpnlLprPinjamLayout);
+        BpnlLprPinjamLayout.setHorizontalGroup(
+            BpnlLprPinjamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlLprPinjamLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(IconDashboard8)
+                .addGap(28, 28, 28)
+                .addComponent(jLabel14)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        BpnlLprPinjamLayout.setVerticalGroup(
+            BpnlLprPinjamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlLprPinjamLayout.createSequentialGroup()
+                .addGroup(BpnlLprPinjamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlLprPinjamLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(IconDashboard8))
+                    .addGroup(BpnlLprPinjamLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel14)))
+                .addGap(10, 10, 10))
+        );
+
+        IconDashboard9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
+
+        jLabel15.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel15.setText("Pengembalian");
+
+        javax.swing.GroupLayout BpnlLprPengembalianLayout = new javax.swing.GroupLayout(BpnlLprPengembalian);
+        BpnlLprPengembalian.setLayout(BpnlLprPengembalianLayout);
+        BpnlLprPengembalianLayout.setHorizontalGroup(
+            BpnlLprPengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlLprPengembalianLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(IconDashboard9)
+                .addGap(28, 28, 28)
+                .addComponent(jLabel15)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        BpnlLprPengembalianLayout.setVerticalGroup(
+            BpnlLprPengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BpnlLprPengembalianLayout.createSequentialGroup()
+                .addGroup(BpnlLprPengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BpnlLprPengembalianLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(IconDashboard9))
+                    .addGroup(BpnlLprPengembalianLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel15)))
                 .addGap(10, 10, 10))
         );
 
@@ -318,13 +453,21 @@ public class MenuUtama extends javax.swing.JFrame {
                     .addGroup(pKiriLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(pKiriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(BpnlDashboard, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BpnlAnggota, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BpnlBuku, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BpnlKategori, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BpnlPenerbit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BpnlPetugas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BpnlPeminjaman, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BpnlPengembalian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BpnlLprPinjam, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(pKiriLayout.createSequentialGroup()
+                                .addGroup(pKiriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel11)
+                                    .addComponent(jLabel13))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(BpnlLprPengembalian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         pKiriLayout.setVerticalGroup(
@@ -339,23 +482,33 @@ public class MenuUtama extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addGap(0, 0, 0)
                         .addComponent(jLabel2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(19, 19, 19)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(122, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlAnggota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlPenerbit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlPetugas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlPeminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlPengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlLprPinjam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BpnlLprPengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(101, Short.MAX_VALUE))
         );
 
         getContentPane().add(pKiri, java.awt.BorderLayout.LINE_START);
@@ -368,7 +521,7 @@ public class MenuUtama extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1444, Short.MAX_VALUE)
+            .addGap(0, 1439, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -385,11 +538,11 @@ public class MenuUtama extends javax.swing.JFrame {
         pUtama.setLayout(pUtamaLayout);
         pUtamaLayout.setHorizontalGroup(
             pUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1420, Short.MAX_VALUE)
+            .addGap(0, 1415, Short.MAX_VALUE)
         );
         pUtamaLayout.setVerticalGroup(
             pUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 669, Short.MAX_VALUE)
+            .addGap(0, 880, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout pDasarLayout = new javax.swing.GroupLayout(pDasar);
@@ -405,8 +558,8 @@ public class MenuUtama extends javax.swing.JFrame {
             pDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pDasarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pUtama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addComponent(pUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pKanan.add(pDasar, java.awt.BorderLayout.CENTER);
@@ -415,6 +568,16 @@ public class MenuUtama extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void BpnlDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BpnlDashboardMouseClicked
+       menuDashboard dashboard = new menuDashboard();
+       showPanel(dashboard);
+    }//GEN-LAST:event_BpnlDashboardMouseClicked
+
+    private void BpnlAnggotaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BpnlAnggotaMouseClicked
+        menuAnggota anggota = new menuAnggota();
+        showPanel(anggota);
+    }//GEN-LAST:event_BpnlAnggotaMouseClicked
 
     /**
      * @param args the command line arguments
@@ -452,6 +615,16 @@ public class MenuUtama extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel BpnlAnggota;
+    private javax.swing.JPanel BpnlBuku;
+    private javax.swing.JPanel BpnlDashboard;
+    private javax.swing.JPanel BpnlKategori;
+    private javax.swing.JPanel BpnlLprPengembalian;
+    private javax.swing.JPanel BpnlLprPinjam;
+    private javax.swing.JPanel BpnlPeminjaman;
+    private javax.swing.JPanel BpnlPenerbit;
+    private javax.swing.JPanel BpnlPengembalian;
+    private javax.swing.JPanel BpnlPetugas;
     private javax.swing.JLabel IconBuku;
     private javax.swing.JLabel IconDashboard;
     private javax.swing.JLabel IconDashboard1;
@@ -460,8 +633,16 @@ public class MenuUtama extends javax.swing.JFrame {
     private javax.swing.JLabel IconDashboard4;
     private javax.swing.JLabel IconDashboard5;
     private javax.swing.JLabel IconDashboard6;
+    private javax.swing.JLabel IconDashboard7;
+    private javax.swing.JLabel IconDashboard8;
+    private javax.swing.JLabel IconDashboard9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -472,13 +653,6 @@ public class MenuUtama extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JPanel pDasar;
     private javax.swing.JPanel pKanan;
     private javax.swing.JPanel pKiri;
