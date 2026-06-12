@@ -27,14 +27,14 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jButton1" min="-2" pref="102" max="-2" attributes="0"/>
+                              <Component id="btnTambah" min="-2" pref="102" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
-                              <Component id="jButton3" min="-2" pref="102" max="-2" attributes="0"/>
+                              <Component id="btnHapus" min="-2" pref="102" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jButton2" min="-2" pref="102" max="-2" attributes="0"/>
+                                  <Component id="btnBatal" min="-2" pref="102" max="-2" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -45,7 +45,7 @@
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jTextField1" alignment="1" min="-2" pref="441" max="-2" attributes="0"/>
+                          <Component id="tCariAnggota" alignment="1" min="-2" pref="441" max="-2" attributes="0"/>
                           <Component id="jLabel13" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -68,10 +68,10 @@
               </Group>
               <EmptySpace pref="36" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jButton1" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                  <Component id="jButton2" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                  <Component id="jButton3" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                  <Component id="jTextField1" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                  <Component id="btnTambah" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                  <Component id="btnBatal" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                  <Component id="btnHapus" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                  <Component id="tCariAnggota" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="691" max="-2" attributes="0"/>
@@ -98,6 +98,7 @@
                 <Column editable="true" title="Title 4" type="java.lang.Object"/>
               </Table>
             </Property>
+            <Property name="rowHeight" type="int" value="50"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -120,25 +121,25 @@
         <Property name="text" type="java.lang.String" value="Data Anggota Perpustakaan"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton1">
+    <Component class="javax.swing.JButton" name="btnTambah">
       <Properties>
         <Property name="text" type="java.lang.String" value="Tambah"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton2">
+    <Component class="javax.swing.JButton" name="btnBatal">
       <Properties>
         <Property name="text" type="java.lang.String" value="Batal"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBatalActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton3">
+    <Component class="javax.swing.JButton" name="btnHapus">
       <Properties>
         <Property name="text" type="java.lang.String" value="Hapus"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextField1">
+    <Component class="javax.swing.JTextField" name="tCariAnggota">
       <Properties>
         <Property name="text" type="java.lang.String" value="Cari"/>
       </Properties>
