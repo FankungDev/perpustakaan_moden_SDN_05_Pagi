@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Koneksi;
+package Master;
 
 /**
  *
  * @author rafli
  */
-public class koneksi {
-    
+public class hello {
+   
 }
