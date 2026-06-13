@@ -4,6 +4,12 @@
  * and open the template in the editor.
  */
 package View;
+import javax.swing.table.DefaultTableModel;
+import Koneksi.koneksi; // Sesuaikan dengan package koneksi Anda
+import java.sql.Connection;
+import java.sql.PreparedStatement; // INI YANG TADI KURANG
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -16,7 +22,61 @@ public class menuAnggota extends javax.swing.JPanel {
      */
     public menuAnggota() {
         initComponents();
+        setTabelModel();
+        loadData();
     }
+    
+    private void setTabelModel() {
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("No");
+    model.addColumn("NIS");
+    model.addColumn("Nama");
+    model.addColumn("Alamat");
+    model.addColumn("Telepon");
+    model.addColumn("Jenis Kelamin");
+    model.addColumn("Tgl Bergabung");
+    jTable1.setModel(model);
+    
+    
+}
+    
+    private void loadData() {
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0); 
+
+    try {
+        // 1. Ambil koneksi
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // 2. Cek apakah koneksi berhasil atau tidak
+        if (conn == null) {
+            System.out.println("Gagal terhubung ke database. Cek konfigurasi koneksi Anda.");
+            return;
+        }
+        
+        // 3. Eksekusi query
+        String sql = "SELECT * FROM data_anggota"; 
+        PreparedStatement st = conn.prepareStatement(sql);
+        ResultSet rs = st.executeQuery();
+        
+        int no = 1;
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no ++,
+                rs.getString("nis"),
+                rs.getString("Nama"),
+                rs.getString("alamat"),
+                rs.getString("No_hp"),
+                rs.getString("Jenis_Kelamin"),
+                rs.getString("Tanggal_Bergabung")
+            });
+        }
+    } catch (Exception e) {
+        // Ini akan memberitahu Anda persis error-nya di Output NetBeans
+        System.out.println("Error pada loadData: " + e.toString());
+        e.printStackTrace(); 
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
