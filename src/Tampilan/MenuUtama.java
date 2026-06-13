@@ -166,11 +166,6 @@ public class MenuUtama extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel5.setText("Anggota");
-        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel5MouseClicked(evt);
-            }
-        });
 
         javax.swing.GroupLayout BpnlAnggotaLayout = new javax.swing.GroupLayout(BpnlAnggota);
         BpnlAnggota.setLayout(BpnlAnggotaLayout);
@@ -583,13 +578,6 @@ public class MenuUtama extends javax.swing.JFrame {
         menuAnggota anggota = new menuAnggota();
         showPanel(anggota);
     }//GEN-LAST:event_BpnlAnggotaMouseClicked
-
-    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
-        pn_utama.removeAll ();
-        pn_utama.add(new MenuAnggota());
-        pn_utama.repaint();
-        pn_utama.revalidate();
-    }//GEN-LAST:event_jLabel5MouseClicked
 
     /**
      * @param args the command line arguments

@@ -11,9 +11,6 @@ package Tampilan;
  */
 public class FormLogin extends javax.swing.JFrame {
     
-    int xx, xy;
-    private Connection conn;
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormLogin.class.getName());
 
     /**
@@ -21,10 +18,8 @@ public class FormLogin extends javax.swing.JFrame {
      */
     public FormLogin() {
         initComponents();
-        conn = Koneksi.getConnection;
         this.setLocationRelativeTo(null);
         this.setBackground(new java.awt.Color(0, 0, 0, 0));
-        setActionButton();
         
         // untuk Logo Utama //
         try {
@@ -45,19 +40,6 @@ public class FormLogin extends javax.swing.JFrame {
         
         // untuk Logo Mata
 }
-    @SuppresWarnings("unchecked")
-    
-    private void formMousePressed(java.awt.event.MouseEvent evt) {
-        xx = evt.getX();
-        xy = evt.getY();
-        
-    }
-    
-    private void formMouseDragged(java.awt.event.MouseEvent evt) {
-        int x = evt.getXOnScreen();
-        int Y = evt.getYOnScreen();
-        this.setLocation(x - xx, y - xy);
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -71,13 +53,12 @@ public class FormLogin extends javax.swing.JFrame {
         custom_JPanelRounded1 = new palette.Custom_JPanelRounded();
         custom_JPanelRounded2 = new palette.Custom_JPanelRounded();
         jLabelIcon = new javax.swing.JLabel();
-        btn_cancel = new javax.swing.JButton();
-        t_username = new palette.Custom_JTextField();
+        custom_JTextField1 = new palette.Custom_JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        hideEye = new javax.swing.JLabel();
-        t_password = new palette.Custom_JPasswordField();
-        btn_login = new palette.Custom_JButton();
+        jLabelMata = new javax.swing.JLabel();
+        custom_JPasswordField1 = new palette.Custom_JPasswordField();
+        custom_JButton1 = new palette.Custom_JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
 
@@ -92,9 +73,6 @@ public class FormLogin extends javax.swing.JFrame {
 
         jLabelIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/LoginPagePng.png"))); // NOI18N
 
-        btn_cancel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btn_cancel.setText("X");
-
         javax.swing.GroupLayout custom_JPanelRounded2Layout = new javax.swing.GroupLayout(custom_JPanelRounded2);
         custom_JPanelRounded2.setLayout(custom_JPanelRounded2Layout);
         custom_JPanelRounded2Layout.setHorizontalGroup(
@@ -102,25 +80,21 @@ public class FormLogin extends javax.swing.JFrame {
             .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(jLabelIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btn_cancel))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         custom_JPanelRounded2Layout.setVerticalGroup(
             custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addGap(22, 22, 22)
                 .addComponent(jLabelIcon)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
-                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         custom_JPanelRounded1.add(custom_JPanelRounded2, new org.netbeans.lib.awtextra.AbsoluteConstraints(398, 0, -1, 388));
 
-        t_username.setForeground(new java.awt.Color(153, 153, 153));
-        t_username.addActionListener();
-        custom_JPanelRounded1.add(t_username, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 105, 350, 41));
+        custom_JTextField1.setForeground(new java.awt.Color(153, 153, 153));
+        custom_JTextField1.addActionListener(this::custom_JTextField1ActionPerformed);
+        custom_JPanelRounded1.add(custom_JTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 105, 350, 41));
 
         jLabel2.setBackground(new java.awt.Color(204, 204, 204));
         jLabel2.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 14)); // NOI18N
@@ -133,19 +107,16 @@ public class FormLogin extends javax.swing.JFrame {
         jLabel3.setText("Password");
         custom_JPanelRounded1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 164, -1, -1));
 
-        hideEye.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/eyesIconfit.png"))); // NOI18N
-        hideEye.addMouseListener();
-        custom_JPanelRounded1.add(hideEye, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 190, 30, 40));
+        jLabelMata.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/eyesIconfit.png"))); // NOI18N
+        custom_JPanelRounded1.add(jLabelMata, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 190, 30, 40));
 
-        t_password.setForeground(new java.awt.Color(153, 153, 153));
-        t_password.addActionListener();
-        custom_JPanelRounded1.add(t_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 192, 350, 41));
+        custom_JPasswordField1.setForeground(new java.awt.Color(153, 153, 153));
+        custom_JPasswordField1.addActionListener(this::custom_JPasswordField1ActionPerformed);
+        custom_JPanelRounded1.add(custom_JPasswordField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 192, 350, 41));
 
-        btn_login.setText("LOGIN");
-        btn_login.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_login.addMouseListener();
-        btn_login.addKeyListener();
-        custom_JPanelRounded1.add(btn_login, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 258, 350, 41));
+        custom_JButton1.setText("LOGIN");
+        custom_JButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        custom_JPanelRounded1.add(custom_JButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 258, 350, 41));
 
         jLabel4.setBackground(new java.awt.Color(204, 204, 204));
         jLabel4.setForeground(new java.awt.Color(153, 153, 153));
@@ -172,25 +143,13 @@ public class FormLogin extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void t_usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t_usernameActionPerformed
+    private void custom_JTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custom_JTextField1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_t_usernameActionPerformed
+    }//GEN-LAST:event_custom_JTextField1ActionPerformed
 
-    private void t_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t_passwordActionPerformed
+    private void custom_JPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custom_JPasswordField1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_t_passwordActionPerformed
-
-    private void btn_loginKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btn_loginKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_loginKeyPressed
-
-    private void hideEyeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hideEyeMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_hideEyeMouseClicked
-
-    private void btn_loginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_loginMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_loginMouseClicked
+    }//GEN-LAST:event_custom_JPasswordField1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -218,132 +177,16 @@ public class FormLogin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_cancel;
-    private palette.Custom_JButton btn_login;
+    private palette.Custom_JButton custom_JButton1;
     private palette.Custom_JPanelRounded custom_JPanelRounded1;
     private palette.Custom_JPanelRounded custom_JPanelRounded2;
-    private javax.swing.JLabel hideEye;
+    private palette.Custom_JPasswordField custom_JPasswordField1;
+    private palette.Custom_JTextField custom_JTextField1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabelIcon;
-    private palette.Custom_JPasswordField t_password;
-    private palette.Custom_JTextField t_username;
+    private javax.swing.JLabel jLabelMata;
     // End of variables declaration//GEN-END:variables
-
-    private void setActionButton() {
-         eye.addMouseListener(new MouseAdapter(){})
-            @Override
-             public void mouseClicked(MousedEvent e) {
-                 hideEye.setVisible(false);
-                 hideEye.setVisible(true);
-                 t_password.setEchoChar((char)0);
-             }     
-             ()};
-
-             hideEye.addMouseListener(new MouseAdapter(){})
-            @Override
-             public void mouseClicked(MousedEvent e) {
-                 eye.setVisible(true);
-                 hideEye.setVisible(false);
-                 t_password.setEchoChar('*');
-             }     
-             ()};
-
-             btn_login.addMouseListener(new MouseAdapter(){
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    prosesLogin();
-                }
-             });
-
-             btn_cancel.addMouseListener(new MouseAdapter(){
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    dispose();
-                    System.exit(0);
-                }
-             });
-
-             t_password.addKeyListener(new KeyAdapter(){
-                @Override
-                public void keyPressed(KeyEvent e){
-                    if(e.getKeyCode() == KeyEvent.VK_ENTER){
-                        btn_login.doClick();
-                    }
-                }
-             });
-
-
-             private String getMd5java(String, messge) {
-                String digest = null;
-                try {
-                    MessageDigest md = MessageDigest.getInstance("MD5");
-                    byte[] hash = md.digest(message.getBytes("UTF-8"));
-
-                    StringBuilder sb  = new StringBuilder(2 * hash.lenght);
-                    for(byte b : hash){
-                        sb.append(String.format("%20", b & 0xff));
-                    }
-                    digest = sb.toString();
-                    
-            } catch (Exception e) {
-                Logger.getLogger(formLogin.clss.getName()).log(Level.SEVERE, null, e);
-            }
-                
-                return digest;
-        }
-
-        private boolean validasiInput(){
-            boolean valid  = false;
-            if(t_username.getText().trim().isEmpty){
-                JOptionPane.showMessageDialog(this, "Username tidak boleh kosong");
-            }else if(t_password.getText().trim().isEmpty){
-                JOptionPane.showMessageDialog(this, "Password tidak boleh kosong");
-            }else{
-                valid = true;
-            }
-            return valid;
-        }
-
-        private boolean checkLogin(String username, String password){
-            if(conn != null){
-                try {
-                    String sql = "SELECT * FROM user WHERE Username=? AND Password=?";
-                    PreparedStatement st = conn.prepareStatement(sql);
-                    st.setString(1, username);
-                    st.setString(2, password);
-                    
-                    ResultSet rs = st.executeQuery():
-                    if(rs.next()) {
-                        return true;
-                    }
-                }catch (SQLException e) {
-                }
-            }
-
-            return false;
-        }
-
-        private void prosesLogin() {
-            if(validasiInput()){
-                String username = t_username.getText();
-                String password = new String(t_password.getPassword());
-                String hashedPassword = getMd5java(password);
-
-                if(checkLogin(username, hashedPassword)){
-                    MenuUtama mn = new MenuUtama();
-                    mn.setVisible(true);
-                    mn.revalidate();
-
-                    dispose();
-                }else{
-                    JOptionPane.showMessageDialog(this, "Username atau Password salah","pesan",
-                    JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        }
-
-
 }

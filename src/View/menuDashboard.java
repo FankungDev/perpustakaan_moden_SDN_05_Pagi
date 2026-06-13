@@ -5,6 +5,12 @@
  */
 package View;
 
+import Koneksi.koneksi;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author rafli
@@ -16,6 +22,82 @@ public class menuDashboard extends javax.swing.JPanel {
      */
     public menuDashboard() {
         initComponents();
+        hitungData();
+        loadTable();
+    }
+    private void hitungData() {
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        Statement st = conn.createStatement();
+
+        // 1. Hitung Anggota
+        ResultSet rsAnggota = st.executeQuery("SELECT COUNT(*) FROM data_anggota");
+        if (rsAnggota.next()) txtAnggota.setText(rsAnggota.getString(1));
+
+        // 2. Hitung Stok Buku (Total buku di perpustakaan)
+        ResultSet rsBuku = st.executeQuery("SELECT SUM(Stok) FROM buku");
+        if (rsBuku.next()) txtBuku.setText(rsBuku.getString(1));
+
+        // 3. Hitung Total Buku Sedang Dipinjam
+        ResultSet rsPinjam = st.executeQuery("SELECT SUM(Jumlah_Pinjam) FROM peminjaman WHERE Tanggal_Kembali IS NULL OR Tanggal_Kembali = '0000-00-00'");
+        if (rsPinjam.next()) txtPeminjaman.setText(rsPinjam.getString(1) != null ? rsPinjam.getString(1) : "0");
+
+        // 4. Hitung Total Buku Sudah Kembali
+        ResultSet rsKembali = st.executeQuery("SELECT SUM(Jumlah_Pinjam) FROM peminjaman WHERE Tanggal_Kembali IS NOT NULL AND Tanggal_Kembali != '0000-00-00'");
+        if (rsKembali.next()) txtPengembalian.setText(rsKembali.getString(1) != null ? rsKembali.getString(1) : "0");
+
+    } catch (Exception e) {
+        System.out.println("Error hitungData: " + e.getMessage());
+    }
+}
+    
+    private void loadTable() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("No.");
+        model.addColumn("ID Pinjam");
+        model.addColumn("Nama Anggota");
+        model.addColumn("Judul Buku");
+        model.addColumn("Jumlah");       // <--- Kolom Baru
+        model.addColumn("Tgl Pinjam");
+        model.addColumn("Tgl Kembali");
+        model.addColumn("Status");
+
+        try {
+            Connection conn = Koneksi.koneksi.getKoneksi();
+            // Tambahkan p.Jumlah_Pinjam ke dalam SELECT
+            String sql = "SELECT p.Id_Pinjam, a.Nama, b.Judul_Buku, p.Jumlah_Pinjam, p.Tanggal_Pinjam, p.Tanggal_Kembali " +
+                         "FROM peminjaman p " +
+                         "JOIN data_anggota a ON p.Nis = a.Nis " +
+                         "JOIN buku b ON p.Id_Buku = b.Id_Buku";
+            
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            int no = 1;
+            while (rs.next()) {
+                String formatID = String.format("PJM%02d", rs.getInt("Id_Pinjam"));
+                String tglKembali = rs.getString("Tanggal_Kembali");
+                String status = (tglKembali == null || tglKembali.equals("0000-00-00")) ? "Sedang dipinjam" : "Sudah dikembalikan";
+                
+                model.addRow(new Object[]{
+                    no++,
+                    formatID,
+                    rs.getString("Nama"),
+                    rs.getString("Judul_Buku"),
+                    rs.getString("Jumlah_Pinjam"), // <--- Mengambil data jumlah
+                    rs.getString("Tanggal_Pinjam"),
+                    (tglKembali == null || tglKembali.equals("0000-00-00")) ? "-" : tglKembali,
+                    status
+                });
+            }
+            tblDataDashboard.setModel(model);
+            
+            // Mengatur lebar kolom "No"
+            tblDataDashboard.getColumnModel().getColumn(0).setPreferredWidth(30);
+            
+        } catch (Exception e) {
+            System.out.println("Error loadTable: " + e.getMessage());
+        }
     }
 
     /**
@@ -29,24 +111,24 @@ public class menuDashboard extends javax.swing.JPanel {
 
         custom_JPanelRounded1 = new palette.Custom_JPanelRounded();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        txtAnggota = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         custom_JPanelRounded2 = new palette.Custom_JPanelRounded();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        txtBuku = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         custom_JPanelRounded3 = new palette.Custom_JPanelRounded();
         jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        txtPeminjaman = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         custom_JPanelRounded4 = new palette.Custom_JPanelRounded();
         jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        txtPengembalian = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblDataDashboard = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -56,9 +138,9 @@ public class menuDashboard extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Anggota");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("999");
+        txtAnggota.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        txtAnggota.setForeground(new java.awt.Color(255, 255, 255));
+        txtAnggota.setText("999");
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconOrang.png"))); // NOI18N
 
@@ -70,7 +152,7 @@ public class menuDashboard extends javax.swing.JPanel {
                 .addContainerGap(22, Short.MAX_VALUE)
                 .addGroup(custom_JPanelRounded1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, custom_JPanelRounded1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addComponent(txtAnggota)
                         .addGap(39, 39, 39))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, custom_JPanelRounded1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -89,7 +171,7 @@ public class menuDashboard extends javax.swing.JPanel {
                         .addGap(25, 25, 25)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)))
+                        .addComponent(txtAnggota)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -99,9 +181,9 @@ public class menuDashboard extends javax.swing.JPanel {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Buku");
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("999");
+        txtBuku.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        txtBuku.setForeground(new java.awt.Color(255, 255, 255));
+        txtBuku.setText("999");
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconBuku_1.png"))); // NOI18N
 
@@ -112,7 +194,7 @@ public class menuDashboard extends javax.swing.JPanel {
             .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
                 .addContainerGap(22, Short.MAX_VALUE)
                 .addGroup(custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5)
+                    .addComponent(txtBuku)
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addComponent(jLabel6)
@@ -127,7 +209,7 @@ public class menuDashboard extends javax.swing.JPanel {
                     .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(35, 35, 35)
-                        .addComponent(jLabel5)))
+                        .addComponent(txtBuku)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -137,9 +219,9 @@ public class menuDashboard extends javax.swing.JPanel {
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Peminjaman");
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("999");
+        txtPeminjaman.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        txtPeminjaman.setForeground(new java.awt.Color(255, 255, 255));
+        txtPeminjaman.setText("999");
 
         jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconPinjamBuku.png"))); // NOI18N
 
@@ -153,7 +235,7 @@ public class menuDashboard extends javax.swing.JPanel {
                     .addComponent(jLabel7)
                     .addGroup(custom_JPanelRounded3Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jLabel8)))
+                        .addComponent(txtPeminjaman)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel9)
                 .addContainerGap())
@@ -167,7 +249,7 @@ public class menuDashboard extends javax.swing.JPanel {
                     .addGroup(custom_JPanelRounded3Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(35, 35, 35)
-                        .addComponent(jLabel8)))
+                        .addComponent(txtPeminjaman)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -177,9 +259,9 @@ public class menuDashboard extends javax.swing.JPanel {
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("Pengembalian");
 
-        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel11.setText("999");
+        txtPengembalian.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        txtPengembalian.setForeground(new java.awt.Color(255, 255, 255));
+        txtPengembalian.setText("999");
 
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconKembaliBuku.png"))); // NOI18N
 
@@ -190,7 +272,7 @@ public class menuDashboard extends javax.swing.JPanel {
             .addGroup(custom_JPanelRounded4Layout.createSequentialGroup()
                 .addContainerGap(22, Short.MAX_VALUE)
                 .addGroup(custom_JPanelRounded4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11)
+                    .addComponent(txtPengembalian)
                     .addComponent(jLabel10))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel12)
@@ -205,7 +287,7 @@ public class menuDashboard extends javax.swing.JPanel {
                     .addGroup(custom_JPanelRounded4Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGap(35, 35, 35)
-                        .addComponent(jLabel11)))
+                        .addComponent(txtPengembalian)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -217,7 +299,7 @@ public class menuDashboard extends javax.swing.JPanel {
         jLabel14.setForeground(new java.awt.Color(153, 153, 153));
         jLabel14.setText("Riwayat Peminjaman Buku");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblDataDashboard.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -228,8 +310,8 @@ public class menuDashboard extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jTable1.setRowHeight(50);
-        jScrollPane1.setViewportView(jTable1);
+        tblDataDashboard.setRowHeight(50);
+        jScrollPane1.setViewportView(tblDataDashboard);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -283,19 +365,19 @@ public class menuDashboard extends javax.swing.JPanel {
     private palette.Custom_JPanelRounded custom_JPanelRounded4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tblDataDashboard;
+    private javax.swing.JLabel txtAnggota;
+    private javax.swing.JLabel txtBuku;
+    private javax.swing.JLabel txtPeminjaman;
+    private javax.swing.JLabel txtPengembalian;
     // End of variables declaration//GEN-END:variables
 }
