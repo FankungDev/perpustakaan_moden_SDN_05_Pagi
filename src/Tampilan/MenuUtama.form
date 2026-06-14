@@ -626,6 +626,9 @@
           </Properties>
         </Component>
         <Container class="javax.swing.JPanel" name="BpnlLprPinjam">
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="BpnlLprPinjamMouseClicked"/>
+          </Events>
 
           <Layout>
             <DimensionLayout dim="0">
@@ -676,6 +679,9 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="BpnlLprPengembalian">
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="BpnlLprPengembalianMouseClicked"/>
+          </Events>
 
           <Layout>
             <DimensionLayout dim="0">
@@ -714,6 +720,9 @@
                   <Image iconType="3" name="/Gambar/iconDashboard.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="IconDashboard9MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel15">
               <Properties>
@@ -722,6 +731,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Pengembalian"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel15MouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

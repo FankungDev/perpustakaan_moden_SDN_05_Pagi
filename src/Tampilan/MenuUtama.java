@@ -6,7 +6,7 @@
 package Tampilan;
 import View.menuDashboard;
 import View.menuAnggota;
-
+import View.MenuPengembalian;
 /**
  *
  * @author rafli
@@ -21,11 +21,22 @@ public class MenuUtama extends javax.swing.JFrame {
         pUtama.setLayout(new java.awt.BorderLayout());
         BpnlDashboard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BpnlAnggota.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BpnlPengembalian.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BpnlAnggota.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             BpnlAnggotaMouseClicked(evt);
         }
     });
+        BpnlPengembalian.addMouseListener(new java.awt.event.MouseAdapter() {
+    public void mouseClicked(java.awt.event.MouseEvent evt) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                MenuPengembalian form = new MenuPengembalian();
+                form.setVisible(true);
+            }
+        });
+    }
+});
     }
     
     public void showPanel(javax.swing.JPanel panel){
@@ -373,6 +384,12 @@ public class MenuUtama extends javax.swing.JFrame {
         jLabel13.setForeground(new java.awt.Color(102, 102, 102));
         jLabel13.setText("LAPORAN");
 
+        BpnlLprPinjam.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BpnlLprPinjamMouseClicked(evt);
+            }
+        });
+
         IconDashboard8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
 
         jLabel14.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -402,10 +419,26 @@ public class MenuUtama extends javax.swing.JFrame {
                 .addGap(10, 10, 10))
         );
 
+        BpnlLprPengembalian.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BpnlLprPengembalianMouseClicked(evt);
+            }
+        });
+
         IconDashboard9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
+        IconDashboard9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                IconDashboard9MouseClicked(evt);
+            }
+        });
 
         jLabel15.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel15.setText("Pengembalian");
+        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel15MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout BpnlLprPengembalianLayout = new javax.swing.GroupLayout(BpnlLprPengembalian);
         BpnlLprPengembalian.setLayout(BpnlLprPengembalianLayout);
@@ -578,6 +611,26 @@ public class MenuUtama extends javax.swing.JFrame {
         menuAnggota anggota = new menuAnggota();
         showPanel(anggota);
     }//GEN-LAST:event_BpnlAnggotaMouseClicked
+
+    private void jLabel15MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MouseClicked
+        // TODO add your handling code here:
+        new MenuPengembalian().setVisible(true);
+    }//GEN-LAST:event_jLabel15MouseClicked
+
+    private void IconDashboard9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IconDashboard9MouseClicked
+        // TODO add your handling code here:
+         new MenuPengembalian().setVisible(true);
+    }//GEN-LAST:event_IconDashboard9MouseClicked
+
+    private void BpnlLprPinjamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BpnlLprPinjamMouseClicked
+        // TODO add your handling code here:
+         new MenuPengembalian().setVisible(true);
+    }//GEN-LAST:event_BpnlLprPinjamMouseClicked
+
+    private void BpnlLprPengembalianMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BpnlLprPengembalianMouseClicked
+        // TODO add your handling code here:
+        new MenuPengembalian().setVisible(true);
+    }//GEN-LAST:event_BpnlLprPengembalianMouseClicked
 
     /**
      * @param args the command line arguments
