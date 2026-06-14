@@ -272,6 +272,11 @@ void tampilData() {
 
         btnCari.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnCari.setText("Cari");
+        btnCari.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCariMouseClicked(evt);
+            }
+        });
         btnCari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCariActionPerformed(evt);
@@ -317,8 +322,8 @@ void tampilData() {
         jLabel9.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         jLabel9.setText("Transaksi > Pengembalian");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -428,6 +433,35 @@ rs.getString("Jumlah_Pinjam")  // ← tanpa koma di akhir
     }
 
     }//GEN-LAST:event_btnCariActionPerformed
+
+    private void btnCariMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCariMouseClicked
+        // TODO add your handling code here:
+    try {
+        java.sql.Connection con = koneksi.getKoneksi();
+        String cari = txtPencarian.getText();
+        String sql = "select * from peminjaman where Id_Pinjam like '%"+cari+"%'";
+        java.sql.Statement st = con.createStatement();
+        java.sql.ResultSet rs = st.executeQuery(sql);
+        
+        DefaultTableModel dtm = (DefaultTableModel) tabelPencarian.getModel();
+        dtm.setRowCount(0);
+        
+        while(rs.next()) {
+            dtm.addRow(new Object[]{
+                rs.getString("Id_Pinjam"),
+                rs.getString("Nis"),
+                rs.getString("Id_Buku"),
+                rs.getString("Tanggal_Pinjam"),
+                rs.getString("Tanggal_Kembali"),
+                rs.getString("Point"),
+                rs.getString("status"),
+                rs.getString("Jumlah_Pinjam")
+            });
+        }
+    } catch(Exception e) {
+        System.out.println(e);
+    }
+    }//GEN-LAST:event_btnCariMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
