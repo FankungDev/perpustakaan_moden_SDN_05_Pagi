@@ -15,12 +15,12 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author rafli
  */
-public class menuAnggota extends javax.swing.JPanel {
+public class menuPetugas extends javax.swing.JPanel {
 
     /**
      * Creates new form menuAnggota
      */
-    public menuAnggota() {
+    public menuPetugas() {
         initComponents();
         setTabelModel();
         loadData();
@@ -29,12 +29,11 @@ public class menuAnggota extends javax.swing.JPanel {
     private void setTabelModel() {
     DefaultTableModel model = new DefaultTableModel();
     model.addColumn("No");
-    model.addColumn("NIS");
+    model.addColumn("ID");
     model.addColumn("Nama");
-    model.addColumn("Alamat");
-    model.addColumn("Telepon");
-    model.addColumn("Jenis Kelamin");
-    model.addColumn("Tgl Bergabung");
+    model.addColumn("Username");
+    model.addColumn("Email");
+    model.addColumn("Level");
     jTable1.setModel(model);
     
     
@@ -55,7 +54,7 @@ public class menuAnggota extends javax.swing.JPanel {
         }
         
         // 3. Eksekusi query
-        String sql = "SELECT * FROM data_anggota"; 
+        String sql = "SELECT * FROM data_admin"; 
         PreparedStatement st = conn.prepareStatement(sql);
         ResultSet rs = st.executeQuery();
         
@@ -63,12 +62,11 @@ public class menuAnggota extends javax.swing.JPanel {
         while (rs.next()) {
             model.addRow(new Object[]{
                 no ++,
-                rs.getString("nis"),
+                rs.getString("ID Admin"),
                 rs.getString("Nama"),
-                rs.getString("alamat"),
-                rs.getString("No_hp"),
-                rs.getString("Jenis_Kelamin"),
-                rs.getString("Tanggal_Bergabung")
+                rs.getString("Username"),
+                rs.getString("Email"),
+                rs.getString("Level"),
             });
         }
     } catch (Exception e) {
@@ -117,7 +115,7 @@ public class menuAnggota extends javax.swing.JPanel {
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Data Anggota Perpustakaan");
+        jLabel2.setText("Data Petugas Perpustakaan");
 
         btnTambah.setText("Tambah");
 
@@ -143,17 +141,16 @@ public class menuAnggota extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(44, 44, 44)
-                                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(62, 62, 62)
-                                .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel2)))
+                                .addComponent(jLabel2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel13)
