@@ -97,6 +97,9 @@ public class menuAnggota extends javax.swing.JPanel {
         btnHapus = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
         tfCari = new palette.Custom_JTextField();
+        btnBatal = new javax.swing.JButton();
+
+        jPasswordField1.setText("jPasswordField1");
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -146,12 +149,6 @@ public class menuAnggota extends javax.swing.JPanel {
                 btnBatalActionPerformed(evt);
             }
         });
-
-        btnHapus.setText("Hapus");
-
-        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel13.setText("Master Data > Anggota");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
