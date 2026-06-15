@@ -4,22 +4,115 @@
  * and open the template in the editor.
  */
 package View;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import Koneksi.koneksi;
 import Tampilan.MenuUtama;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
  * @author User
  */
 public class MenuPengembalian extends javax.swing.JFrame {
+    private void loadData() {
+    try {
+        Connection con = koneksi.getKoneksi();
+        String sql = "SELECT * FROM peminjaman";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
 
+        DefaultTableModel model = (DefaultTableModel) tabelPencarian.getModel();
+        model.setRowCount(0); // Kosongkan dulu
+
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                rs.getString("Id_Pinjam"),
+                rs.getString("Nis"),
+                rs.getString("Id_Buku"),
+                rs.getString("Tanggal_Pinjam"),
+                rs.getString("Tanggal_Kembali"),
+                rs.getInt("Point"),
+                rs.getString("Status"),
+                rs.getInt("Jumlah_Pinjaman")
+            });
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal load data: " + e.getMessage());
+    }
+}
     /**
      * Creates new form MenuPengembalian
      */
     public MenuPengembalian() {
         initComponents();
+        loadData();
+       tabelPencarian.getTableHeader().setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+    @Override
+    public java.awt.Component getTableCellRendererComponent(
+            javax.swing.JTable table, Object value, boolean isSelected,
+            boolean hasFocus, int row, int column) {
+        javax.swing.JLabel label = (javax.swing.JLabel) super.getTableCellRendererComponent(
+                table, value, isSelected, hasFocus, row, column);
+        label.setBackground(new java.awt.Color(40, 167, 69)); // Hijau
+        label.setForeground(java.awt.Color.WHITE);
+        label.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 11));
+        label.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(30, 130, 50)));
+        label.setOpaque(true);
+        return label;
+    }
+});
+
+tabelPencarian.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+    @Override
+    public java.awt.Component getTableCellRendererComponent(
+            javax.swing.JTable table, Object value, boolean isSelected,
+            boolean hasFocus, int row, int column) {
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        if (isSelected) {
+            setBackground(new java.awt.Color(173, 216, 230));
+        } else if (row % 2 == 0) {
+            setBackground(new java.awt.Color(227, 242, 253)); // Biru muda
+        } else {
+            setBackground(java.awt.Color.WHITE);
+        }
+        return this;
+    }
+});
+
+jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
+tabelPencarian.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+tabelPencarian.getColumnModel().getColumn(0).setPreferredWidth(90);   // Id_Pinjam
+tabelPencarian.getColumnModel().getColumn(1).setPreferredWidth(90);   // Nis
+tabelPencarian.getColumnModel().getColumn(2).setPreferredWidth(80);   // Id_Buku
+tabelPencarian.getColumnModel().getColumn(3).setPreferredWidth(120);  // Tanggal_Pinjam
+tabelPencarian.getColumnModel().getColumn(4).setPreferredWidth(120);  // Tanggal_Kembali
+tabelPencarian.getColumnModel().getColumn(5).setPreferredWidth(60);   // Point
+tabelPencarian.getColumnModel().getColumn(6).setPreferredWidth(150);  // Status
+tabelPencarian.getColumnModel().getColumn(7).setPreferredWidth(120);  // Jumlah_Pinjaman
+btnKembalikan.setBackground(new java.awt.Color(40, 167, 69));
+ 
+
+btnKembalikan.setBackground(new java.awt.Color(40, 167, 69));
+btnKembalikan.setForeground(java.awt.Color.WHITE);
+btnKembalikan.setOpaque(true);
+btnKembalikan.setBorderPainted(false);
+
+btnCari.setBackground(new java.awt.Color(40, 167, 69));
+btnCari.setForeground(java.awt.Color.WHITE);
+btnCari.setOpaque(true);
+btnCari.setBorderPainted(false);
+
+btnRefresh.setBackground(new java.awt.Color(0, 123, 255));
+btnRefresh.setForeground(java.awt.Color.WHITE);
+btnRefresh.setOpaque(true);
+btnRefresh.setBorderPainted(false);
+
+btnBack.setOpaque(true);
         tabelPencarian.addMouseListener(new java.awt.event.MouseAdapter() {
     public void mouseClicked(java.awt.event.MouseEvent evt) {
         int baris = tabelPencarian.getSelectedRow();
@@ -122,6 +215,8 @@ void tampilData() {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelPencarian = new javax.swing.JTable();
         jLabel9 = new javax.swing.JLabel();
+
+        setBackground(new java.awt.Color(51, 51, 255));
 
         jLabel3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel3.setText("Id Peminjam");
@@ -295,6 +390,7 @@ void tampilData() {
                 "Id_Pinjam", "Nis", "Id_Buku", "Tanggal_Pinjam", "Tanggal_Kembali", "Point", "Status", "Jumlah_Pinjam"
             }
         ));
+        tabelPencarian.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jScrollPane1.setViewportView(tabelPencarian);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -315,8 +411,8 @@ void tampilData() {
                     .addComponent(txtPencarian, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         jLabel9.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
