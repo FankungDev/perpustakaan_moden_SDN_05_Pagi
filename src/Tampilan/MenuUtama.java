@@ -5,17 +5,152 @@
  */
 package Tampilan;
 
+
+    stok INT
+);
 /**
  *
  * @author rafli
  */
 public class MenuUtama extends javax.swing.JFrame {
+      private int halamanSaatIni=1;
+      private int dataPerHalaman=14;
+      private int totalpages;
+      private final Connection conn;
+      private String idKategori;
+      private String idpenerbit;
+      
+      
+     public MenuBuku() {
+    initComponents();
 
+    conn = koneksi.getConnection();
+    setTabelModel();
+    loadData();
+    paginationBuku();
+    actionbutton();
+    setTableRenderer();
+    
+    private void setTabelModel() {
+    javax.swing.table.DefaultTableModel model =
+        new javax.swing.table.DefaultTableModel(
+            new Object[][] {},
+            new String[] {
+                "ID Buku",
+                "Judul",
+                "Pengarang",
+                "Penerbit",
+                "Stok"
+            }
+        );
+
+    tableBuku.setModel(model);
+}
+    public MenuBuku() {
+    initComponents();
+
+    conn = koneksi.getConnection();
+
+    setTabelModel();
+    loadData();
+    paginationBuku();
+    actionButoon();
+    setTableRenderer();
+} 
+    private void insertData() {
+    try {
+        String sql = "INSERT INTO buku(judul,pengarang,penerbit,stok) VALUES(?,?,?,?)";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        ps.setString(1, txtJudul.getText());
+        ps.setString(2, txtPengarang.getText());
+        ps.setString(3, txtPenerbit.getText());
+        ps.setString(4, txtStok.getText());
+
+        ps.executeUpdate();
+
+        JOptionPane.showMessageDialog(this, "Data berhasil disimpan");
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+}
+    private void resetForm() {
+    txtJudul.setText("");
+    txtPengarang.setText("");
+    txtPenerbit.setText("");
+    txtStok.setText("");
+} 
+    private void deleteData() {
+    try {
+        String sql = "DELETE FROM buku WHERE id_buku=?";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, txtIdBuku.getText());
+
+        ps.executeUpdate();
+
+        JOptionPane.showMessageDialog(this, "Data berhasil dihapus");
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+}
+    
+    private void updateData() {
+    try {
+        String sql = "UPDATE buku SET judul=?, pengarang=?, penerbit=?, stok=? WHERE id_buku=?";
+
+        PreparedStatement ps = c     onn.prepareStatement(sql);
+
+        ps.setString(1, txtJudul.getText());
+        ps.setString(2, txtPengarang.getText());
+        ps.setString(3, txtPenerbit.getText());
+        ps.setString(4, txtStok.getText());
+        ps.setString(5, txtIdBuku.getText());
+
+        ps.executeUpdate();
+
+        JOptionPane.showMessageDialog(this, "Data berhasil diubah");
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+}  
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {
+    insertData();
+    loadData();
+ private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {
+    insertData();
+    loadData();
+    resetForm();
+}
+ private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {
+    updateData();
+    loadData();
+    resetForm();
+}
+ private void tableBukuMouseClicked(java.awt.event.MouseEvent evt) {
+
+    int row = tableBuku.getSelectedRow();
+
+    txtIdBuku.setText(tableBuku.getValueAt(row, 0).toString());
+    txtJudul.setText(tableBuku.getValueAt(row, 1).toString());
+    txtPengarang.setText(tableBuku.getValueAt(row, 2).toString());
+    txtPenerbit.setText(tableBuku.getValueAt(row, 3).toString());
+    txtStok.setText(tableBuku.getValueAt(row, 4).toString());
+}
+    
+    
+  
+         
     /**
      * Creates new form MenuUtama
      */
     public MenuUtama() {
         initComponents();
+        
     }
 
     /**
@@ -355,7 +490,7 @@ public class MenuUtama extends javax.swing.JFrame {
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(122, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
         getContentPane().add(pKiri, java.awt.BorderLayout.LINE_START);
@@ -368,7 +503,7 @@ public class MenuUtama extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1444, Short.MAX_VALUE)
+            .addGap(0, 1450, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
