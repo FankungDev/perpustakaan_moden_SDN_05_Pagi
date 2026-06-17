@@ -5,11 +5,12 @@
  */
 package View;
 import javax.swing.table.DefaultTableModel;
-import Koneksi.koneksi; // Sesuaikan dengan package koneksi Anda
+import Koneksi.koneksi; 
 import java.sql.Connection;
-import java.sql.PreparedStatement; // INI YANG TADI KURANG
+import java.sql.PreparedStatement; 
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
+import java.util.Date;
 import Tampilan.MenuUtama;
 
 /**
@@ -21,9 +22,55 @@ public class menuCRUDAnggota extends javax.swing.JPanel {
     
     public menuCRUDAnggota() {
         initComponents();
+        btnSimpan.setVisible(false); // Sembunyikan Simpan, tampilkan Tambah
+        btnTambah.setVisible(true);
+        loadKelas();
     }
     
+    public menuCRUDAnggota(String nis, String nama, String alamat, String telp, String email, String idKelas, String jk, java.util.Date tgl) {
+        initComponents();
+        loadKelas();
+        cbKelas.setSelectedItem(idKelas);
+        btnTambah.setVisible(false); // Sembunyikan Tambah, tampilkan Simpan
+        btnSimpan.setVisible(true);
+        
+        
+        // Isi field dengan data
+        txtId.setText(nis);
+        txtId.setEnabled(false); // NIS tidak bisa diubah agar relasi aman
+        txtNama.setText(nama);
+        txtAlamat.setText(alamat);
+        txtTlpn.setText(telp);
+        txtEmail.setText(email);
+        cbKelas.setSelectedItem(idKelas);
+        if (jk.equalsIgnoreCase("Laki - laki")) {
+            rbLaki.setSelected(true);
+        } else {
+            rbPerempuan.setSelected(true);
+        }
+        txtTanggal.setDate(tgl);
+    }
   
+    private void loadKelas() {
+    try {
+        // Mengambil koneksi
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        // Query untuk mengambil data id_kelas
+        String sql = "SELECT id_kelas FROM data_kelas"; 
+        PreparedStatement st = conn.prepareStatement(sql);
+        ResultSet rs = st.executeQuery();
+        
+        // Hapus semua isi default ("Item 1", "Item 2", dll)
+        cbKelas.removeAllItems();
+        
+        // Tambahkan data dari database ke combobox
+        while (rs.next()) {
+            cbKelas.addItem(rs.getString("id_kelas"));
+        }
+    } catch (Exception e) {
+        System.out.println("Error load kelas: " + e.getMessage());
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -252,11 +299,77 @@ public class menuCRUDAnggota extends javax.swing.JPanel {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-   
+
+    if (txtId.getText().isEmpty() || txtNama.getText().isEmpty() || 
+        txtAlamat.getText().isEmpty() || txtTlpn.getText().isEmpty() || 
+        txtEmail.getText().isEmpty() || txtTanggal.getDate() == null || 
+        (!rbLaki.isSelected() && !rbPerempuan.isSelected())) {
+        
+        javax.swing.JOptionPane.showMessageDialog(this, "Semua data wajib diisi!");
+        return; 
+    }
+
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        String sqlCek = "SELECT nis FROM data_anggota WHERE nis = ?";
+        PreparedStatement stCek = conn.prepareStatement(sqlCek);
+        stCek.setString(1, txtId.getText());
+        ResultSet rs = stCek.executeQuery();
+        
+        if (rs.next()) {
+       
+            javax.swing.JOptionPane.showMessageDialog(this, "NIS sudah terdaftar! Gunakan NIS lain.");
+            return;
+        }
+
+        
+        String sql = "INSERT INTO data_anggota (nis, Nama, alamat, No_hp, Email, id_kelas, Jenis_Kelamin, Tanggal_Bergabung) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement st = conn.prepareStatement(sql);
+        
+        st.setString(1, txtId.getText());
+        st.setString(2, txtNama.getText());
+        st.setString(3, txtAlamat.getText());
+        st.setString(4, txtTlpn.getText());
+        st.setString(5, txtEmail.getText());
+        st.setString(6, cbKelas.getSelectedItem().toString());
+        st.setString(7, rbLaki.isSelected() ? "Laki - laki" : "Perempuan");
+        st.setDate(8, new java.sql.Date(txtTanggal.getDate().getTime()));
+        
+        st.executeUpdate();
+        
+        javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Ditambahkan!");
+        btnBatalActionPerformed(evt); // Kembali ke menu utama
+        
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        // TODO add your handling code here:
+         try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        String sql = "UPDATE data_anggota SET Nama=?, alamat=?, No_hp=?, Email=?, id_kelas=?, Jenis_Kelamin=?, Tanggal_Bergabung=? WHERE nis=?";
+        PreparedStatement st = conn.prepareStatement(sql);
+        
+        st.setString(1, txtNama.getText());
+        st.setString(2, txtAlamat.getText());
+        st.setString(3, txtTlpn.getText());
+        st.setString(4, txtEmail.getText());
+        
+        // AMBIL NILAI DARI COMBOBOX
+        String idKelas = cbKelas.getSelectedItem().toString();
+        st.setString(5, idKelas); 
+        
+        st.setString(6, rbLaki.isSelected() ? "Laki - laki" : "Perempuan");
+        st.setDate(7, new java.sql.Date(txtTanggal.getDate().getTime()));
+        st.setString(8, txtId.getText());
+        
+        st.executeUpdate();
+        javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Diupdate!");
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal Update: " + e.getMessage());
+    }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
 

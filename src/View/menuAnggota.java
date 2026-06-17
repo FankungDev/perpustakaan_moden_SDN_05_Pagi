@@ -5,9 +5,9 @@
  */
 package View;
 import javax.swing.table.DefaultTableModel;
-import Koneksi.koneksi; // Sesuaikan dengan package koneksi Anda
+import Koneksi.koneksi; 
 import java.sql.Connection;
-import java.sql.PreparedStatement; // INI YANG TADI KURANG
+import java.sql.PreparedStatement; 
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
 import Tampilan.MenuUtama;
@@ -231,39 +231,51 @@ public class menuAnggota extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-        String keyword = tfCari.getText();
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0); // Bersihkan tabel
+    String keyword = tfCari.getText();
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0);
 
-        try {
-            Connection conn = Koneksi.koneksi.getKoneksi();
-            // 3. Query dengan LIKE untuk pencarian
-            String sql = "SELECT * FROM data_anggota WHERE Nama LIKE ? OR nis LIKE ?";
-            PreparedStatement st = conn.prepareStatement(sql);
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        String sql = "SELECT * FROM data_anggota " +
+                     "WHERE Nama LIKE ? OR nis LIKE ? " +
+                     "ORDER BY CASE " +
+                     "WHEN Nama LIKE ? THEN 1 " + 
+                     "ELSE 2 END, Nama ASC";     
 
-            // Menambahkan wildcard % agar pencarian bisa ditemukan di tengah kata
-            st.setString(1, "%" + keyword + "%");
-            st.setString(2, "%" + keyword + "%");
+        PreparedStatement st = conn.prepareStatement(sql);
 
-            ResultSet rs = st.executeQuery();
+        
+        st.setString(1, "%" + keyword + "%"); 
+        st.setString(2, "%" + keyword + "%");
+        
+        st.setString(3, keyword + "%"); 
 
-            int no = 1;
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    no++,
-                    rs.getString("nis"),
-                    rs.getString("Nama"),
-                    rs.getString("alamat"),
-                    rs.getString("No_hp"),
-                    rs.getString("Email"),
-                    rs.getString("id_kelas"),
-                    rs.getString("Jenis_Kelamin"),
-                    rs.getString("Tanggal_Bergabung")
-                });
-            }
-        } catch (Exception e) {
-            System.out.println("Error pencarian: " + e.getMessage());
+        ResultSet rs = st.executeQuery();
+
+        int no = 1;
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no++,
+                rs.getString("nis"),
+                rs.getString("Nama"),
+                rs.getString("alamat"),
+                rs.getString("No_hp"),
+                rs.getString("Email"),
+                rs.getString("id_kelas"),
+                rs.getString("Jenis_Kelamin"),
+                rs.getString("Tanggal_Bergabung")
+            });
         }
+        
+        if (model.getRowCount() == 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Data tidak ditemukan!");
+            loadData();
+        }
+        
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
@@ -290,11 +302,69 @@ public class menuAnggota extends javax.swing.JPanel {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-     
+    int baris = jTable1.getSelectedRow();
+    
+ 
+    if (baris != -1) {
+        String nis = jTable1.getValueAt(baris, 1).toString();
+        
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(this, 
+                "Apakah Anda yakin ingin menghapus data dengan NIS: " + nis + "?", 
+                "Konfirmasi Hapus", 
+                javax.swing.JOptionPane.YES_NO_OPTION);
+        
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                Connection conn = Koneksi.koneksi.getKoneksi();
+                String sql = "DELETE FROM data_anggota WHERE nis = ?";
+                PreparedStatement st = conn.prepareStatement(sql);
+                
+                st.setString(1, nis);
+                st.executeUpdate();
+                
+                javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus!");
+                loadData();
+                btnBatalActionPerformed(evt);
+                
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal Hapus: " + e.getMessage());
+            }
+        }
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih baris data yang ingin dihapus di tabel!");
+    }
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
-
+           int baris = jTable1.getSelectedRow();
+    
+    if (baris != -1) {
+        String nis = (jTable1.getValueAt(baris, 1) != null) ? jTable1.getValueAt(baris, 1).toString() : "";
+        String nama = (jTable1.getValueAt(baris, 2) != null) ? jTable1.getValueAt(baris, 2).toString() : "";
+        String alamat = (jTable1.getValueAt(baris, 3) != null) ? jTable1.getValueAt(baris, 3).toString() : "";
+        String telp = (jTable1.getValueAt(baris, 4) != null) ? jTable1.getValueAt(baris, 4).toString() : "";
+        String email = (jTable1.getValueAt(baris, 5) != null) ? jTable1.getValueAt(baris, 5).toString() : "";
+        String idKelas = (jTable1.getValueAt(baris, 6) != null) ? jTable1.getValueAt(baris, 6).toString() : "";
+        String jk = (jTable1.getValueAt(baris, 7) != null) ? jTable1.getValueAt(baris, 7).toString() : "";
+        
+        java.util.Date tgl = null;
+        Object objTgl = jTable1.getValueAt(baris, 8);
+        if (objTgl != null) {
+            try {
+                tgl = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(objTgl.toString());
+            } catch (Exception e) { 
+                System.out.println("Format tanggal salah"); 
+            }
+        }
+        MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (menuUtama != null) {
+            menuUtama.showPanel(new menuCRUDAnggota(nis, nama, alamat, telp, email, idKelas, jk, tgl));
+        } else {
+            System.out.println("Error: MenuUtama tidak ditemukan!");
+        }
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Pilih data di tabel terlebih dahulu!");
+    }
     }//GEN-LAST:event_btnUbahActionPerformed
 
 
