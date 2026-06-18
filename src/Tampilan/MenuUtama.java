@@ -7,6 +7,7 @@ package Tampilan;
 import View.menuDashboard;
 import View.menuAnggota;
 import View.MenuPengembalian;
+import View.menuKategori;
 import View.menuPetugas;
 import View.menuPenerbit;
 
@@ -25,26 +26,36 @@ public class MenuUtama extends javax.swing.JFrame {
         BpnlDashboard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BpnlAnggota.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BpnlPengembalian.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BpnlPetugas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BpnlPenerbit.setCursor(new  java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BpnlKategori.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        
         BpnlAnggota.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             BpnlAnggotaMouseClicked(evt);
                     }
                     });
-        BpnlPetugas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         
         BpnlPetugas.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             showPanel(new menuPetugas());
             }
             });
-        BpnlPenerbit.setCursor(new  java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        
         BpnlPenerbit.addMouseListener(new java.awt.event.MouseAdapter(){
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 showPanel(new menuPenerbit());
             }
         });
+        
+        BpnlKategori.addMouseListener(new java.awt.event.MouseAdapter(){
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                showPanel(new menuKategori());
+            }
+        });
+        
         BpnlPengembalian.addMouseListener(new java.awt.event.MouseAdapter() {
-    public void mouseClicked(java.awt.event.MouseEvent evt) {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 MenuPengembalian form = new MenuPengembalian();

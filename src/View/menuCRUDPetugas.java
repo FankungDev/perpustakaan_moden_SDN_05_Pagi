@@ -6,6 +6,7 @@
 package View;
 import javax.swing.table.DefaultTableModel;
 import Koneksi.koneksi; // Sesuaikan dengan package koneksi Anda
+import Tampilan.MenuUtama;
 import java.sql.Connection;
 import java.sql.PreparedStatement; // INI YANG TADI KURANG
 import java.sql.ResultSet;
@@ -170,7 +171,10 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        // TODO add your handling code here:
+         MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (menuUtama != null) {
+            menuUtama.showPanel(new menuPetugas());
+        }        // TODO add your handling code here:
     }//GEN-LAST:event_btnBatalActionPerformed
 
 

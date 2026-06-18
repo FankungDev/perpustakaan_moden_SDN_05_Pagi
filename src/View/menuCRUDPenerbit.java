@@ -6,6 +6,7 @@
 package View;
 import javax.swing.table.DefaultTableModel;
 import Koneksi.koneksi; // Sesuaikan dengan package koneksi Anda
+import Tampilan.MenuUtama;
 import java.sql.Connection;
 import java.sql.PreparedStatement; // INI YANG TADI KURANG
 import java.sql.ResultSet;
@@ -22,8 +23,21 @@ public class menuCRUDPenerbit extends javax.swing.JPanel {
      */
     public menuCRUDPenerbit() {
         initComponents();
+        btnSimpan.setVisible(false); // Sembunyikan Simpan, tampilkan Tambah
+        btnTambah.setVisible(true);
        
     }
+    
+    public menuCRUDPenerbit(String id, String nama, String situs) {
+    initComponents();
+    btnTambah.setVisible(false); // Sembunyikan Tambah, tampilkan Simpan
+    btnSimpan.setVisible(true);
+    tfIdPenerbit.setText(id);
+    tfNamaPenerbit.setText(nama);
+    tfSitusPenerbit.setText(situs);
+    tfIdPenerbit.setEditable(false);
+    
+}
     
    
 
@@ -47,6 +61,7 @@ public class menuCRUDPenerbit extends javax.swing.JPanel {
         tfNamaPenerbit = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         tfSitusPenerbit = new javax.swing.JTextField();
+        btnSimpan = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -56,7 +71,7 @@ public class menuCRUDPenerbit extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
         jLabel2.setText("Tambah Data Penerbit Buku ");
 
-        btnTambah.setText("SIMPAN");
+        btnTambah.setText("Tambah");
         btnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTambahActionPerformed(evt);
@@ -80,6 +95,13 @@ public class menuCRUDPenerbit extends javax.swing.JPanel {
 
         jLabel5.setText("Situs");
 
+        btnSimpan.setText("SIMPAN");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -95,7 +117,9 @@ public class menuCRUDPenerbit extends javax.swing.JPanel {
                                 .addComponent(jLabel2))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
                                 .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 489, Short.MAX_VALUE)
                         .addComponent(jLabel13)
@@ -125,7 +149,8 @@ public class menuCRUDPenerbit extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -143,16 +168,110 @@ public class menuCRUDPenerbit extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-                    // TODO add your handling code here:
+        MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (menuUtama != null) {
+            menuUtama.showPanel(new menuPenerbit());
+        }
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-        // TODO add your handling code here:
+    String id = tfIdPenerbit.getText().trim();
+    String nama = tfNamaPenerbit.getText().trim();
+    String situs = tfSitusPenerbit.getText().trim();
+
+    // 2. Validasi input
+    if (id.isEmpty() || nama.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "ID dan Nama Penerbit tidak boleh kosong!");
+        return;
+    }
+
+    // 3. Proses simpan ke database
+    try {
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        String sql = "INSERT INTO penerbit (id_penerbit, nama_penerbit, situs) VALUES (?, ?, ?)";
+        java.sql.PreparedStatement st = conn.prepareStatement(sql);
+        
+        st.setString(1, id);
+        st.setString(2, nama);
+        st.setString(3, situs);
+        
+        int rowsInserted = st.executeUpdate();
+        
+        if (rowsInserted > 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
+            // Opsional: Kosongkan field setelah berhasil
+            tfIdPenerbit.setText("");
+            tfNamaPenerbit.setText("");
+            tfSitusPenerbit.setText("");
+        }
+        
+    } catch (java.sql.SQLException e) {
+        if (e.getErrorCode() == 1062) { 
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal: ID Penerbit '" + id + "' sudah ada di database.");
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }
     }//GEN-LAST:event_btnTambahActionPerformed
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+    String id = tfIdPenerbit.getText().trim();
+    String nama = tfNamaPenerbit.getText().trim();
+    String situs = tfSitusPenerbit.getText().trim();
+
+    // 1. Validasi Input
+    if (id.isEmpty() || nama.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "ID dan Nama Penerbit wajib diisi!");
+        return;
+    }
+
+    try {
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // 2. Cek apakah ini mode Edit (jika ID tidak bisa diedit) atau Tambah baru
+        if (!tfIdPenerbit.isEditable()) {
+            // LOGIKA UPDATE
+            String sql = "UPDATE penerbit SET nama_penerbit = ?, situs = ? WHERE id_penerbit = ?";
+            java.sql.PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, nama);
+            st.setString(2, situs);
+            st.setString(3, id);
+            st.executeUpdate();
+            javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!");
+        } else {
+            // LOGIKA TAMBAH (INSERT)
+            // Validasi duplikasi ID untuk data baru
+            String sqlCek = "SELECT COUNT(*) FROM penerbit WHERE id_penerbit = ?";
+            java.sql.PreparedStatement stCek = conn.prepareStatement(sqlCek);
+            stCek.setString(1, id);
+            java.sql.ResultSet rs = stCek.executeQuery();
+            
+            if (rs.next() && rs.getInt(1) > 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal: ID Penerbit '" + id + "' sudah ada!");
+                return;
+            }
+            
+            String sql = "INSERT INTO penerbit (id_penerbit, nama_penerbit, situs) VALUES (?, ?, ?)";
+            java.sql.PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, id);
+            st.setString(2, nama);
+            st.setString(3, situs);
+            st.executeUpdate();
+            javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
+        }
+        
+        // Tutup form atau kembali ke panel utama
+        // Anda bisa memanggil method untuk kembali ke panel tabel di sini
+        
+    } catch (java.sql.SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error Database: " + e.getMessage());
+    }            // TODO add your handling code here:
+    }//GEN-LAST:event_btnSimpanActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;

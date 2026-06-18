@@ -231,24 +231,30 @@ public class menuAnggota extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-    String keyword = tfCari.getText();
+    String keyword = tfCari.getText().trim();
+    
+    // Jika kosong, panggil loadData() agar tabel terisi default (urut berdasarkan NIS/ID)
+    if (keyword.isEmpty()) {
+        loadData();
+        return;
+    }
+
     DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
     model.setRowCount(0);
 
     try {
         Connection conn = Koneksi.koneksi.getKoneksi();
+        // Query tetap menggunakan logika pencarian Anda
         String sql = "SELECT * FROM data_anggota " +
                      "WHERE Nama LIKE ? OR nis LIKE ? " +
                      "ORDER BY CASE " +
                      "WHEN Nama LIKE ? THEN 1 " + 
-                     "ELSE 2 END, Nama ASC";     
+                     "ELSE 2 END, nis ASC"; // Mengurutkan berdasarkan NIS jika nama tidak prioritas
 
         PreparedStatement st = conn.prepareStatement(sql);
-
         
         st.setString(1, "%" + keyword + "%"); 
         st.setString(2, "%" + keyword + "%");
-        
         st.setString(3, keyword + "%"); 
 
         ResultSet rs = st.executeQuery();
@@ -336,7 +342,7 @@ public class menuAnggota extends javax.swing.JPanel {
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
-           int baris = jTable1.getSelectedRow();
+    int baris = jTable1.getSelectedRow();
     
     if (baris != -1) {
         String nis = (jTable1.getValueAt(baris, 1) != null) ? jTable1.getValueAt(baris, 1).toString() : "";

@@ -6,6 +6,7 @@
 package View;
 import javax.swing.table.DefaultTableModel;
 import Koneksi.koneksi; // Sesuaikan dengan package koneksi Anda
+import Tampilan.MenuUtama;
 import java.sql.Connection;
 import java.sql.PreparedStatement; // INI YANG TADI KURANG
 import java.sql.ResultSet;
@@ -22,8 +23,22 @@ public class menuCRUDKategori extends javax.swing.JPanel {
      */
     public menuCRUDKategori() {
         initComponents();
+        btnSimpan.setVisible(false); // Sembunyikan Simpan, tampilkan Tambah
+        btnTambah.setVisible(true);
        
     }
+    
+    public menuCRUDKategori(String id, String nama, String deskripsi) {
+    initComponents();
+    tfIdKategori.setText(id);      // Sesuaikan dengan nama variabel TextField Anda
+    tfNamaKategori.setText(nama);
+    tfDeskripsi.setText(deskripsi);
+    btnTambah.setVisible(false); // Sembunyikan Tambah, tampilkan Simpan
+    btnSimpan.setVisible(true);
+    
+    // Opsional: set ID agar tidak bisa diedit saat mode edit
+    tfIdKategori.setEditable(false);
+}
     
    
 
@@ -39,7 +54,7 @@ public class menuCRUDKategori extends javax.swing.JPanel {
         jRadioButton1 = new javax.swing.JRadioButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        btnTambah = new javax.swing.JButton();
+        btnSimpan = new javax.swing.JButton();
         btnBatal = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -47,7 +62,8 @@ public class menuCRUDKategori extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         tfNamaKategori = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        tfDeksripsi = new javax.swing.JTextField();
+        tfDeskripsi = new javax.swing.JTextField();
+        btnTambah = new javax.swing.JButton();
 
         jRadioButton1.setText("jRadioButton1");
 
@@ -57,9 +73,14 @@ public class menuCRUDKategori extends javax.swing.JPanel {
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Tambah Kategori Perpustakaan");
+        jLabel2.setText("Tambah Kategori Buku");
 
-        btnTambah.setText("SIMPAN");
+        btnSimpan.setText("SIMPAN");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
 
         btnBatal.setText("BATAL");
         btnBatal.addActionListener(new java.awt.event.ActionListener() {
@@ -70,13 +91,20 @@ public class menuCRUDKategori extends javax.swing.JPanel {
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel13.setText("Master Data > Anggota");
+        jLabel13.setText("Master Data > Kategori > Tambah Kategori");
 
         jLabel3.setText("ID");
 
         jLabel4.setText("Nama");
 
         jLabel5.setText("Deskripsi");
+
+        btnTambah.setText("Tambah");
+        btnTambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTambahActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -97,14 +125,17 @@ public class menuCRUDKategori extends javax.swing.JPanel {
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel2))
                                     .addGroup(layout.createSequentialGroup()
+                                        .addGap(1, 1, 1)
                                         .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGap(22, 22, 22)
+                                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
                                         .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 695, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 537, Short.MAX_VALUE)
                                 .addComponent(jLabel13))
                             .addComponent(tfIdKategori)
                             .addComponent(tfNamaKategori)
-                            .addComponent(tfDeksripsi)
+                            .addComponent(tfDeskripsi)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5)
@@ -123,8 +154,9 @@ public class menuCRUDKategori extends javax.swing.JPanel {
                         .addComponent(jLabel13)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -136,18 +168,122 @@ public class menuCRUDKategori extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addGap(23, 23, 23)
-                .addComponent(tfDeksripsi, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tfDeskripsi, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(483, 483, 483))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        // TODO add your handling code here:
+    MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (menuUtama != null) {
+            menuUtama.showPanel(new menuKategori());
+        } 
     }//GEN-LAST:event_btnBatalActionPerformed
+
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+    String id = tfIdKategori.getText().trim();
+    String nama = tfNamaKategori.getText().trim();
+    String deskripsi = tfDeskripsi.getText().trim();
+
+    // 1. Validasi Input Kosong
+    if (id.isEmpty() || nama.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "ID dan Nama Kategori wajib diisi!");
+        return;
+    }
+
+    try {
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // 2. Cek apakah ID sudah ada di database (Validasi Duplikasi)
+        String sqlCek = "SELECT COUNT(*) FROM kategori_buku WHERE ID_Kategori = ?";
+        java.sql.PreparedStatement stCek = conn.prepareStatement(sqlCek);
+        stCek.setString(1, id);
+        java.sql.ResultSet rs = stCek.executeQuery();
+        
+        if (rs.next() && rs.getInt(1) > 0) {
+            // Jika ID sudah ada, tampilkan peringatan
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal: ID Kategori '" + id + "' sudah terdaftar!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // 3. Jika ID belum ada, lakukan INSERT data baru
+        String sqlInsert = "INSERT INTO kategori_buku (ID_Kategori, Nama_Kategori, Deskripsi) VALUES (?, ?, ?)";
+        java.sql.PreparedStatement stInsert = conn.prepareStatement(sqlInsert);
+        stInsert.setString(1, id);
+        stInsert.setString(2, nama);
+        stInsert.setString(3, deskripsi);
+        stInsert.executeUpdate();
+        
+        javax.swing.JOptionPane.showMessageDialog(this, "Data kategori berhasil ditambahkan!");
+        
+        // 4. Bersihkan form setelah sukses
+        tfIdKategori.setText("");
+        tfNamaKategori.setText("");
+        tfDeskripsi.setText("");
+        tfIdKategori.requestFocus();
+        
+    } catch (java.sql.SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error Database: " + e.getMessage());
+    }
+    }//GEN-LAST:event_btnTambahActionPerformed
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+    String id = tfIdKategori.getText().trim();
+    String nama = tfNamaKategori.getText().trim();
+    String deskripsi = tfDeskripsi.getText().trim();
+
+    // 1. Validasi Input Kosong
+    if (id.isEmpty() || nama.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "ID dan Nama Kategori wajib diisi!");
+        return;
+    }
+
+    try {
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // 2. Cek apakah ID sudah ada
+        String sqlCek = "SELECT COUNT(*) FROM kategori_buku WHERE ID_Kategori = ?";
+        java.sql.PreparedStatement stCek = conn.prepareStatement(sqlCek);
+        stCek.setString(1, id);
+        java.sql.ResultSet rs = stCek.executeQuery();
+        
+        if (rs.next() && rs.getInt(1) > 0) {
+            // Jika ID ditemukan, cek apakah ini mode update atau bukan
+            // Jika Anda ingin mencegah duplikasi saat TAMBAH data saja:
+            if (!tfIdKategori.isEditable()) { 
+                // Mode Edit: Lanjutkan ke proses Update
+                String sqlUpdate = "UPDATE kategori_buku SET Nama_Kategori = ?, Deskripsi = ? WHERE ID_Kategori = ?";
+                java.sql.PreparedStatement stUpdate = conn.prepareStatement(sqlUpdate);
+                stUpdate.setString(1, nama);
+                stUpdate.setString(2, deskripsi);
+                stUpdate.setString(3, id);
+                stUpdate.executeUpdate();
+                javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!");
+            } else {
+                // Mode Tambah: Jika ID sudah ada, munculkan peringatan
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal: ID Kategori '" + id + "' sudah terdaftar!");
+                return; // Berhenti di sini
+            }
+        } else {
+            // Mode Tambah: ID belum ada, lakukan INSERT
+            String sqlInsert = "INSERT INTO kategori_buku (ID_Kategori, Nama_Kategori, Deskripsi) VALUES (?, ?, ?)";
+            java.sql.PreparedStatement stInsert = conn.prepareStatement(sqlInsert);
+            stInsert.setString(1, id);
+            stInsert.setString(2, nama);
+            stInsert.setString(3, deskripsi);
+            stInsert.executeUpdate();
+            javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
+        }
+        
+    } catch (java.sql.SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error Database: " + e.getMessage());
+    }
+    }//GEN-LAST:event_btnSimpanActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
@@ -156,7 +292,7 @@ public class menuCRUDKategori extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JTextField tfDeksripsi;
+    private javax.swing.JTextField tfDeskripsi;
     private javax.swing.JTextField tfIdKategori;
     private javax.swing.JTextField tfNamaKategori;
     // End of variables declaration//GEN-END:variables

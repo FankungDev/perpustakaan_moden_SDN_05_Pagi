@@ -25,22 +25,25 @@ public class menuPenerbit extends javax.swing.JPanel {
         setTabelModel();
         loadData();
         
-        panelUbah.setVisible(false);
+        btnUbah.setVisible(false);
+        btnHapus.setVisible(false);
+        btnBatal.setVisible(false);   
+        
     }
     
     private void setTabelModel() {
     DefaultTableModel model = new DefaultTableModel();
     model.addColumn("No");
-    model.addColumn("ID");
-    model.addColumn("Nama");
-    model.addColumn("Situs");
-    tblData.setModel(model);
+    model.addColumn("ID Penerbit");
+    model.addColumn("Nama Penerbit");
+    model.addColumn("Situs Penerbit");
+    jTable1.setModel(model);
     
     
 }
     
     private void loadData() {
-    DefaultTableModel model = (DefaultTableModel) tblData.getModel();
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
     model.setRowCount(0); 
 
     try {
@@ -64,7 +67,6 @@ public class menuPenerbit extends javax.swing.JPanel {
                 no ++,
                 rs.getString("id_penerbit"),
                 rs.getString("nama_penerbit"),
-                rs.getString("Level"),
                 rs.getString("situs")
             });
         }
@@ -85,22 +87,20 @@ public class menuPenerbit extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblData = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         tfCari = new palette.Custom_JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         btnCari = new javax.swing.JButton();
-        panelUbah = new javax.swing.JPanel();
         btnUbah = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
         btnBatal = new javax.swing.JButton();
-        panelTambah = new javax.swing.JPanel();
         btnTambah = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        tblData.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -111,7 +111,19 @@ public class menuPenerbit extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tblData);
+        jTable1.setRowHeight(50);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+
+        tfCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfCariActionPerformed(evt);
+            }
+        });
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/peopleIconKecil.png"))); // NOI18N
 
@@ -129,8 +141,6 @@ public class menuPenerbit extends javax.swing.JPanel {
                 btnCariActionPerformed(evt);
             }
         });
-
-        panelUbah.setBackground(new java.awt.Color(255, 255, 255));
 
         btnUbah.setText("UBAH");
         btnUbah.addActionListener(new java.awt.event.ActionListener() {
@@ -153,31 +163,6 @@ public class menuPenerbit extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout panelUbahLayout = new javax.swing.GroupLayout(panelUbah);
-        panelUbah.setLayout(panelUbahLayout);
-        panelUbahLayout.setHorizontalGroup(
-            panelUbahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelUbahLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(btnUbah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
-                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
-                .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        panelUbahLayout.setVerticalGroup(
-            panelUbahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelUbahLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(panelUbahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnUbah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
-        );
-
-        panelTambah.setBackground(new java.awt.Color(255, 255, 255));
-
         btnTambah.setText("TAMBAH");
         btnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -185,48 +170,39 @@ public class menuPenerbit extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout panelTambahLayout = new javax.swing.GroupLayout(panelTambah);
-        panelTambah.setLayout(panelTambahLayout);
-        panelTambahLayout.setHorizontalGroup(
-            panelTambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTambahLayout.createSequentialGroup()
-                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        panelTambahLayout.setVerticalGroup(
-            panelTambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTambahLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel13)
-                        .addGap(41, 41, 41))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(panelTambah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(panelUbah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(6, 6, 6)
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel13)
+                                .addGap(14, 14, 14))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)
+                                .addComponent(btnUbah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
+                                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
+                                .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1403, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(31, Short.MAX_VALUE))))
+                                .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1403, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 27, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -238,12 +214,13 @@ public class menuPenerbit extends javax.swing.JPanel {
                         .addComponent(jLabel2)
                         .addComponent(jLabel13)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(panelUbah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(panelTambah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUbah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 691, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -251,21 +228,126 @@ public class menuPenerbit extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        panelUbah.setVisible(false);
-        panelTambah.setVisible(true);
+            btnUbah.setVisible(false);
+            btnHapus.setVisible(false);
+            btnBatal.setVisible(false);
+            btnTambah.setVisible(true);
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-        // TODO add your handling code here:
+    String keyword = tfCari.getText().trim();
+    
+    // Jika kolom pencarian kosong, cukup panggil loadData() dan keluar dari fungsi
+    if (keyword.isEmpty()) {
+        loadData();
+        return;
+    }
+
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0);
+
+    try {
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        // Query dengan pencarian dan pengurutan berdasarkan ID
+        String sql = "SELECT * FROM penerbit " +
+                     "WHERE id_penerbit LIKE ? OR nama_penerbit LIKE ? " +
+                     "ORDER BY id_penerbit ASC"; // Mengurutkan berdasarkan ID jika ditemukan
+
+        java.sql.PreparedStatement st = conn.prepareStatement(sql);
+        
+        st.setString(1, "%" + keyword + "%"); 
+        st.setString(2, "%" + keyword + "%");
+
+        java.sql.ResultSet rs = st.executeQuery();
+
+        int no = 1;
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no++,
+                rs.getString("id_penerbit"),
+                rs.getString("nama_penerbit"),
+                rs.getString("situs")
+            });
+        }
+        
+        if (model.getRowCount() == 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Data tidak ditemukan!");
+            loadData();
+        }
+        
+    } catch (Exception e) {
+        System.out.println("Error pada btnCari: " + e.getMessage());
+    }
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
-        // TODO add your handling code here:
+    int baris = jTable1.getSelectedRow();
+ 
+        if (baris != -1) {
+            
+            String idPenerbit = (jTable1.getValueAt(baris, 1) != null) ? jTable1.getValueAt(baris, 1).toString() : "";
+            String namaPenerbit = (jTable1.getValueAt(baris, 2) != null) ? jTable1.getValueAt(baris, 2).toString() : "";
+            String situs = (jTable1.getValueAt(baris, 3) != null) ? jTable1.getValueAt(baris, 3).toString() : "";
+
+            
+            MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+            if (menuUtama != null) {
+              
+                menuUtama.showPanel(new menuCRUDPenerbit(idPenerbit, namaPenerbit, situs));
+            } else {
+                System.out.println("Error: MenuUtama tidak ditemukan!");
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih data di tabel terlebih dahulu!");
+        }
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-        // TODO add your handling code here:
+    int baris = jTable1.getSelectedRow();
+    
+    if (baris != -1) {
+        // Mengambil id_penerbit dari kolom indeks 1
+        String idPenerbit = jTable1.getValueAt(baris, 1).toString();
+        
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(this, 
+                "Apakah Anda yakin ingin menghapus data penerbit dengan ID: " + idPenerbit + "?", 
+                "Konfirmasi Hapus", 
+                javax.swing.JOptionPane.YES_NO_OPTION);
+        
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+                String sql = "DELETE FROM penerbit WHERE id_penerbit = ?";
+                java.sql.PreparedStatement st = conn.prepareStatement(sql);
+                
+                st.setString(1, idPenerbit);
+                st.executeUpdate();
+                
+                javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus!");
+                
+                // Refresh tabel dan kosongkan field
+                loadData();
+                btnBatalActionPerformed(evt);
+                
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal Hapus: " + e.getMessage());
+            }
+        }
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih baris data yang ingin dihapus di tabel!");
+    }
     }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+            btnUbah.setVisible(true);
+            btnHapus.setVisible(true);
+            btnBatal.setVisible(true);
+            btnTambah.setVisible(false);                   // TODO add your handling code here:
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void tfCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfCariActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
@@ -287,9 +369,7 @@ public class menuPenerbit extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel panelTambah;
-    private javax.swing.JPanel panelUbah;
-    private javax.swing.JTable tblData;
+    private javax.swing.JTable jTable1;
     private palette.Custom_JTextField tfCari;
     // End of variables declaration//GEN-END:variables
 }

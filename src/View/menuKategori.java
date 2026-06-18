@@ -25,52 +25,56 @@ public class menuKategori extends javax.swing.JPanel {
         initComponents();
         setTabelModel();
         loadData();
+        
+        btnUbah.setVisible(false);
+        btnHapus.setVisible(false);
+        btnBatal.setVisible(false);
     }
     
-    private void setTabelModel() {
+     private void setTabelModel() {
     DefaultTableModel model = new DefaultTableModel();
     model.addColumn("No");
-    model.addColumn("ID");
-    model.addColumn("Nama");
-    model.addColumn("Username");
-    model.addColumn("Email");
-    model.addColumn("Level");
-    tblData.setModel(model);
-    
-    
-}
-    
-   private void loadData() {
-    DefaultTableModel model = (DefaultTableModel) tblData.getModel();
+    model.addColumn("ID Kategori");
+    model.addColumn("Nama Kategori");
+    model.addColumn("Deksripsi");
+    jTable1.setModel(model);
+    }
+     
+    private void loadData() {
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
     model.setRowCount(0); 
 
     try {
+        // 1. Ambil koneksi
         Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // 2. Cek apakah koneksi berhasil atau tidak
         if (conn == null) {
-            System.out.println("Gagal terhubung ke database.");
+            System.out.println("Gagal terhubung ke database. Cek konfigurasi koneksi Anda.");
             return;
         }
         
-        String sql = "SELECT * FROM data_admin"; 
+        // 3. Eksekusi query
+        String sql = "SELECT * FROM kategori_buku"; 
         PreparedStatement st = conn.prepareStatement(sql);
         ResultSet rs = st.executeQuery();
         
         int no = 1;
         while (rs.next()) {
             model.addRow(new Object[]{
-                no++,
-                rs.getString("Id_Admin"), // Perhatikan: sesuaikan dengan nama kolom di DB
-                rs.getString("Nama"),
-                rs.getString("Username"),
-                rs.getString("Email"),
-                rs.getString("Level")
+                no ++,
+                rs.getString("ID_Kategori"),
+                rs.getString("Nama_Kategori"),
+                rs.getString("Deskripsi"),
             });
         }
     } catch (Exception e) {
-        System.out.println("Error pada loadData: " + e.getMessage());
+        // Ini akan memberitahu Anda persis error-nya di Output NetBeans
+        System.out.println("Error pada loadData: " + e.toString());
         e.printStackTrace(); 
     }
-}
+    }
+     
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -82,17 +86,20 @@ public class menuKategori extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblData = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         btnCari = new javax.swing.JButton();
         btnTambah = new javax.swing.JButton();
+        btnUbah = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
+        btnBatal = new javax.swing.JButton();
+        tfCari = new palette.Custom_JTextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        tblData.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -103,15 +110,19 @@ public class menuKategori extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tblData);
+        jTable1.setRowHeight(50);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/peopleIconKecil.png"))); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Data Kategori Perpustakaan");
-
-        jTextField1.setText("Cari");
+        jLabel2.setText("Data Kategori Buku");
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(153, 153, 153));
@@ -131,31 +142,54 @@ public class menuKategori extends javax.swing.JPanel {
             }
         });
 
+        btnUbah.setText("UBAH");
+        btnUbah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUbahActionPerformed(evt);
+            }
+        });
+
+        btnHapus.setText("HAPUS");
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
+
+        btnBatal.setText("BATAL");
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel13)
-                        .addGap(18, 18, 18))
+                        .addComponent(jLabel13))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1403, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnUbah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 441, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(22, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1403, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -166,43 +200,162 @@ public class menuKategori extends javax.swing.JPanel {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2)
                         .addComponent(jLabel13)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
+                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUbah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 691, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        // TODO add your handling code here:
+            btnUbah.setVisible(false);
+            btnHapus.setVisible(false);
+            btnBatal.setVisible(false);
+            btnTambah.setVisible(true);
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-        // TODO add your handling code here:
+                                        
+    String keyword = tfCari.getText().trim();
+    
+    // Jika kolom pencarian kosong, panggil loadData() untuk reset tampilan
+    if (keyword.isEmpty()) {
+        loadData();
+        return;
+    }
+
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0);
+
+    try {
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        // Query pencarian untuk tabel kategori_buku
+        String sql = "SELECT * FROM kategori_buku " +
+                     "WHERE ID_Kategori LIKE ? OR Nama_Kategori LIKE ? " +
+                     "ORDER BY ID_Kategori ASC"; 
+
+        java.sql.PreparedStatement st = conn.prepareStatement(sql);
+        
+        st.setString(1, "%" + keyword + "%"); 
+        st.setString(2, "%" + keyword + "%");
+
+        java.sql.ResultSet rs = st.executeQuery();
+
+        int no = 1;
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no++,
+                rs.getString("ID_Kategori"),
+                rs.getString("Nama_Kategori"),
+                rs.getString("Deskripsi")
+            });
+        }
+        
+        if (model.getRowCount() == 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Data tidak ditemukan!");
+            loadData();
+        }
+        
+    } catch (Exception e) {
+        System.out.println("Error pada btnCari: " + e.getMessage());
+    }      // TODO add your handling code here:
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
         if (menuUtama != null) {
-            menuUtama.showPanel(new menuCRUDPenerbit());
+            menuUtama.showPanel(new menuCRUDKategori());
         }
 
         // TODO add your handling code here:
     }//GEN-LAST:event_btnTambahActionPerformed
 
+    private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
+            int baris = jTable1.getSelectedRow();
+ 
+            if (baris != -1) {
+                // Mengambil data berdasarkan indeks kolom pada loadData() Anda
+                // Indeks 1: ID_Kategori, Indeks 2: Nama_Kategori, Indeks 3: Deskripsi
+                String idKategori = (jTable1.getValueAt(baris, 1) != null) ? jTable1.getValueAt(baris, 1).toString() : "";
+                String namaKategori = (jTable1.getValueAt(baris, 2) != null) ? jTable1.getValueAt(baris, 2).toString() : "";
+                String deskripsi = (jTable1.getValueAt(baris, 3) != null) ? jTable1.getValueAt(baris, 3).toString() : "";
+
+                MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+
+                if (menuUtama != null) {
+                    // Memanggil panel dengan parameter untuk mode EDIT
+                    menuUtama.showPanel(new menuCRUDKategori(idKategori, namaKategori, deskripsi));
+                } else {
+                    System.out.println("Error: MenuUtama tidak ditemukan!");
+                }
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Pilih data kategori di tabel terlebih dahulu!");
+            }
+    }//GEN-LAST:event_btnUbahActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+    int baris = jTable1.getSelectedRow();
+    
+    if (baris != -1) {
+        // Mengambil ID_Kategori dari kolom indeks 1
+        String idKategori = jTable1.getValueAt(baris, 1).toString();
+        
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(this, 
+                "Apakah Anda yakin ingin menghapus kategori dengan ID: " + idKategori + "?", 
+                "Konfirmasi Hapus", 
+                javax.swing.JOptionPane.YES_NO_OPTION);
+        
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+                String sql = "DELETE FROM kategori_buku WHERE ID_Kategori = ?";
+                java.sql.PreparedStatement st = conn.prepareStatement(sql);
+                
+                st.setString(1, idKategori);
+                st.executeUpdate();
+                
+                javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus!");
+                
+                // Refresh tabel dan kosongkan field jika ada fungsi batal
+                loadData();
+                // Jika Anda punya tombol batal, panggil fungsinya di sini
+                // btnBatalActionPerformed(evt);
+                
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal Hapus: " + e.getMessage());
+            }
+        }
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih baris data kategori yang ingin dihapus di tabel!");
+    }
+    }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+            btnUbah.setVisible(true);
+            btnHapus.setVisible(true);
+            btnBatal.setVisible(true);
+            btnTambah.setVisible(false);       
+    }//GEN-LAST:event_jTable1MouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnCari;
+    private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JButton btnUbah;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTable tblData;
+    private javax.swing.JTable jTable1;
+    private palette.Custom_JTextField tfCari;
     // End of variables declaration//GEN-END:variables
 }

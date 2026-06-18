@@ -45,17 +45,20 @@
                                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
+                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                                       <Component id="btnTambah" min="-2" pref="102" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                                      <Component id="btnSimpan" min="-2" pref="102" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="btnBatal" min="-2" pref="102" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="695" max="32767" attributes="0"/>
+                              <EmptySpace pref="537" max="32767" attributes="0"/>
                               <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="tfIdKategori" max="32767" attributes="0"/>
                           <Component id="tfNamaKategori" alignment="0" max="32767" attributes="0"/>
-                          <Component id="tfDeksripsi" alignment="0" max="32767" attributes="0"/>
+                          <Component id="tfDeskripsi" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
@@ -83,8 +86,9 @@
               </Group>
               <EmptySpace pref="36" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btnTambah" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                  <Component id="btnSimpan" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
                   <Component id="btnBatal" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                  <Component id="btnTambah" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
@@ -97,7 +101,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
-              <Component id="tfDeksripsi" min="-2" pref="44" max="-2" attributes="0"/>
+              <Component id="tfDeskripsi" min="-2" pref="44" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="483" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -119,13 +123,16 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="66" green="66" red="66" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Tambah Kategori Perpustakaan"/>
+        <Property name="text" type="java.lang.String" value="Tambah Kategori Buku"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="btnTambah">
+    <Component class="javax.swing.JButton" name="btnSimpan">
       <Properties>
         <Property name="text" type="java.lang.String" value="SIMPAN"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimpanActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnBatal">
       <Properties>
@@ -143,7 +150,7 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="99" red="99" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Master Data &gt; Anggota"/>
+        <Property name="text" type="java.lang.String" value="Master Data &gt; Kategori &gt; Tambah Kategori"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
@@ -165,7 +172,15 @@
         <Property name="text" type="java.lang.String" value="Deskripsi"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="tfDeksripsi">
+    <Component class="javax.swing.JTextField" name="tfDeskripsi">
+    </Component>
+    <Component class="javax.swing.JButton" name="btnTambah">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Tambah"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTambahActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
