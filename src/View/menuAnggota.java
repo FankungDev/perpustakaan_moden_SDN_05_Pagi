@@ -1,4 +1,4 @@
-/*
+    /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -336,7 +336,7 @@ public class menuAnggota extends javax.swing.JPanel {
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
-           int baris = jTable1.getSelectedRow();
+    int baris = jTable1.getSelectedRow();
     
     if (baris != -1) {
         String nis = (jTable1.getValueAt(baris, 1) != null) ? jTable1.getValueAt(baris, 1).toString() : "";

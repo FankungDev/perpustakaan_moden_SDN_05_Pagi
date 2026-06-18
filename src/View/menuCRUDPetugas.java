@@ -25,6 +25,22 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
        
     }
     
+    public menuCRUDPetugas(String id, String nama, String user, String email, String level) {
+        initComponents();
+        
+        // Masukkan data ke dalam komponen UI (Sesuaikan nama variabelnya!)
+        tfIdPetugas.setText(id);
+        tfNamaPetugas.setText(nama);
+        tfUsernamePetugas.setText(user);
+        tfEmailPetugas.setText(email);
+        cbLevel.setSelectedItem(level);
+        
+        // Jika ID tidak boleh diubah saat edit, nonaktifkan field-nya
+        tfIdPetugas.setEnabled(false);
+        pfPasswordPetugas.setEnabled(false); // Jika kamu punya field password
+        pfPasswordPetugas.setText("*******");
+    }
+    
    
 
     /**
@@ -63,6 +79,11 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         jLabel2.setText("Data Petugas Perpustakaan");
 
         btnSimpan.setText("SIMPAN");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
 
         btnBatal.setText("BATAL");
         btnBatal.addActionListener(new java.awt.event.ActionListener() {
@@ -172,6 +193,19 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnBatalActionPerformed
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        String sql;
+    // Jika password kosong, berarti tidak ingin mengubah password
+    if (pfPasswordPetugas.getText().isEmpty()) {
+        sql = "UPDATE data_admin SET Nama=?, Username=?, Email=?, Level=? WHERE ID_Admin=?";
+        // ... jalankan query tanpa password
+    } else {
+        // Jika diisi, update juga password-nya
+        sql = "UPDATE data_admin SET Nama=?, Username=?, Email=?, Level=?, Password=? WHERE ID_Admin=?";
+        // ... jalankan query dengan password
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSimpanActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
