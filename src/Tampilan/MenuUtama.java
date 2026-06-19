@@ -6,10 +6,10 @@
 package Tampilan;
 import View.menuDashboard;
 import View.menuAnggota;
-import View.MenuPengembalian;
 import View.menuKategori;
 import View.menuPetugas;
 import View.menuPenerbit;
+import View.MenuPengembalian;
 
 /**
  *
@@ -58,8 +58,7 @@ public class MenuUtama extends javax.swing.JFrame {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                MenuPengembalian form = new MenuPengembalian();
-                form.setVisible(true);
+             
             }
         });
     }
@@ -126,6 +125,7 @@ public class MenuUtama extends javax.swing.JFrame {
         pKanan = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         pDasar = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
         pUtama = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -291,6 +291,11 @@ public class MenuUtama extends javax.swing.JFrame {
         );
 
         IconDashboard4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
+        IconDashboard4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                IconDashboard4MouseClicked(evt);
+            }
+        });
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel8.setText("Penerbit");
@@ -382,9 +387,19 @@ public class MenuUtama extends javax.swing.JFrame {
         jLabel11.setText("TRANSAKSI");
 
         IconDashboard7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/iconDashboard.png"))); // NOI18N
+        IconDashboard7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                IconDashboard7MouseClicked(evt);
+            }
+        });
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel12.setText("Pengembalian");
+        jLabel12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel12MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout BpnlPengembalianLayout = new javax.swing.GroupLayout(BpnlPengembalian);
         BpnlPengembalian.setLayout(BpnlPengembalianLayout);
@@ -643,34 +658,33 @@ public class MenuUtama extends javax.swing.JFrame {
 
         pDasar.setBackground(new java.awt.Color(204, 204, 204));
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         pUtama.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout pUtamaLayout = new javax.swing.GroupLayout(pUtama);
         pUtama.setLayout(pUtamaLayout);
         pUtamaLayout.setHorizontalGroup(
             pUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1415, Short.MAX_VALUE)
+            .addGap(0, 1441, Short.MAX_VALUE)
         );
         pUtamaLayout.setVerticalGroup(
             pUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 880, Short.MAX_VALUE)
+            .addGap(0, 904, Short.MAX_VALUE)
         );
+
+        jScrollPane1.setViewportView(pUtama);
 
         javax.swing.GroupLayout pDasarLayout = new javax.swing.GroupLayout(pDasar);
         pDasar.setLayout(pDasarLayout);
         pDasarLayout.setHorizontalGroup(
             pDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pDasarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1443, Short.MAX_VALUE)
         );
         pDasarLayout.setVerticalGroup(
             pDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pDasarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 906, Short.MAX_VALUE)
         );
 
         pKanan.add(pDasar, java.awt.BorderLayout.CENTER);
@@ -692,22 +706,18 @@ public class MenuUtama extends javax.swing.JFrame {
 
     private void IconDashboard9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IconDashboard9MouseClicked
         // TODO add your handling code here:
-         new MenuPengembalian().setVisible(true);
     }//GEN-LAST:event_IconDashboard9MouseClicked
 
     private void BpnlLprPinjamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BpnlLprPinjamMouseClicked
         // TODO add your handling code here:
-         new MenuPengembalian().setVisible(true);
     }//GEN-LAST:event_BpnlLprPinjamMouseClicked
 
     private void BpnlLprAnggotaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BpnlLprAnggotaMouseClicked
         // TODO add your handling code here:
-        new MenuPengembalian().setVisible(true);
     }//GEN-LAST:event_BpnlLprAnggotaMouseClicked
 
     private void jLabel15MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MouseClicked
         // TODO add your handling code here:
-        new MenuPengembalian().setVisible(true);
     }//GEN-LAST:event_jLabel15MouseClicked
 
     private void IconDashboard10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IconDashboard10MouseClicked
@@ -721,6 +731,20 @@ public class MenuUtama extends javax.swing.JFrame {
     private void BpnlLprBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BpnlLprBukuMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_BpnlLprBukuMouseClicked
+
+    private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
+   // Panggil method showPanel yang sudah kamu buat, lalu masukkan class MenuPengembalian
+    showPanel(new View.MenuPengembalian());
+    }//GEN-LAST:event_jLabel12MouseClicked
+
+    private void IconDashboard4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IconDashboard4MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_IconDashboard4MouseClicked
+
+    private void IconDashboard7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IconDashboard7MouseClicked
+      // Panggil method showPanel yang sudah kamu buat, lalu masukkan class MenuPengembalian
+    showPanel(new View.MenuPengembalian());
+    }//GEN-LAST:event_IconDashboard7MouseClicked
 
     /**
      * @param args the command line arguments
@@ -816,6 +840,7 @@ public class MenuUtama extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pDasar;
     private javax.swing.JPanel pKanan;
     private javax.swing.JPanel pKiri;
