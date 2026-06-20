@@ -23,12 +23,12 @@ public class menuBuku extends javax.swing.JPanel {
      */
     public menuBuku() {
         initComponents();
-        setTabelModel();
-        loadData();
         
         btnUbah.setVisible(false);
         btnHapus.setVisible(false);
         btnBatal.setVisible(false);
+        setTabelModel();
+        loadData();
     }
     
     private void setTabelModel() {
@@ -37,68 +37,59 @@ public class menuBuku extends javax.swing.JPanel {
     model.addColumn("ID Buku");
     model.addColumn("Judul");
     model.addColumn("Pengarang");
-    model.addColumn("ID Kategori");
-    model.addColumn("Nama Kategori");
     model.addColumn("Tahun Terbit");
-    model.addColumn("ID Penerbit");
-    model.addColumn("Nama Penerbit");
-    model.addColumn("jumlah halaman");
+    model.addColumn("ID Kategori");   // Tambahan
+    model.addColumn("Kategori");
+    model.addColumn("ID Penerbit");   // Tambahan
+    model.addColumn("Penerbit");
     model.addColumn("Stok");
-    model.addColumn("Gambar");
+    model.addColumn("Cover");
+    model.addColumn("Jumlah Halaman");
+    
     jTable1.setModel(model);
     }
-     
-    private void loadData() {
+    
+    public void loadData() {
     DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    model.setRowCount(0); 
+    model.setRowCount(0);
 
     try {
-        // 1. Ambil koneksi
         Connection conn = Koneksi.koneksi.getKoneksi();
-        
-        // 2. Cek apakah koneksi berhasil atau tidak
-        if (conn == null) {
-            System.out.println("Gagal terhubung ke database. Cek konfigurasi koneksi Anda.");
-            return;
-        }
-        
-        // 3. Eksekusi query dengan INNER JOIN untuk mengambil nama_kategori dan nama_penerbit
-        String sql = "SELECT b.Id_buku, b.judul_buku, b.Pengarang, b.id_kategori, k.nama_kategori, "
-                   + "b.id_penerbit, p.nama_penerbit, b.jumlah_halaman, b.stok, b.cover "
-                   + "FROM buku b "
-                   + "INNER JOIN kategori_buku k ON b.id_kategori = k.id_kategori "
-                   + "INNER JOIN penerbit p ON b.id_penerbit = p.id_penerbit"; 
-        
-        PreparedStatement st = conn.prepareStatement(sql);
-        ResultSet rs = st.executeQuery();
-        
+        // Query mengambil data dari tabel utama dan tabel relasi
+        String sql = "SELECT b.id_buku, b.judul_buku, b.pengarang, b.tahun_terbit, " +
+             "b.id_kategori, k.nama_kategori, b.id_penerbit, p.nama_penerbit, " +
+             "b.stok, b.cover, b.jumlah_halaman " +
+             "FROM buku b " +
+             "JOIN kategori_buku k ON b.id_kategori = k.id_kategori " +
+             "JOIN penerbit p ON b.id_penerbit = p.id_penerbit " +
+             "ORDER BY b.id_buku ASC";
+
+        java.sql.Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
         int no = 1;
         while (rs.next()) {
-            model.addRow(new Object[]{
-                no++,
-                rs.getString("Id_buku"),
-                rs.getString("judul_buku"),
-                rs.getString("Pengarang"),
-                rs.getString("id_kategori"),
-                rs.getString("nama_kategori"),
-                rs.getString("tahun_terbit"),
-                rs.getString("id_penerbit"),
-                rs.getString("nama_penerbit"), // Diambil dari tabel penerbit
-                rs.getString("jumlah_halaman"),
-                rs.getString("stok"),
-                rs.getString("cover")
-            });
-        }
-        
-        // Tutup resources
-        rs.close();
-        st.close();
-        
-    } catch (Exception e) {
-        System.out.println("Error pada loadData: " + e.toString());
-        e.printStackTrace(); 
+        model.addRow(new Object[]{
+            no++,
+            rs.getString("id_buku"),
+            rs.getString("judul_buku"), // Perubahan di sini
+            rs.getString("pengarang"),
+            rs.getString("tahun_terbit"),
+            rs.getString("id_kategori"),
+            rs.getString("nama_kategori"),
+            rs.getString("id_penerbit"),
+            rs.getString("nama_penerbit"),
+            rs.getString("stok"),
+            rs.getString("cover"),
+            rs.getString("jumlah_halaman")
+        });
     }
-}
+    } catch (Exception e) {
+        System.out.println("Error loadData: " + e.getMessage());
+    }
+    }
+    
+   
      
 
     /**
@@ -248,131 +239,21 @@ public class menuBuku extends javax.swing.JPanel {
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
                                         
-    String keyword = tfCari.getText().trim();
-    
-    // Jika kolom pencarian kosong, panggil loadData() untuk reset tampilan
-    if (keyword.isEmpty()) {
-        loadData();
-        return;
-    }
-
-    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    model.setRowCount(0);
-
-    try {
-        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
-        // Query pencarian untuk tabel kategori_buku
-        String sql = "SELECT * FROM kategori_buku " +
-                     "WHERE ID_Kategori LIKE ? OR Nama_Kategori LIKE ? " +
-                     "ORDER BY ID_Kategori ASC"; 
-
-        java.sql.PreparedStatement st = conn.prepareStatement(sql);
-        
-        st.setString(1, "%" + keyword + "%"); 
-        st.setString(2, "%" + keyword + "%");
-
-        java.sql.ResultSet rs = st.executeQuery();
-
-        int no = 1;
-        while (rs.next()) {
-            model.addRow(new Object[]{
-                no++,
-                rs.getString("ID_Kategori"),
-                rs.getString("Nama_Kategori"),
-                rs.getString("Deskripsi")
-            });
-        }
-        
-        if (model.getRowCount() == 0) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Data tidak ditemukan!");
-            loadData();
-        }
-        
-    } catch (Exception e) {
-        System.out.println("Error pada btnCari: " + e.getMessage());
-    }      // TODO add your handling code here:
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-        MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+     MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
         if (menuUtama != null) {
-            menuUtama.showPanel(new menCRUDBuku());
+            menuUtama.showPanel(new menuCRUDBuku());
         }
-
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
-        int baris = jTable1.getSelectedRow();
-
-        if (baris != -1) {
-        // Mengambil data string dari tabel
-        String idBuku = (jTable1.getValueAt(baris, 1) != null) ? jTable1.getValueAt(baris, 1).toString() : "";
-        String judulBuku = (jTable1.getValueAt(baris, 2) != null) ? jTable1.getValueAt(baris, 2).toString() : "";
-        String pengarang = (jTable1.getValueAt(baris, 3) != null) ? jTable1.getValueAt(baris, 3).toString() : "";
-        String idKategori = (jTable1.getValueAt(baris, 4) != null) ? jTable1.getValueAt(baris, 4).toString() : "";
-        String namaKategori = (jTable1.getValueAt(baris, 5) != null) ? jTable1.getValueAt(baris, 5).toString() : "";
-        String tahunTerbit = (jTable1.getValueAt(baris, 6) != null) ? jTable1.getValueAt(baris, 6).toString() : "";
-        String idPenerbit = (jTable1.getValueAt(baris, 7) != null) ? jTable1.getValueAt(baris, 7).toString() : "";
-        String namaPenerbit = (jTable1.getValueAt(baris, 8) != null) ? jTable1.getValueAt(baris, 8).toString() : "";
-
-        // Ambil data string lalu konversi ke int untuk jumlah halaman dan stok
-        String strHalaman = (jTable1.getValueAt(baris, 9) != null) ? jTable1.getValueAt(baris, 9).toString() : "0";
-        String strStok = (jTable1.getValueAt(baris, 10) != null) ? jTable1.getValueAt(baris, 10).toString() : "0";
-
-        int jumlahHalaman = Integer.parseInt(strHalaman);
-        int stok = Integer.parseInt(strStok);
-
-        String cover = (jTable1.getValueAt(baris, 11) != null) ? jTable1.getValueAt(baris, 11).toString() : "";
-
-        MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
-
-        if (menuUtama != null) {
-            // Memanggil panel menuCRUDBuku dengan parameter yang sudah pas urutannya
-            menuUtama.showPanel(new menCRUDBuku(idBuku, judulBuku, pengarang, idKategori, namaKategori, tahunTerbit, idPenerbit, namaPenerbit, jumlahHalaman, stok, cover));
-        } else {
-            System.out.println("Error: MenuUtama tidak ditemukan!");
-        }
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Pilih data buku di tabel terlebih dahulu!");
-        }
+    
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-    int baris = jTable1.getSelectedRow();
     
-    if (baris != -1) {
-        // Mengambil ID_Kategori dari kolom indeks 1
-        String idKategori = jTable1.getValueAt(baris, 1).toString();
-        
-        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(this, 
-                "Apakah Anda yakin ingin menghapus kategori dengan ID: " + idKategori + "?", 
-                "Konfirmasi Hapus", 
-                javax.swing.JOptionPane.YES_NO_OPTION);
-        
-        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
-            try {
-                java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
-                String sql = "DELETE FROM kategori_buku WHERE ID_Kategori = ?";
-                java.sql.PreparedStatement st = conn.prepareStatement(sql);
-                
-                st.setString(1, idKategori);
-                st.executeUpdate();
-                
-                javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus!");
-                
-                // Refresh tabel dan kosongkan field jika ada fungsi batal
-                loadData();
-                // Jika Anda punya tombol batal, panggil fungsinya di sini
-                // btnBatalActionPerformed(evt);
-                
-            } catch (Exception e) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Gagal Hapus: " + e.getMessage());
-            }
-        }
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih baris data kategori yang ingin dihapus di tabel!");
-    }
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked

@@ -17,64 +17,18 @@ import Tampilan.MenuUtama;
  *
  * @author rafli
  */
-public class menCRUDBuku extends javax.swing.JPanel {
+public class menuCRUDBuku extends javax.swing.JPanel {
 
     
-    public menCRUDBuku() {
+    public menuCRUDBuku() {
         initComponents();
         btnSimpan.setVisible(false); // Sembunyikan Simpan, tampilkan Tambah
         btnTambah.setVisible(true);
-        loadPenerbit();
     }
     
-    public menCRUDBuku(String idBuku, String judulBuku, String pengarang, String idKategori, String namaKategori, String tahunTerbit, String idPenerbit, String namaPenerbit, int jumlahHalaman, int stok, String cover) {
-        initComponents();
-        
-        // Sembunyikan Tambah, tampilkan Simpan (Mode Edit)
-        btnTambah.setVisible(false); 
-        btnSimpan.setVisible(true);
-        
-        // Isi field input dengan data buku yang dikirim dari tabel
-        txtIdBuku.setText(idBuku);
-        txtIdBuku.setEnabled(false); // ID Buku dikunci agar primary key aman saat di-update
-        
-        txtJudul.setText(judulBuku);
-        txtPengarang.setText(pengarang);
-        txtTahunTerbit.setText(tahunTerbit);
-        txtNamaKategori.setText(namaKategori);
-        
-        // Mengubah int ke String untuk ditampilkan di JTextField
-        txtJumlahHalaman.setText(String.valueOf(jumlahHalaman));
-        txtStok.setText(String.valueOf(stok));
-        
-        // Menampilkan nama file gambar/cover ke field cover
-        txtCover.setText(cover);
-        
-        // Load data penerbit ke combobox dan pilih yang sesuai
-        loadPenerbit();
-        cbPenerbit.setSelectedItem(namaPenerbit);
-    }
+    
   
-    private void loadPenerbit() {
-        try {
-            Connection conn = Koneksi.koneksi.getKoneksi();
-            String sql = "SELECT nama_penerbit FROM penerbit"; 
-            PreparedStatement st = conn.prepareStatement(sql);
-            ResultSet rs = st.executeQuery();
-            
-            cbPenerbit.removeAllItems(); // Hapus item bawaan (Item 1, 2, dll)
-            
-            while (rs.next()) {
-                cbPenerbit.addItem(rs.getString("nama_penerbit"));
-            }
-            
-            rs.close();
-            st.close();
-        } catch (Exception e) {
-            System.out.println("Error load penerbit: " + e.getMessage());
-        }
-    }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -83,7 +37,6 @@ public class menCRUDBuku extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         jPasswordField1 = new javax.swing.JPasswordField();
         gender = new javax.swing.ButtonGroup();
@@ -99,7 +52,6 @@ public class menCRUDBuku extends javax.swing.JPanel {
         txtJudul = new javax.swing.JTextField();
         txtTahunTerbit = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        txtNamaKategori = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -110,8 +62,10 @@ public class menCRUDBuku extends javax.swing.JPanel {
         txtStok = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         cbPenerbit = new javax.swing.JComboBox<>();
-        panelWadah = new javax.swing.JPanel();
-        txtCover = new javax.swing.JLabel();
+        cbKategori = new javax.swing.JComboBox<>();
+        txtImagePath = new javax.swing.JTextField();
+        btnBrowseGambar = new javax.swing.JButton();
+        lbTampilGambar = new javax.swing.JLabel();
 
         jPasswordField1.setText("jPasswordField1");
 
@@ -156,8 +110,6 @@ public class menCRUDBuku extends javax.swing.JPanel {
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel5.setText("Tahun Terbit");
 
-        txtNamaKategori.setForeground(new java.awt.Color(153, 153, 153));
-
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel6.setText("Nama Kategori");
 
@@ -188,13 +140,20 @@ public class menCRUDBuku extends javax.swing.JPanel {
 
         cbPenerbit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        panelWadah.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 159, 143);
-        panelWadah.add(txtCover, gridBagConstraints);
+        cbKategori.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        txtImagePath.setForeground(new java.awt.Color(153, 153, 153));
+
+        btnBrowseGambar.setText("...");
+        btnBrowseGambar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBrowseGambarActionPerformed(evt);
+            }
+        });
+
+        lbTampilGambar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lbTampilGambar.setText("ID");
+        lbTampilGambar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -209,9 +168,7 @@ public class menCRUDBuku extends javax.swing.JPanel {
                             .addComponent(jLabel12)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(txtStok, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtJumlahHalaman, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 957, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel7)
-                            .addComponent(cbPenerbit, javax.swing.GroupLayout.PREFERRED_SIZE, 957, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtJumlahHalaman, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 957, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 434, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -224,9 +181,7 @@ public class menCRUDBuku extends javax.swing.JPanel {
                                 .addComponent(jLabel13))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(txtNamaKategori, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 957, Short.MAX_VALUE)
-                                        .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING))
+                                    .addComponent(jLabel6)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                             .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -241,9 +196,17 @@ public class menCRUDBuku extends javax.swing.JPanel {
                                         .addComponent(txtJudul, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(txtPengarang, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(txtTahunTerbit, javax.swing.GroupLayout.Alignment.LEADING))
-                                    .addComponent(jLabel4))
+                                    .addComponent(jLabel4)
+                                    .addComponent(cbKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 957, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel7)
+                                    .addComponent(cbPenerbit, javax.swing.GroupLayout.PREFERRED_SIZE, 957, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(panelWadah, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtImagePath, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnBrowseGambar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(lbTampilGambar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addGap(95, 95, 95))))
         );
         layout.setVerticalGroup(
@@ -280,13 +243,16 @@ public class menCRUDBuku extends javax.swing.JPanel {
                         .addComponent(txtTahunTerbit, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtNamaKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(panelWadah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(11, 11, 11)
+                        .addComponent(cbKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lbTampilGambar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbPenerbit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbPenerbit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtImagePath, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBrowseGambar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -302,7 +268,7 @@ public class menCRUDBuku extends javax.swing.JPanel {
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
             MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
         if (menuUtama != null) {
-            menuUtama.showPanel(new menuAnggota());
+            menuUtama.showPanel(new menuBuku());
         }
     }//GEN-LAST:event_btnBatalActionPerformed
 
@@ -314,11 +280,17 @@ public class menCRUDBuku extends javax.swing.JPanel {
       
     }//GEN-LAST:event_btnSimpanActionPerformed
 
+    private void btnBrowseGambarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowseGambarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBrowseGambarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnBrowseGambar;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JComboBox<String> cbKategori;
     private javax.swing.JComboBox<String> cbPenerbit;
     private javax.swing.ButtonGroup gender;
     private javax.swing.JLabel jLabel1;
@@ -334,12 +306,11 @@ public class menCRUDBuku extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JPanel panelWadah;
-    private javax.swing.JLabel txtCover;
+    private javax.swing.JLabel lbTampilGambar;
     private javax.swing.JTextField txtIdBuku;
+    private javax.swing.JTextField txtImagePath;
     private javax.swing.JTextField txtJudul;
     private javax.swing.JTextField txtJumlahHalaman;
-    private javax.swing.JTextField txtNamaKategori;
     private javax.swing.JTextField txtPengarang;
     private javax.swing.JTextField txtStok;
     private javax.swing.JTextField txtTahunTerbit;

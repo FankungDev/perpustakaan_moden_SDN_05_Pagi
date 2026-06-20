@@ -44,9 +44,8 @@ public class menuAnggota extends javax.swing.JPanel {
     model.addColumn("Jenis Kelamin");
     model.addColumn("Tgl Bergabung");
     jTable1.setModel(model);
-    
-    
-}
+       
+    }
     
     private void loadData() {
     DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
@@ -86,7 +85,7 @@ public class menuAnggota extends javax.swing.JPanel {
         System.out.println("Error pada loadData: " + e.toString());
         e.printStackTrace(); 
     }
-}
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
