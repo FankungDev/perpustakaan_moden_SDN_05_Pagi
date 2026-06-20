@@ -11,7 +11,13 @@ import java.sql.PreparedStatement; // INI YANG TADI KURANG
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
 import Tampilan.MenuUtama;
-
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.ImageIcon;
+import java.awt.Component;
+import java.awt.Image;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 /**
  *
  * @author rafli
@@ -32,21 +38,32 @@ public class menuBuku extends javax.swing.JPanel {
     }
     
     private void setTabelModel() {
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("No");
-    model.addColumn("ID Buku");
-    model.addColumn("Judul");
-    model.addColumn("Pengarang");
-    model.addColumn("Tahun Terbit");
-    model.addColumn("ID Kategori");   // Tambahan
-    model.addColumn("Kategori");
-    model.addColumn("ID Penerbit");   // Tambahan
-    model.addColumn("Penerbit");
-    model.addColumn("Stok");
-    model.addColumn("Cover");
-    model.addColumn("Jumlah Halaman");
-    
-    jTable1.setModel(model);
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                // Beritahu tabel bahwa kolom 10 berisi Icon/Gambar
+                if (columnIndex == 10) return javax.swing.ImageIcon.class;
+                return super.getColumnClass(columnIndex);
+            }
+        };
+
+        model.addColumn("No");
+        model.addColumn("ID Buku");
+        model.addColumn("Judul");
+        model.addColumn("Pengarang");
+        model.addColumn("Tahun Terbit");
+        model.addColumn("ID Kategori");
+        model.addColumn("Kategori");
+        model.addColumn("ID Penerbit");
+        model.addColumn("Penerbit");
+        model.addColumn("Stok");
+        model.addColumn("Cover"); // Kolom index 10
+        model.addColumn("Jumlah Halaman");
+
+        jTable1.setModel(model);
+
+        // Terapkan renderer ke kolom Cover (index 10)
+        jTable1.getColumnModel().getColumn(10).setCellRenderer(new ImageRenderer());
     }
     
     public void loadData() {
@@ -249,7 +266,29 @@ public class menuBuku extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
-    
+        int baris = jTable1.getSelectedRow();
+        if (baris != -1) {
+            // AMBIL DATA - Pastikan index (1, 2, dst) sesuai urutan kolom di JTable Anda!
+            String idBuku      = jTable1.getValueAt(baris, 1).toString();
+            String judul       = jTable1.getValueAt(baris, 2).toString();
+            String pengarang   = jTable1.getValueAt(baris, 3).toString();
+            String tahun       = jTable1.getValueAt(baris, 4).toString();
+            String idKategori  = jTable1.getValueAt(baris, 5).toString();
+            String idPenerbit  = jTable1.getValueAt(baris, 7).toString();
+            String stok        = jTable1.getValueAt(baris, 9).toString();
+            String cover       = jTable1.getValueAt(baris, 10).toString(); // Pastikan index kolom gambar benar
+            String jmlHalaman  = jTable1.getValueAt(baris, 11).toString();
+
+            // DEBUG: Cek di Output NetBeans apakah path cover terambil
+            System.out.println("Path Gambar yang dikirim: " + cover);
+
+            MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+            if (menuUtama != null) {
+                menuUtama.showPanel(new menuCRUDBuku(idBuku, judul, pengarang, tahun, idKategori, idPenerbit, jmlHalaman, stok, cover));
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih data di tabel terlebih dahulu!");
+        }
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
@@ -277,4 +316,24 @@ public class menuBuku extends javax.swing.JPanel {
     private javax.swing.JTable jTable1;
     private palette.Custom_JTextField tfCari;
     // End of variables declaration//GEN-END:variables
+}
+
+class ImageRenderer extends DefaultTableCellRenderer {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, 
+            boolean isSelected, boolean hasFocus, int row, int column) {
+        
+        JLabel label = new JLabel();
+        if (value != null && !value.toString().isEmpty()) {
+            // Mengambil path relatif (misal: uploads/buku1.jpg)
+            String path = System.getProperty("user.dir") + "/" + value.toString();
+            ImageIcon icon = new ImageIcon(path);
+            
+            // Resize gambar agar pas di dalam baris tabel
+            Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            label.setIcon(new ImageIcon(img));
+            label.setHorizontalAlignment(JLabel.CENTER);
+        }
+        return label;
+    }
 }
