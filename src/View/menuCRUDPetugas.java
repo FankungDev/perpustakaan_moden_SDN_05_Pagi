@@ -23,7 +23,28 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
      */
     public menuCRUDPetugas() {
         initComponents();
+        btnSimpan.setVisible(false); // Sembunyikan Simpan, tampilkan Tambah
+        btnTambah.setVisible(true);
        
+    }
+    
+    public menuCRUDPetugas(String idPetugas, String nama, String username, String email, String level , String password) {
+        initComponents(); // Tetap panggil ini untuk inisialisasi komponen GUI
+        btnTambah.setVisible(false); // Sembunyikan Tambah, tampilkan Simpan
+        btnSimpan.setVisible(true);
+        
+        
+        tfIdPetugas.setText(idPetugas);
+        tfNamaPetugas.setText(nama);
+        tfUsernamePetugas.setText(username);
+        tfEmailPetugas.setText(email);
+        pfPasswordPetugas.setText(password);
+        
+        // Jika level adalah ComboBox:
+        cbLevel.setSelectedItem(level);
+        
+        // Opsional: Kunci ID jika tidak boleh diubah saat edit
+        tfIdPetugas.setEditable(false); 
     }
     
    
@@ -39,7 +60,7 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        btnSimpan = new javax.swing.JButton();
+        btnTambah = new javax.swing.JButton();
         btnBatal = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -54,6 +75,7 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         cbLevel = new javax.swing.JComboBox<>();
         pfPasswordPetugas = new javax.swing.JPasswordField();
+        btnSimpan = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -63,7 +85,12 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
         jLabel2.setText("Data Petugas Perpustakaan");
 
-        btnSimpan.setText("SIMPAN");
+        btnTambah.setText("TAMBAH");
+        btnTambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTambahActionPerformed(evt);
+            }
+        });
 
         btnBatal.setText("BATAL");
         btnBatal.addActionListener(new java.awt.event.ActionListener() {
@@ -90,6 +117,13 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
 
         cbLevel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Level", "Admin", "User" }));
 
+        btnSimpan.setText("SIMPAN");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -104,8 +138,10 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel2))
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGap(18, 18, 18)
                                 .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 512, Short.MAX_VALUE)
                         .addComponent(jLabel13)
@@ -140,8 +176,9 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
                         .addComponent(jLabel13)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -177,10 +214,110 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         }        // TODO add your handling code here:
     }//GEN-LAST:event_btnBatalActionPerformed
 
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        String id = tfIdPetugas.getText().trim();
+        String nama = tfNamaPetugas.getText().trim();
+        String username = tfUsernamePetugas.getText().trim();
+        String email = tfEmailPetugas.getText().trim();
+        String password = new String(pfPasswordPetugas.getPassword()); // Mengambil password
+        String level = cbLevel.getSelectedItem().toString();
+
+        // 1. Validasi Input
+        if (id.isEmpty() || nama.isEmpty() || username.isEmpty() || password.isEmpty() || level.equals("Pilih Level")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Semua data wajib diisi dengan benar!");
+            return;
+        }
+
+        try {
+            java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+
+            // 2. Cek apakah ini mode Edit (ID tidak bisa diedit)
+            if (!tfIdPetugas.isEditable()) {
+                // LOGIKA UPDATE
+                // Jika password dikosongkan, kita bisa memilih untuk tidak mengubah password
+                String sql = "UPDATE data_admin SET Nama = ?, Username = ?, Email = ?, Password = ?, Level = ? WHERE ID_Admin = ?";
+                java.sql.PreparedStatement st = conn.prepareStatement(sql);
+                st.setString(1, nama);
+                st.setString(2, username);
+                st.setString(3, email);
+                st.setString(4, password);
+                st.setString(5, level);
+                st.setString(6, id);
+
+                st.executeUpdate();
+                javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!");
+            } else {
+                // LOGIKA TAMBAH (INSERT)
+                String sqlCek = "SELECT COUNT(*) FROM data_admin WHERE ID_Admin = ?";
+                java.sql.PreparedStatement stCek = conn.prepareStatement(sqlCek);
+                stCek.setString(1, id);
+                java.sql.ResultSet rs = stCek.executeQuery();
+
+                if (rs.next() && rs.getInt(1) > 0) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal: ID Petugas '" + id + "' sudah terdaftar!");
+                    return;
+                }
+
+                String sql = "INSERT INTO data_admin (ID_Admin, Nama, Username, Email, Password, Level) VALUES (?, ?, ?, ?, ?, ?)";
+                java.sql.PreparedStatement st = conn.prepareStatement(sql);
+                st.setString(1, id);
+                st.setString(2, nama);
+                st.setString(3, username);
+                st.setString(4, email);
+                st.setString(5, password);
+                st.setString(6, level);
+
+                st.executeUpdate();
+                javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
+            }
+
+            // Kembali ke menu tabel petugas
+            btnBatalActionPerformed(evt);
+
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error Database: " + e.getMessage());
+        }            // TODO add your handling code here:
+    }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+        String id = tfIdPetugas.getText().trim();
+        String nama = tfNamaPetugas.getText().trim();
+        String username = tfUsernamePetugas.getText().trim();
+        String email = tfEmailPetugas.getText().trim();
+        String password = new String(pfPasswordPetugas.getPassword());
+        String level = cbLevel.getSelectedItem().toString();
+
+        // 2. Query SQL
+        String sql = "INSERT INTO data_admin (ID_Admin, Nama, Username, Email, Password, Level) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+            // 3. Persiapkan koneksi
+            java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+            java.sql.PreparedStatement st = conn.prepareStatement(sql);
+
+            // 4. Masukkan data ke dalam placeholder (?)
+            st.setString(1, id);
+            st.setString(2, nama);
+            st.setString(3, username);
+            st.setString(4, email);
+            st.setString(5, password);
+            st.setString(6, level);
+
+            // 5. Eksekusi
+            st.executeUpdate();
+
+            javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil disimpan!");
+
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal simpan: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnTambahActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnSimpan;
+    private javax.swing.JButton btnTambah;
     private javax.swing.JComboBox<String> cbLevel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
