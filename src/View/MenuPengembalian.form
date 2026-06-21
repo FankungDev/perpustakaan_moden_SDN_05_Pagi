@@ -132,8 +132,14 @@
           </Properties>
         </Component>
         <Component class="palette.Custom_JTextField" name="txtTanggal">
+          <Properties>
+            <Property name="placeholder" type="java.lang.String" value="Tanggal"/>
+          </Properties>
         </Component>
         <Component class="palette.Custom_JTextField" name="txtIdPengembalian">
+          <Properties>
+            <Property name="placeholder" type="java.lang.String" value="ID"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
@@ -203,6 +209,12 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtDenda">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="Denda"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtDendaActionPerformed"/>
+      </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="670" y="450" width="130" height="-1"/>
@@ -210,6 +222,9 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtIdAnggota">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="ID Anggota"/>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="158" y="374" width="232" height="-1"/>
@@ -217,6 +232,9 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtTanggalPinjam">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="Tanggal Pinjam"/>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="158" y="270" width="232" height="-1"/>
@@ -224,6 +242,9 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtNamaAnggota">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="Nama Anggota"/>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="158" y="428" width="232" height="-1"/>
@@ -231,6 +252,9 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtTanggalKembali">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="Tanggal Kembali"/>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="158" y="319" width="232" height="-1"/>
@@ -290,6 +314,9 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtJudul">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="Judul"/>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="550" y="270" width="232" height="-1"/>
@@ -297,6 +324,9 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtPengarang">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="Pengarang"/>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="550" y="320" width="232" height="-1"/>
@@ -304,6 +334,9 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtPenerbit">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="Penerbit"/>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="550" y="380" width="232" height="-1"/>
@@ -311,6 +344,9 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtBuku">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="Buku"/>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="550" y="210" width="230" height="-1"/>
@@ -332,6 +368,9 @@
       </Constraints>
     </Component>
     <Component class="palette.Custom_JTextField" name="txtIdPeminjaman">
+      <Properties>
+        <Property name="placeholder" type="java.lang.String" value="ID Peminjaman"/>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="158" y="215" width="190" height="-1"/>
@@ -379,13 +418,16 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="javax.swing.JButton" name="btnSetAnggota">
+    <Component class="javax.swing.JButton" name="btnGetPeminjaman">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="10" style="1"/>
         </Property>
         <Property name="text" type="java.lang.String" value="..."/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGetPeminjamanActionPerformed"/>
+      </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="350" y="210" width="35" height="35"/>

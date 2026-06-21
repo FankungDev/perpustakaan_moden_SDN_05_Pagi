@@ -733,8 +733,8 @@ public class MenuUtama extends javax.swing.JFrame {
     }//GEN-LAST:event_BpnlLprBukuMouseClicked
 
     private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
-   // Panggil method showPanel yang sudah kamu buat, lalu masukkan class MenuPengembalian
-    showPanel(new View.MenuPengembalian());
+   // Panggil method showPanel yang sudah kamu buat, lalu masukkan class menuCRUDPengembalian
+    showPanel(new View.menuCRUDPengembalian());
     }//GEN-LAST:event_jLabel12MouseClicked
 
     private void IconDashboard4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IconDashboard4MouseClicked
@@ -742,8 +742,8 @@ public class MenuUtama extends javax.swing.JFrame {
     }//GEN-LAST:event_IconDashboard4MouseClicked
 
     private void IconDashboard7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IconDashboard7MouseClicked
-      // Panggil method showPanel yang sudah kamu buat, lalu masukkan class MenuPengembalian
-    showPanel(new View.MenuPengembalian());
+      // Panggil method showPanel yang sudah kamu buat, lalu masukkan class menuCRUDPengembalian
+    showPanel(new View.menuCRUDPengembalian());
     }//GEN-LAST:event_IconDashboard7MouseClicked
 
     /**

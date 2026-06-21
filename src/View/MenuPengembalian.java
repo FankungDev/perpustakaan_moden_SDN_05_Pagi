@@ -69,7 +69,7 @@ public class MenuPengembalian extends javax.swing.JPanel {
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         IconBuku = new javax.swing.JLabel();
-        btnSetAnggota = new javax.swing.JButton();
+        btnGetPeminjaman = new javax.swing.JButton();
         IconBuku1 = new javax.swing.JLabel();
         IconBuku2 = new javax.swing.JLabel();
 
@@ -109,6 +109,10 @@ public class MenuPengembalian extends javax.swing.JPanel {
 
         jLabel4.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel4.setText("Tanggal");
+
+        txtTanggal.setPlaceholder("Tanggal");
+
+        txtIdPengembalian.setPlaceholder("ID");
 
         javax.swing.GroupLayout custom_JPanelRounded1Layout = new javax.swing.GroupLayout(custom_JPanelRounded1);
         custom_JPanelRounded1.setLayout(custom_JPanelRounded1Layout);
@@ -158,10 +162,25 @@ public class MenuPengembalian extends javax.swing.JPanel {
         jLabel9.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel9.setText("Nama Anggota");
         add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 434, -1, -1));
+
+        txtDenda.setPlaceholder("Denda");
+        txtDenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDendaActionPerformed(evt);
+            }
+        });
         add(txtDenda, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 450, 130, -1));
+
+        txtIdAnggota.setPlaceholder("ID Anggota");
         add(txtIdAnggota, new org.netbeans.lib.awtextra.AbsoluteConstraints(158, 374, 232, -1));
+
+        txtTanggalPinjam.setPlaceholder("Tanggal Pinjam");
         add(txtTanggalPinjam, new org.netbeans.lib.awtextra.AbsoluteConstraints(158, 270, 232, -1));
+
+        txtNamaAnggota.setPlaceholder("Nama Anggota");
         add(txtNamaAnggota, new org.netbeans.lib.awtextra.AbsoluteConstraints(158, 428, 232, -1));
+
+        txtTanggalKembali.setPlaceholder("Tanggal Kembali");
         add(txtTanggalKembali, new org.netbeans.lib.awtextra.AbsoluteConstraints(158, 319, 232, -1));
 
         jLabel10.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -179,13 +198,23 @@ public class MenuPengembalian extends javax.swing.JPanel {
         jLabel13.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel13.setText("Penerbit");
         add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 380, -1, -1));
+
+        txtJudul.setPlaceholder("Judul");
         add(txtJudul, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 270, 232, -1));
+
+        txtPengarang.setPlaceholder("Pengarang");
         add(txtPengarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 320, 232, -1));
+
+        txtPenerbit.setPlaceholder("Penerbit");
         add(txtPenerbit, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 380, 232, -1));
+
+        txtBuku.setPlaceholder("Buku");
         add(txtBuku, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 210, 230, -1));
 
         jLabel14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 200, 160, 200));
+
+        txtIdPeminjaman.setPlaceholder("ID Peminjaman");
         add(txtIdPeminjaman, new org.netbeans.lib.awtextra.AbsoluteConstraints(158, 215, 190, -1));
 
         jLabel15.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
@@ -200,9 +229,14 @@ public class MenuPengembalian extends javax.swing.JPanel {
         IconBuku.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/transaksipengembalian.png"))); // NOI18N
         add(IconBuku, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 0, 50, 50));
 
-        btnSetAnggota.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
-        btnSetAnggota.setText("...");
-        add(btnSetAnggota, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 210, 35, 35));
+        btnGetPeminjaman.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btnGetPeminjaman.setText("...");
+        btnGetPeminjaman.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGetPeminjamanActionPerformed(evt);
+            }
+        });
+        add(btnGetPeminjaman, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 210, 35, 35));
 
         IconBuku1.setForeground(new java.awt.Color(240, 240, 240));
         IconBuku1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/penegmbalian.png"))); // NOI18N
@@ -239,18 +273,79 @@ public class MenuPengembalian extends javax.swing.JPanel {
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKembaliActionPerformed
-    this.setVisible(false);
-    MenuUtama mu = new MenuUtama();
-    mu.setVisible(true);
+    MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+    if (menuUtama != null) {
+        menuUtama.showPanel(new menuCRUDPengembalian());
+    }
     }//GEN-LAST:event_btnKembaliActionPerformed
+
+    private void btnGetPeminjamanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetPeminjamanActionPerformed
+     String idPinjam = txtIdPeminjaman.getText().trim();
+    if (idPinjam.isEmpty()) return;
+
+    try {
+        koneksi kon = new koneksi();
+        java.sql.Connection conn = kon.getKoneksi();
+
+        String sql = "SELECT p.id_peminjaman, p.tanggal_pinjam, p.tanggal_kembali, " +
+                     "a.id_anggota, a.nama, " +
+                     "b.id_buku, b.judul, b.pengarang, b.penerbit " +
+                     "FROM peminjaman p " +
+                     "JOIN anggota a ON p.id_anggota = a.id_anggota " +
+                     "JOIN buku b ON p.id_buku = b.id_buku " +
+                     "WHERE p.id_peminjaman = ?";
+
+        java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, idPinjam);
+        java.sql.ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            txtTanggalPinjam.setText(rs.getString("tanggal_pinjam"));
+            txtTanggalKembali.setText(rs.getString("tanggal_kembali"));
+            txtIdAnggota.setText(rs.getString("id_anggota"));
+            txtNamaAnggota.setText(rs.getString("nama"));
+            txtBuku.setText(rs.getString("id_buku"));
+            txtJudul.setText(rs.getString("judul"));
+            txtPengarang.setText(rs.getString("pengarang"));
+            txtPenerbit.setText(rs.getString("penerbit"));
+            hitungDenda();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "ID Peminjaman tidak ditemukan!");
+        }
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
+
+    }//GEN-LAST:event_btnGetPeminjamanActionPerformed
+    private void hitungDenda(){  
+    try {
+        String tglKembaliStr = txtTanggalKembali.getText();
+        java.time.LocalDate tglKembali = java.time.LocalDate.parse(tglKembaliStr);
+        java.time.LocalDate tglHariIni = java.time.LocalDate.now();
+
+        long telat = java.time.temporal.ChronoUnit.DAYS.between(tglKembali, tglHariIni);
+
+        if (telat > 0) {
+            long totalDenda = telat * 500;
+            txtDenda.setText(String.valueOf(totalDenda));
+        } else {
+            txtDenda.setText("0");
+        }
+    } catch (Exception e) {
+        txtDenda.setText("0");
+    }
+    }
+    private void txtDendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDendaActionPerformed
+        
+    }//GEN-LAST:event_txtDendaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel IconBuku;
     private javax.swing.JLabel IconBuku1;
     private javax.swing.JLabel IconBuku2;
+    private javax.swing.JButton btnGetPeminjaman;
     private palette.Custom_JButton btnKembali;
-    private javax.swing.JButton btnSetAnggota;
     private palette.Custom_JButton btnSimpan;
     private palette.Custom_JPanelRounded custom_JPanelRounded1;
     private javax.swing.JLabel jLabel1;
