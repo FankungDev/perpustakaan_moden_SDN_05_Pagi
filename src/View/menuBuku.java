@@ -17,7 +17,11 @@ import javax.swing.ImageIcon;
 import java.awt.Component;
 import java.awt.Image;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 /**
  *
  * @author rafli
@@ -292,7 +296,53 @@ public class menuBuku extends javax.swing.JPanel {
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-    
+    int selectedRow = jTable1.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus!");
+        return;
+    }
+
+    int confirm = JOptionPane.showConfirmDialog(this, "Yakin hapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+    if (confirm != JOptionPane.YES_OPTION) {
+        return;
+    }
+
+    try {
+        String idBuku = jTable1.getValueAt(selectedRow, 1).toString();
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // 1. Ambil path gambar dari database sebelum dihapus
+        String pathGambar = "";
+        String sqlGet = "SELECT cover FROM buku WHERE Id_Buku = ?";
+        PreparedStatement psGet = conn.prepareStatement(sqlGet);
+        psGet.setString(1, idBuku);
+        ResultSet rs = psGet.executeQuery();
+        if (rs.next()) {
+            pathGambar = rs.getString("cover");
+        }
+
+        // 2. Eksekusi Hapus dari Database
+        String sqlDelete = "DELETE FROM buku WHERE Id_Buku = ?";
+        PreparedStatement psDelete = conn.prepareStatement(sqlDelete);
+        psDelete.setString(1, idBuku);
+        psDelete.executeUpdate();
+
+        // 3. Hapus file fisik dari folder 'uploads'
+        if (pathGambar != null && !pathGambar.isEmpty()) {
+            // Path relatif diubah jadi absolut untuk menghapus file
+            Path fileToDelete = Paths.get(System.getProperty("user.dir"), pathGambar);
+            Files.deleteIfExists(fileToDelete);
+        }
+
+        // 4. Hapus baris dari Tabel
+        ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
+
+        JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
+        
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal hapus: " + e.getMessage());
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked

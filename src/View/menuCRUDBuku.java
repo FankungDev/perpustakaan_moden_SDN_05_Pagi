@@ -160,21 +160,25 @@ public class menuCRUDBuku extends javax.swing.JPanel {
     }
     
     private String copyFile(File sourceFile) {
-    try {
-        // Buat folder 'uploads' jika belum ada
-        File directory = new File("uploads");
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
+        try {
+            // Mendapatkan path root proyek (folder yang sejajar dengan src)
+            String rootPath = System.getProperty("user.dir");
+            Path uploadDir = Paths.get(rootPath, "uploads");
 
-        // Tentukan lokasi tujuan
-        Path destPath = Paths.get("uploads", sourceFile.getName());
-        
-        // Copy file ke folder uploads
-        Files.copy(sourceFile.toPath(), destPath, StandardCopyOption.REPLACE_EXISTING);
-        
-        // Kembalikan path untuk disimpan ke DB
-        return "uploads/" + sourceFile.getName();
+            // Membuat folder 'uploads' jika belum ada
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+
+            // Menentukan path tujuan (uploads/namafile.jpg)
+            Path targetPath = uploadDir.resolve(sourceFile.getName());
+
+            // Menyalin file ke folder tujuan
+            Files.copy(sourceFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+            // Mengembalikan path untuk database (format: uploads/namafile.jpg)
+            return "uploads/" + sourceFile.getName();
+
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Gagal menyalin gambar: " + e.getMessage());
             return null;
@@ -443,88 +447,114 @@ public class menuCRUDBuku extends javax.swing.JPanel {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-    try {
-        // 1. Validasi: Pastikan path tidak kosong
-        if (txtImagePath.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Pilih gambar terlebih dahulu!");
-            return;
-        }
+        try {
+            // 1. Validasi: Pastikan path tidak kosong
+            if (txtImagePath.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Pilih gambar terlebih dahulu!");
+                return;
+            }
 
-        // 2. Salin gambar ke folder 'uploads' dan dapatkan path relatifnya
-        File file = new File(txtImagePath.getText());
-        String pathUntukDB = copyFile(file); 
-        
-        if (pathUntukDB == null) {
-            return; // Berhenti jika gagal copy
-        }
+            // 2. Salin gambar ke folder 'uploads' dan dapatkan path relatifnya
+            File file = new File(txtImagePath.getText());
+            String pathUntukDB = copyFile(file); 
 
-        // 3. Eksekusi Insert
-        String sql = "INSERT INTO buku (Id_Buku, Judul_Buku, Pengarang, Tahun_Terbit, Id_Kategori, Id_Penerbit, Jumlah_Halaman, Stok, cover) VALUES (?,?,?,?,?,?,?,?,?)";
-        
-        Connection conn = Koneksi.koneksi.getKoneksi();
-        PreparedStatement ps = conn.prepareStatement(sql);
-        
-        ps.setString(1, txtIdBuku.getText());
-        ps.setString(2, txtJudul.getText());
-        ps.setString(3, txtPengarang.getText());
-        ps.setString(4, txtTahunTerbit.getText());
-        
-        // Split ID dari ComboBox
-        ps.setString(5, cbKategori.getSelectedItem().toString().split(" - ")[0]);
-        ps.setString(6, cbPenerbit.getSelectedItem().toString().split(" - ")[0]);
-        
-        ps.setString(7, txtJumlahHalaman.getText());
-        ps.setString(8, txtStok.getText());
-        ps.setString(9, pathUntukDB); // Simpan "uploads/namafile.jpg"
-        
-        ps.executeUpdate();
-        JOptionPane.showMessageDialog(this, "Data Berhasil Disimpan!");
-        
-        // Bersihkan form setelah simpan
-        // (opsional: tambahkan fungsi clearForm() di sini)
-        
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Gagal Simpan: " + e.getMessage());
-        e.printStackTrace(); // Penting untuk melihat detail error di log
-    }
+            if (pathUntukDB == null) {
+                return; // Berhenti jika gagal copy
+            }
+
+            // 3. Eksekusi Insert
+            String sql = "INSERT INTO buku (Id_Buku, Judul_Buku, Pengarang, Tahun_Terbit, Id_Kategori, Id_Penerbit, Jumlah_Halaman, Stok, cover) VALUES (?,?,?,?,?,?,?,?,?)";
+
+            Connection conn = Koneksi.koneksi.getKoneksi();
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setString(1, txtIdBuku.getText());
+            ps.setString(2, txtJudul.getText());
+            ps.setString(3, txtPengarang.getText());
+            ps.setString(4, txtTahunTerbit.getText());
+
+            // Split ID dari ComboBox (mengambil angka sebelum " - ")
+            ps.setString(5, cbKategori.getSelectedItem().toString().split(" - ")[0]);
+            ps.setString(6, cbPenerbit.getSelectedItem().toString().split(" - ")[0]);
+
+            ps.setString(7, txtJumlahHalaman.getText());
+            ps.setString(8, txtStok.getText());
+            ps.setString(9, pathUntukDB); // Simpan path yang sudah diproses ("uploads/namafile.jpg")
+
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Data Berhasil Disimpan!");
+
+            // (Opsional) Panggil fungsi untuk membersihkan form/inputan setelah simpan
+            // clearForm(); 
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal Simpan: " + e.getMessage());
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        try {
-        String sql;
-        boolean updateGambar = !txtImagePath.getText().isEmpty();
+    try {
+            boolean updateGambar = !txtImagePath.getText().isEmpty() && !txtImagePath.getText().contains("uploads/");
+            String pathBaruUntukDB = null;
+            String pathLama = null;
 
-        if (!updateGambar) {
-            // Update tanpa mengubah cover
-            sql = "UPDATE buku SET Judul_Buku=?, Pengarang=?, Tahun_Terbit=?, Id_Kategori=?, Id_Penerbit=?, Jumlah_Halaman=?, Stok=? WHERE Id_Buku=?";
-        } else {
-            // Update dengan path gambar baru
-            sql = "UPDATE buku SET Judul_Buku=?, Pengarang=?, Tahun_Terbit=?, Id_Kategori=?, Id_Penerbit=?, Jumlah_Halaman=?, Stok=?, cover=? WHERE Id_Buku=?";
-        }
+            Connection conn = Koneksi.koneksi.getKoneksi();
 
-        Connection conn = Koneksi.koneksi.getKoneksi();
-        PreparedStatement ps = conn.prepareStatement(sql);
-        
-        ps.setString(1, txtJudul.getText());
-        ps.setString(2, txtPengarang.getText());
-        ps.setString(3, txtTahunTerbit.getText());
-        ps.setString(4, cbKategori.getSelectedItem().toString().split(" - ")[0]);
-        ps.setString(5, cbPenerbit.getSelectedItem().toString().split(" - ")[0]);
-        ps.setString(6, txtJumlahHalaman.getText());
-        ps.setString(7, txtStok.getText());
-        
-        if (!updateGambar) {
-            ps.setString(8, txtIdBuku.getText());
-        } else {
-            ps.setString(8, txtImagePath.getText()); // Simpan path baru
-            ps.setString(9, txtIdBuku.getText());
-        }
-        
-        ps.executeUpdate();
-        JOptionPane.showMessageDialog(this, "Data Berhasil Diupdate!");
-        
+            // 1. Jika ada perubahan gambar, ambil path lama dari DB
+            if (updateGambar) {
+                String sqlGetLama = "SELECT cover FROM buku WHERE Id_Buku = ?";
+                PreparedStatement psGet = conn.prepareStatement(sqlGetLama);
+                psGet.setString(1, txtIdBuku.getText());
+                ResultSet rs = psGet.executeQuery();
+                if (rs.next()) {
+                    pathLama = rs.getString("cover");
+                }
+
+                // Copy gambar baru ke folder 'uploads'
+                File file = new File(txtImagePath.getText());
+                pathBaruUntukDB = copyFile(file);
+                if (pathBaruUntukDB == null) return;
+            }
+
+            // 2. Siapkan query
+            String sql = updateGambar ? 
+                "UPDATE buku SET Judul_Buku=?, Pengarang=?, Tahun_Terbit=?, Id_Kategori=?, Id_Penerbit=?, Jumlah_Halaman=?, Stok=?, cover=? WHERE Id_Buku=?" :
+                "UPDATE buku SET Judul_Buku=?, Pengarang=?, Tahun_Terbit=?, Id_Kategori=?, Id_Penerbit=?, Jumlah_Halaman=?, Stok=? WHERE Id_Buku=?";
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, txtJudul.getText());
+            ps.setString(2, txtPengarang.getText());
+            ps.setString(3, txtTahunTerbit.getText());
+            ps.setString(4, cbKategori.getSelectedItem().toString().split(" - ")[0]);
+            ps.setString(5, cbPenerbit.getSelectedItem().toString().split(" - ")[0]);
+            ps.setString(6, txtJumlahHalaman.getText());
+            ps.setString(7, txtStok.getText());
+
+            if (updateGambar) {
+                ps.setString(8, pathBaruUntukDB);
+                ps.setString(9, txtIdBuku.getText());
+            } else {
+                ps.setString(8, txtIdBuku.getText());
+            }
+
+            // 3. Eksekusi Update
+            ps.executeUpdate();
+
+            // 4. Hapus file lama jika update berhasil
+            if (updateGambar && pathLama != null && !pathLama.isEmpty()) {
+                Path fileLama = Paths.get(System.getProperty("user.dir"), pathLama);
+                Files.deleteIfExists(fileLama);
+            }
+
+            JOptionPane.showMessageDialog(this, "Data Berhasil Diupdate!");
+
+            // Kembali ke menuBuku
+            btnBatalActionPerformed(null);
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal Update: " + e.getMessage());
+            e.printStackTrace();
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
