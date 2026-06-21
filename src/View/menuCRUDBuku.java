@@ -4,25 +4,23 @@
  * and open the template in the editor.
  */
 package View;
-import javax.swing.table.DefaultTableModel;
-import Koneksi.koneksi; 
-import java.sql.Connection;
-import java.sql.PreparedStatement; 
-import java.sql.ResultSet;
-import javax.swing.table.DefaultTableModel;
-import java.util.Date;
+import Koneksi.koneksi;
 import Tampilan.MenuUtama;
-import java.util.Base64;
-import java.io.*;
-import java.nio.file.Files;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.JOptionPane;
+import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -50,7 +48,7 @@ public class menuCRUDBuku extends javax.swing.JPanel {
     
     // 2. Set data ke text field
     txtIdBuku.setText(idBuku);
-    txtIdBuku.setEditable(false); // ID biasanya tidak bisa diubah
+    txtIdBuku.setEditable(false); 
     txtJudul.setText(judul);
     txtPengarang.setText(pengarang);
     txtTahunTerbit.setText(tahun);
@@ -62,35 +60,17 @@ public class menuCRUDBuku extends javax.swing.JPanel {
     selectCombo(cbKategori, idKategori);
     selectCombo(cbPenerbit, idPenerbit);
     
-    // 4. Load Gambar dengan jalur yang benar
+    // --- TEMPATKAN KODINGAN DI SINI ---
     if (cover != null && !cover.isEmpty()) {
-        String projectPath = System.getProperty("user.dir");
-        java.io.File fileGambar = new java.io.File(projectPath, cover);
-        
-        System.out.println("Mencoba load gambar di: " + fileGambar.getAbsolutePath());
-
-        if (fileGambar.exists()) {
-            javax.swing.SwingUtilities.invokeLater(() -> {
-                try {
-                    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(fileGambar.getAbsolutePath());
-                    // Mendapatkan ukuran label saat ini
-                    int w = lbTampilGambar.getWidth();
-                    int h = lbTampilGambar.getHeight();
-                    
-                    // Fallback jika label belum ter-render (masih 0)
-                    if (w <= 0) w = 150;
-                    if (h <= 0) h = 180;
-                    
-                    java.awt.Image img = icon.getImage().getScaledInstance(w, h, java.awt.Image.SCALE_SMOOTH);
-                    lbTampilGambar.setIcon(new javax.swing.ImageIcon(img));
-                } catch (Exception e) {
-                    System.out.println("Gagal memuat gambar: " + e.getMessage());
-                }
-            });
-        } else {
-            System.out.println("FILE TIDAK DITEMUKAN: " + fileGambar.getAbsolutePath());
-        }
+        lbTampilGambar.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                tampilkanGambar(System.getProperty("user.dir") + java.io.File.separator + cover);
+                lbTampilGambar.removeComponentListener(this); 
+            }
+        });
     }
+    // ----------------------------------
 
     // 5. Pengaturan tombol
     btnTambah.setVisible(false);
@@ -187,6 +167,26 @@ public class menuCRUDBuku extends javax.swing.JPanel {
         }
     }
     
+    private void tampilkanGambar(String path) {
+        try {
+            java.io.File f = new java.io.File(path);
+            if (f.exists()) {
+                javax.swing.ImageIcon icon = new javax.swing.ImageIcon(path);
+                int w = lbTampilGambar.getWidth();
+                int h = lbTampilGambar.getHeight();
+
+                // Fallback jika komponen masih bernilai 0
+                if (w <= 0) w = 150;
+                if (h <= 0) h = 180;
+
+                java.awt.Image img = icon.getImage().getScaledInstance(w, h, java.awt.Image.SCALE_SMOOTH);
+                lbTampilGambar.setIcon(new javax.swing.ImageIcon(img));
+                lbTampilGambar.setText(""); // Menghilangkan teks "ID" saat gambar tampil
+            }
+        } catch (Exception e) {
+            System.out.println("Gagal memuat gambar: " + e.getMessage());
+        }
+    }
     
     
     
@@ -556,21 +556,14 @@ public class menuCRUDBuku extends javax.swing.JPanel {
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnBrowseGambarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowseGambarActionPerformed
-        JFileChooser chooser = new JFileChooser();
+    JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg"));
         int result = chooser.showOpenDialog(this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
-            txtImagePath.setText(file.getAbsolutePath()); // Menyimpan lokasi file
-
-            try {
-                javax.swing.ImageIcon icon = new javax.swing.ImageIcon(file.getAbsolutePath());
-                java.awt.Image img = icon.getImage().getScaledInstance(lbTampilGambar.getWidth(), lbTampilGambar.getHeight(), java.awt.Image.SCALE_SMOOTH);
-                lbTampilGambar.setIcon(new javax.swing.ImageIcon(img));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            java.io.File file = chooser.getSelectedFile();
+            txtImagePath.setText(file.getAbsolutePath());
+            tampilkanGambar(file.getAbsolutePath()); // Panggil method helper di atas
         }
     }//GEN-LAST:event_btnBrowseGambarActionPerformed
 
