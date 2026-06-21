@@ -111,7 +111,7 @@ public class menCRUDBuku extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         cbPenerbit = new javax.swing.JComboBox<>();
         panelWadah = new javax.swing.JPanel();
-        lblGambar = new javax.swing.JLabel();
+        txtCover = new javax.swing.JLabel();
 
         jPasswordField1.setText("jPasswordField1");
 
@@ -194,7 +194,7 @@ public class menCRUDBuku extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 159, 143);
-        panelWadah.add(lblGambar, gridBagConstraints);
+        panelWadah.add(txtCover, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -334,8 +334,8 @@ public class menCRUDBuku extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JLabel lblGambar;
     private javax.swing.JPanel panelWadah;
+    private javax.swing.JLabel txtCover;
     private javax.swing.JTextField txtIdBuku;
     private javax.swing.JTextField txtJudul;
     private javax.swing.JTextField txtJumlahHalaman;

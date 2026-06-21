@@ -240,7 +240,39 @@ public class menuPetugas extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
-        // TODO add your handling code here:
+    int baris = jTable1.getSelectedRow();
+    
+    if (baris != -1) {
+    // Ambil data yang ada di tabel saja
+    String idPetugas = (jTable1.getValueAt(baris, 1) != null) ? jTable1.getValueAt(baris, 1).toString() : "";
+    String nama      = (jTable1.getValueAt(baris, 2) != null) ? jTable1.getValueAt(baris, 2).toString() : "";
+    String username  = (jTable1.getValueAt(baris, 3) != null) ? jTable1.getValueAt(baris, 3).toString() : "";
+    String email     = (jTable1.getValueAt(baris, 4) != null) ? jTable1.getValueAt(baris, 4).toString() : "";
+    String level     = (jTable1.getValueAt(baris, 5) != null) ? jTable1.getValueAt(baris, 5).toString() : "";
+    
+    // Ambil password langsung dari database berdasarkan ID
+    String password = "";
+    try {
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        String sql = "SELECT Password FROM data_admin WHERE ID_Admin = ?";
+        java.sql.PreparedStatement st = conn.prepareStatement(sql);
+        st.setString(1, idPetugas);
+        java.sql.ResultSet rs = st.executeQuery();
+        if (rs.next()) {
+            password = rs.getString("Password");
+        }
+    } catch (Exception e) {
+        System.out.println("Error ambil password: " + e.getMessage());
+    }
+    
+    // Buka form CRUD
+    MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+    if (menuUtama != null) {
+        menuUtama.showPanel(new menuCRUDPetugas(idPetugas, nama, username, email, level, password));
+    }
+    } else {
+    javax.swing.JOptionPane.showMessageDialog(this, "Pilih data di tabel terlebih dahulu!");
+    }
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
