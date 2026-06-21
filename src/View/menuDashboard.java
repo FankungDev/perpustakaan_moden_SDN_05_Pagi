@@ -57,48 +57,49 @@ public class menuDashboard extends javax.swing.JPanel {
         model.addColumn("ID Pinjam");
         model.addColumn("Nama Anggota");
         model.addColumn("Judul Buku");
-        model.addColumn("Jumlah");       // <--- Kolom Baru
+        model.addColumn("Jumlah");
         model.addColumn("Tgl Pinjam");
         model.addColumn("Tgl Kembali");
         model.addColumn("Status");
 
         try {
             Connection conn = Koneksi.koneksi.getKoneksi();
-            // Tambahkan p.Jumlah_Pinjam ke dalam SELECT
             String sql = "SELECT p.Id_Pinjam, a.Nama, b.Judul_Buku, p.Jumlah_Pinjam, p.Tanggal_Pinjam, p.Tanggal_Kembali " +
                          "FROM peminjaman p " +
                          "JOIN data_anggota a ON p.Nis = a.Nis " +
                          "JOIN buku b ON p.Id_Buku = b.Id_Buku";
-            
+
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
-            
+
             int no = 1;
             while (rs.next()) {
-                String formatID = String.format("PJM%02d", rs.getInt("Id_Pinjam"));
+                // PERBAIKAN: Gunakan penggabungan string biasa
+                String formatID = "PJM" + rs.getString("Id_Pinjam");
+
                 String tglKembali = rs.getString("Tanggal_Kembali");
                 String status = (tglKembali == null || tglKembali.equals("0000-00-00")) ? "Sedang dipinjam" : "Sudah dikembalikan";
-                
+
                 model.addRow(new Object[]{
                     no++,
                     formatID,
                     rs.getString("Nama"),
                     rs.getString("Judul_Buku"),
-                    rs.getString("Jumlah_Pinjam"), // <--- Mengambil data jumlah
+                    rs.getString("Jumlah_Pinjam"),
                     rs.getString("Tanggal_Pinjam"),
                     (tglKembali == null || tglKembali.equals("0000-00-00")) ? "-" : tglKembali,
                     status
                 });
             }
             tblDataDashboard.setModel(model);
-            
+
             // Mengatur lebar kolom "No"
             tblDataDashboard.getColumnModel().getColumn(0).setPreferredWidth(30);
-            
+
         } catch (Exception e) {
             System.out.println("Error loadTable: " + e.getMessage());
         }
-    }
+}   
 
     /**
      * This method is called from within the constructor to initialize the form.

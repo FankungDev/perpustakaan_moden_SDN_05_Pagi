@@ -21,6 +21,42 @@ public class MenuPengembalian extends javax.swing.JPanel {
         txtIdPeminjaman.setText("");
         txtDenda.setText("");
         txtIdPengembalian.requestFocus();
+}
+    private void getpeminjaman() {
+    String idPinjam = txtIdPeminjaman.getText().trim();
+    if (idPinjam.isEmpty()) return;
+    try {
+        koneksi kon = new koneksi();
+        java.sql.Connection conn = kon.getKoneksi();
+
+        String sql = "SELECT p.Id_Pinjam, p.Tanggal_Pinjam, p.Tanggal_Kembali, " +
+             "a.id_anggota, a.nama, " +
+             "b.id_buku, b.judul, b.pengarang, b.penerbit " +
+             "FROM peminjaman p " +
+             "JOIN data_anggota a ON p.Nis = a.Nis " +
+             "JOIN buku b ON p.Id_Buku = b.id_buku " +
+             "WHERE p.Id_Pinjam = ?";
+        
+        java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, idPinjam);
+        java.sql.ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            txtTanggalPinjam.setText(rs.getString("Tanggal_Pinjam"));
+    txtTanggalKembali.setText(rs.getString("Tanggal_Kembali"));
+    txtIdAnggota.setText(rs.getString("Nis"));
+    txtNamaAnggota.setText(rs.getString("nama"));
+    txtBuku.setText(rs.getString("id_buku"));
+    txtJudul.setText(rs.getString("judul"));
+    txtPengarang.setText(rs.getString("pengarang"));
+    txtPenerbit.setText(rs.getString("penerbit"));
+    hitungDenda();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "ID Peminjaman tidak ditemukan!");
+        }
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
 }/**
      * Creates new form MenuPengembalian
      */
@@ -280,42 +316,18 @@ public class MenuPengembalian extends javax.swing.JPanel {
     }//GEN-LAST:event_btnKembaliActionPerformed
 
     private void btnGetPeminjamanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetPeminjamanActionPerformed
-     String idPinjam = txtIdPeminjaman.getText().trim();
-    if (idPinjam.isEmpty()) return;
 
-    try {
-        koneksi kon = new koneksi();
-        java.sql.Connection conn = kon.getKoneksi();
+    DialongPilihPinjam dialog = new DialongPilihPinjam(
+        (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), true
+    );
+    dialog.setVisible(true);
 
-        String sql = "SELECT p.id_peminjaman, p.tanggal_pinjam, p.tanggal_kembali, " +
-                     "a.id_anggota, a.nama, " +
-                     "b.id_buku, b.judul, b.pengarang, b.penerbit " +
-                     "FROM peminjaman p " +
-                     "JOIN anggota a ON p.id_anggota = a.id_anggota " +
-                     "JOIN buku b ON p.id_buku = b.id_buku " +
-                     "WHERE p.id_peminjaman = ?";
+    String idPinjam = dialog.getIdPeminjaman();
+    if (idPinjam != null && !idPinjam.isEmpty()) {
+        txtIdPeminjaman.setText(idPinjam);
+        getpeminjaman();
 
-        java.sql.PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, idPinjam);
-        java.sql.ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            txtTanggalPinjam.setText(rs.getString("tanggal_pinjam"));
-            txtTanggalKembali.setText(rs.getString("tanggal_kembali"));
-            txtIdAnggota.setText(rs.getString("id_anggota"));
-            txtNamaAnggota.setText(rs.getString("nama"));
-            txtBuku.setText(rs.getString("id_buku"));
-            txtJudul.setText(rs.getString("judul"));
-            txtPengarang.setText(rs.getString("pengarang"));
-            txtPenerbit.setText(rs.getString("penerbit"));
-            hitungDenda();
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "ID Peminjaman tidak ditemukan!");
-        }
-    } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-    }
-
+}
     }//GEN-LAST:event_btnGetPeminjamanActionPerformed
     private void hitungDenda(){  
     try {

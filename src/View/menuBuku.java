@@ -11,7 +11,17 @@ import java.sql.PreparedStatement; // INI YANG TADI KURANG
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
 import Tampilan.MenuUtama;
-
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.ImageIcon;
+import java.awt.Component;
+import java.awt.Image;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 /**
  *
  * @author rafli
@@ -23,82 +33,84 @@ public class menuBuku extends javax.swing.JPanel {
      */
     public menuBuku() {
         initComponents();
-        setTabelModel();
-        loadData();
         
         btnUbah.setVisible(false);
         btnHapus.setVisible(false);
         btnBatal.setVisible(false);
+        setTabelModel();
+        loadData();
     }
     
     private void setTabelModel() {
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("No");
-    model.addColumn("ID Buku");
-    model.addColumn("Judul");
-    model.addColumn("Pengarang");
-    model.addColumn("ID Kategori");
-    model.addColumn("Nama Kategori");
-    model.addColumn("Tahun Terbit");
-    model.addColumn("ID Penerbit");
-    model.addColumn("Nama Penerbit");
-    model.addColumn("jumlah halaman");
-    model.addColumn("Stok");
-    model.addColumn("Gambar");
-    jTable1.setModel(model);
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                // Beritahu tabel bahwa kolom 10 berisi Icon/Gambar
+                if (columnIndex == 10) return javax.swing.ImageIcon.class;
+                return super.getColumnClass(columnIndex);
+            }
+        };
+
+        model.addColumn("No");
+        model.addColumn("ID Buku");
+        model.addColumn("Judul");
+        model.addColumn("Pengarang");
+        model.addColumn("Tahun Terbit");
+        model.addColumn("ID Kategori");
+        model.addColumn("Kategori");
+        model.addColumn("ID Penerbit");
+        model.addColumn("Penerbit");
+        model.addColumn("Stok");
+        model.addColumn("Cover"); // Kolom index 10
+        model.addColumn("Jumlah Halaman");
+
+        jTable1.setModel(model);
+
+        // Terapkan renderer ke kolom Cover (index 10)
+        jTable1.getColumnModel().getColumn(10).setCellRenderer(new ImageRenderer());
     }
-     
-    private void loadData() {
+    
+    public void loadData() {
     DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    model.setRowCount(0); 
+    model.setRowCount(0);
 
     try {
-        // 1. Ambil koneksi
         Connection conn = Koneksi.koneksi.getKoneksi();
-        
-        // 2. Cek apakah koneksi berhasil atau tidak
-        if (conn == null) {
-            System.out.println("Gagal terhubung ke database. Cek konfigurasi koneksi Anda.");
-            return;
-        }
-        
-        // 3. Eksekusi query dengan INNER JOIN untuk mengambil nama_kategori dan nama_penerbit
-        String sql = "SELECT b.Id_buku, b.judul_buku, b.Pengarang, b.id_kategori, k.nama_kategori, "
-                   + "b.id_penerbit, p.nama_penerbit, b.jumlah_halaman, b.stok, b.cover "
-                   + "FROM buku b "
-                   + "INNER JOIN kategori_buku k ON b.id_kategori = k.id_kategori "
-                   + "INNER JOIN penerbit p ON b.id_penerbit = p.id_penerbit"; 
-        
-        PreparedStatement st = conn.prepareStatement(sql);
-        ResultSet rs = st.executeQuery();
-        
+        // Query mengambil data dari tabel utama dan tabel relasi
+        String sql = "SELECT b.id_buku, b.judul_buku, b.pengarang, b.tahun_terbit, " +
+             "b.id_kategori, k.nama_kategori, b.id_penerbit, p.nama_penerbit, " +
+             "b.stok, b.cover, b.jumlah_halaman " +
+             "FROM buku b " +
+             "JOIN kategori_buku k ON b.id_kategori = k.id_kategori " +
+             "JOIN penerbit p ON b.id_penerbit = p.id_penerbit " +
+             "ORDER BY b.id_buku ASC";
+
+        java.sql.Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
         int no = 1;
         while (rs.next()) {
-            model.addRow(new Object[]{
-                no++,
-                rs.getString("Id_buku"),
-                rs.getString("judul_buku"),
-                rs.getString("Pengarang"),
-                rs.getString("id_kategori"),
-                rs.getString("nama_kategori"),
-                rs.getString("tahun_terbit"),
-                rs.getString("id_penerbit"),
-                rs.getString("nama_penerbit"), // Diambil dari tabel penerbit
-                rs.getString("jumlah_halaman"),
-                rs.getString("stok"),
-                rs.getString("cover")
-            });
-        }
-        
-        // Tutup resources
-        rs.close();
-        st.close();
-        
-    } catch (Exception e) {
-        System.out.println("Error pada loadData: " + e.toString());
-        e.printStackTrace(); 
+        model.addRow(new Object[]{
+            no++,
+            rs.getString("id_buku"),
+            rs.getString("judul_buku"), // Perubahan di sini
+            rs.getString("pengarang"),
+            rs.getString("tahun_terbit"),
+            rs.getString("id_kategori"),
+            rs.getString("nama_kategori"),
+            rs.getString("id_penerbit"),
+            rs.getString("nama_penerbit"),
+            rs.getString("stok"),
+            rs.getString("cover"),
+            rs.getString("jumlah_halaman")
+        });
     }
-}
+    } catch (Exception e) {
+        System.out.println("Error loadData: " + e.getMessage());
+    }
+    }
+    
+   
      
 
     /**
@@ -248,130 +260,88 @@ public class menuBuku extends javax.swing.JPanel {
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
                                         
-    String keyword = tfCari.getText().trim();
-    
-    // Jika kolom pencarian kosong, panggil loadData() untuk reset tampilan
-    if (keyword.isEmpty()) {
-        loadData();
-        return;
-    }
-
-    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    model.setRowCount(0);
-
-    try {
-        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
-        // Query pencarian untuk tabel kategori_buku
-        String sql = "SELECT * FROM kategori_buku " +
-                     "WHERE ID_Kategori LIKE ? OR Nama_Kategori LIKE ? " +
-                     "ORDER BY ID_Kategori ASC"; 
-
-        java.sql.PreparedStatement st = conn.prepareStatement(sql);
-        
-        st.setString(1, "%" + keyword + "%"); 
-        st.setString(2, "%" + keyword + "%");
-
-        java.sql.ResultSet rs = st.executeQuery();
-
-        int no = 1;
-        while (rs.next()) {
-            model.addRow(new Object[]{
-                no++,
-                rs.getString("ID_Kategori"),
-                rs.getString("Nama_Kategori"),
-                rs.getString("Deskripsi")
-            });
-        }
-        
-        if (model.getRowCount() == 0) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Data tidak ditemukan!");
-            loadData();
-        }
-        
-    } catch (Exception e) {
-        System.out.println("Error pada btnCari: " + e.getMessage());
-    }      // TODO add your handling code here:
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-        MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+     MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
         if (menuUtama != null) {
-            menuUtama.showPanel(new menCRUDBuku());
+            menuUtama.showPanel(new menuCRUDBuku());
         }
-
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
         int baris = jTable1.getSelectedRow();
-
         if (baris != -1) {
-        // Mengambil data string dari tabel
-        String idBuku = (jTable1.getValueAt(baris, 1) != null) ? jTable1.getValueAt(baris, 1).toString() : "";
-        String judulBuku = (jTable1.getValueAt(baris, 2) != null) ? jTable1.getValueAt(baris, 2).toString() : "";
-        String pengarang = (jTable1.getValueAt(baris, 3) != null) ? jTable1.getValueAt(baris, 3).toString() : "";
-        String idKategori = (jTable1.getValueAt(baris, 4) != null) ? jTable1.getValueAt(baris, 4).toString() : "";
-        String namaKategori = (jTable1.getValueAt(baris, 5) != null) ? jTable1.getValueAt(baris, 5).toString() : "";
-        String tahunTerbit = (jTable1.getValueAt(baris, 6) != null) ? jTable1.getValueAt(baris, 6).toString() : "";
-        String idPenerbit = (jTable1.getValueAt(baris, 7) != null) ? jTable1.getValueAt(baris, 7).toString() : "";
-        String namaPenerbit = (jTable1.getValueAt(baris, 8) != null) ? jTable1.getValueAt(baris, 8).toString() : "";
+            // AMBIL DATA - Pastikan index (1, 2, dst) sesuai urutan kolom di JTable Anda!
+            String idBuku      = jTable1.getValueAt(baris, 1).toString();
+            String judul       = jTable1.getValueAt(baris, 2).toString();
+            String pengarang   = jTable1.getValueAt(baris, 3).toString();
+            String tahun       = jTable1.getValueAt(baris, 4).toString();
+            String idKategori  = jTable1.getValueAt(baris, 5).toString();
+            String idPenerbit  = jTable1.getValueAt(baris, 7).toString();
+            String stok        = jTable1.getValueAt(baris, 9).toString();
+            String cover       = jTable1.getValueAt(baris, 10).toString(); // Pastikan index kolom gambar benar
+            String jmlHalaman  = jTable1.getValueAt(baris, 11).toString();
 
-        // Ambil data string lalu konversi ke int untuk jumlah halaman dan stok
-        String strHalaman = (jTable1.getValueAt(baris, 9) != null) ? jTable1.getValueAt(baris, 9).toString() : "0";
-        String strStok = (jTable1.getValueAt(baris, 10) != null) ? jTable1.getValueAt(baris, 10).toString() : "0";
+            // DEBUG: Cek di Output NetBeans apakah path cover terambil
+            System.out.println("Path Gambar yang dikirim: " + cover);
 
-        int jumlahHalaman = Integer.parseInt(strHalaman);
-        int stok = Integer.parseInt(strStok);
-
-        String cover = (jTable1.getValueAt(baris, 11) != null) ? jTable1.getValueAt(baris, 11).toString() : "";
-
-        MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
-
-        if (menuUtama != null) {
-            // Memanggil panel menuCRUDBuku dengan parameter yang sudah pas urutannya
-            menuUtama.showPanel(new menCRUDBuku(idBuku, judulBuku, pengarang, idKategori, namaKategori, tahunTerbit, idPenerbit, namaPenerbit, jumlahHalaman, stok, cover));
+            MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+            if (menuUtama != null) {
+                menuUtama.showPanel(new menuCRUDBuku(idBuku, judul, pengarang, tahun, idKategori, idPenerbit, jmlHalaman, stok, cover));
+            }
         } else {
-            System.out.println("Error: MenuUtama tidak ditemukan!");
-        }
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Pilih data buku di tabel terlebih dahulu!");
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih data di tabel terlebih dahulu!");
         }
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-    int baris = jTable1.getSelectedRow();
-    
-    if (baris != -1) {
-        // Mengambil ID_Kategori dari kolom indeks 1
-        String idKategori = jTable1.getValueAt(baris, 1).toString();
+    int selectedRow = jTable1.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus!");
+        return;
+    }
+
+    int confirm = JOptionPane.showConfirmDialog(this, "Yakin hapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+    if (confirm != JOptionPane.YES_OPTION) {
+        return;
+    }
+
+    try {
+        String idBuku = jTable1.getValueAt(selectedRow, 1).toString();
+        Connection conn = Koneksi.koneksi.getKoneksi();
         
-        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(this, 
-                "Apakah Anda yakin ingin menghapus kategori dengan ID: " + idKategori + "?", 
-                "Konfirmasi Hapus", 
-                javax.swing.JOptionPane.YES_NO_OPTION);
-        
-        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
-            try {
-                java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
-                String sql = "DELETE FROM kategori_buku WHERE ID_Kategori = ?";
-                java.sql.PreparedStatement st = conn.prepareStatement(sql);
-                
-                st.setString(1, idKategori);
-                st.executeUpdate();
-                
-                javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus!");
-                
-                // Refresh tabel dan kosongkan field jika ada fungsi batal
-                loadData();
-                // Jika Anda punya tombol batal, panggil fungsinya di sini
-                // btnBatalActionPerformed(evt);
-                
-            } catch (Exception e) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Gagal Hapus: " + e.getMessage());
-            }
+        // 1. Ambil path gambar dari database sebelum dihapus
+        String pathGambar = "";
+        String sqlGet = "SELECT cover FROM buku WHERE Id_Buku = ?";
+        PreparedStatement psGet = conn.prepareStatement(sqlGet);
+        psGet.setString(1, idBuku);
+        ResultSet rs = psGet.executeQuery();
+        if (rs.next()) {
+            pathGambar = rs.getString("cover");
         }
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih baris data kategori yang ingin dihapus di tabel!");
+
+        // 2. Eksekusi Hapus dari Database
+        String sqlDelete = "DELETE FROM buku WHERE Id_Buku = ?";
+        PreparedStatement psDelete = conn.prepareStatement(sqlDelete);
+        psDelete.setString(1, idBuku);
+        psDelete.executeUpdate();
+
+        // 3. Hapus file fisik dari folder 'uploads'
+        if (pathGambar != null && !pathGambar.isEmpty()) {
+            // Path relatif diubah jadi absolut untuk menghapus file
+            Path fileToDelete = Paths.get(System.getProperty("user.dir"), pathGambar);
+            Files.deleteIfExists(fileToDelete);
+        }
+
+        // 4. Hapus baris dari Tabel
+        ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
+
+        JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
+        
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal hapus: " + e.getMessage());
+        e.printStackTrace();
     }
     }//GEN-LAST:event_btnHapusActionPerformed
 
@@ -396,4 +366,24 @@ public class menuBuku extends javax.swing.JPanel {
     private javax.swing.JTable jTable1;
     private palette.Custom_JTextField tfCari;
     // End of variables declaration//GEN-END:variables
+}
+
+class ImageRenderer extends DefaultTableCellRenderer {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, 
+            boolean isSelected, boolean hasFocus, int row, int column) {
+        
+        JLabel label = new JLabel();
+        if (value != null && !value.toString().isEmpty()) {
+            // Mengambil path relatif (misal: uploads/buku1.jpg)
+            String path = System.getProperty("user.dir") + "/" + value.toString();
+            ImageIcon icon = new ImageIcon(path);
+            
+            // Resize gambar agar pas di dalam baris tabel
+            Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            label.setIcon(new ImageIcon(img));
+            label.setHorizontalAlignment(JLabel.CENTER);
+        }
+        return label;
+    }
 }
