@@ -7,6 +7,7 @@ package Tampilan;
 import View.menuDashboard;
 import View.menuAnggota;
 import View.MenuPengembalian;
+import View.menuPeminjaman;
 import View.menuPetugas;
 import View.menuPenerbit;
 
@@ -31,12 +32,19 @@ public class MenuUtama extends javax.swing.JFrame {
                     }
                     });
         BpnlPetugas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BpnlPeminjaman.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         
+        BpnlPeminjaman.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            showPanel(new menuPeminjaman());
+            }
+            });
         BpnlPetugas.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             showPanel(new menuPetugas());
             }
             });
+        
         BpnlPenerbit.setCursor(new  java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BpnlPenerbit.addMouseListener(new java.awt.event.MouseAdapter(){
             public void mouseClicked(java.awt.event.MouseEvent evt) {
