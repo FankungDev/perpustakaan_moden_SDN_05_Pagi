@@ -6,6 +6,7 @@
 package View;
 import javax.swing.table.DefaultTableModel;
 import Koneksi.koneksi; // Sesuaikan dengan package koneksi Anda
+import Tampilan.PopupDataAnggota;
 import java.sql.Connection;
 import java.sql.PreparedStatement; // INI YANG TADI KURANG
 import java.sql.ResultSet;
@@ -16,6 +17,7 @@ import javax.swing.table.DefaultTableModel;
  * @author rafli
  */
 public class menuCRUDPeminjaman extends javax.swing.JPanel {
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(menuCRUDPeminjaman.class.getName());
 
     /**
      * Creates new form menuAnggota
@@ -25,6 +27,16 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         setTabelModel();
         loadData();
     }
+    
+    public String nis, namaAnggota, email, telepon; 
+
+// Fungsi untuk mengisi text field
+public void itemTerpilihAnggota() {
+    txtAnggotaPeminjaman.setText(nis);
+    txtNamaPeminjaman.setText(namaAnggota);
+    txtEmailPeminjaman.setText(email);
+    txtTeleponPeminjaman.setText(telepon);
+}
     
     private void setTabelModel() {
     DefaultTableModel model = new DefaultTableModel();
@@ -45,36 +57,31 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     model.setRowCount(0); 
 
     try {
-        // 1. Ambil koneksi
         Connection conn = Koneksi.koneksi.getKoneksi();
         
-        // 2. Cek apakah koneksi berhasil atau tidak
-        if (conn == null) {
-            System.out.println("Gagal terhubung ke database. Cek konfigurasi koneksi Anda.");
-            return;
-        }
+        // Query dengan JOIN untuk menghubungkan Peminjaman, Anggota, dan Buku
+        String sql = "SELECT p.Id_Pinjam, a.nis, a.Nama, p.Id_Buku, b.Judul_Buku " +
+                     "FROM peminjaman p " +
+                     "JOIN data_anggota a ON p.Nis = a.nis " +
+                     "JOIN buku b ON p.Id_Buku = b.Id_Buku";
         
-        // 3. Eksekusi query
-        String sql = "SELECT * FROM data_anggota"; 
         PreparedStatement st = conn.prepareStatement(sql);
         ResultSet rs = st.executeQuery();
         
         int no = 1;
         while (rs.next()) {
             model.addRow(new Object[]{
-                no ++,
+                no++,
+                rs.getString("Id_Pinjam"),
                 rs.getString("nis"),
                 rs.getString("Nama"),
-                rs.getString("alamat"),
-                rs.getString("No_hp"),
-                rs.getString("Jenis_Kelamin"),
-                rs.getString("Tanggal_Bergabung")
+                rs.getString("Id_Buku"),
+                rs.getString("Judul_Buku")
             });
         }
     } catch (Exception e) {
-        // Ini akan memberitahu Anda persis error-nya di Output NetBeans
-        System.out.println("Error pada loadData: " + e.toString());
-        e.printStackTrace(); 
+        // Menggunakan logger sesuai permintaan Anda sebelumnya
+        logger.log(java.util.logging.Level.SEVERE, "Gagal load data peminjaman dengan join", e);
     }
 }
 
@@ -180,6 +187,11 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         jLabel9.setText("Telepon");
 
         btnCariAnggota.setText("...");
+        btnCariAnggota.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCariAnggotaActionPerformed(evt);
+            }
+        });
 
         jLabel10.setText("Buku");
 
@@ -307,10 +319,11 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel13)
                         .addGap(18, 18, 18)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -367,8 +380,60 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        // TODO add your handling code here:
+String idPinjam = txtIdPeminjaman.getText();
+    String nis = txtAnggotaPeminjaman.getText(); // Asumsi ini adalah kolom NIS
+    String idBuku = txtBuku.getText();           // Asumsi ini adalah kolom Id_Buku
+    String tglPinjam = txtTglPeminjaman.getText();
+    String jml = txtJumlah.getText();
+    String status = "Sedang dipinjam"; 
+
+    // Validasi sederhana agar tidak ada field kosong
+    if (idPinjam.isEmpty() || nis.isEmpty() || idBuku.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Harap lengkapi data!");
+        return;
+    }
+
+    // 2. Query SQL
+    // Menggunakan NULL untuk Tanggal_Kembali dan 0 untuk Point sesuai screenshot Anda
+    String sql = "INSERT INTO peminjaman (Id_Pinjam, Nis, Id_Buku, Tanggal_Pinjam, Tanggal_Kembali, Point, status, Jumlah_Pinjam) VALUES (?, ?, ?, ?, NULL, 0, ?, ?)";
+
+    try {
+        // 3. Koneksi ke Database
+        java.sql.Connection conn = (java.sql.Connection) Koneksi.koneksi.getKoneksi();
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+        
+        // 4. Set parameter sesuai urutan ? pada query
+        pst.setString(1, idPinjam);
+        pst.setString(2, nis);
+        pst.setString(3, idBuku);
+        pst.setString(4, tglPinjam);
+        pst.setString(5, status);
+        pst.setString(6, jml);
+        
+        // 5. Eksekusi
+        pst.execute();
+        javax.swing.JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan!");
+        
+        // Opsional: Panggil fungsi untuk refresh tabel (ganti dengan nama fungsi milik Anda)
+        // tampilkan_data(); 
+        
+        // Opsional: Bersihkan field setelah simpan
+        txtIdPeminjaman.setText("");
+        txtAnggotaPeminjaman.setText("");
+        txtBuku.setText("");
+        txtTglPeminjaman.setText("");
+        txtJumlah.setText("");
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal simpan: " + e.getMessage());
+    }
     }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnCariAnggotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariAnggotaActionPerformed
+PopupDataAnggota pop = new PopupDataAnggota(); // Sesuaikan dengan nama class JFrame popup Anda
+    pop.anggota = this; // Mengirim referensi class ini ke popup
+    pop.setVisible(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCariAnggotaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

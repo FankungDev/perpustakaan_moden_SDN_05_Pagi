@@ -14,7 +14,7 @@ import Tampilan.MenuUtama;
 
 /**
  *
- * @author rafli
+ * @author ADIT
  */
 public class menuKategori extends javax.swing.JPanel {
 

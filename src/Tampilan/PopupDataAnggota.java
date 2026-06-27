@@ -5,19 +5,79 @@
  */
 package Tampilan;
 
+import View.menuCRUDPeminjaman;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author aditya
  */
 public class PopupDataAnggota extends javax.swing.JFrame {
-
+public menuCRUDPeminjaman anggota = null;
     /**
      * Creates new form PopupDataAnggota
      */
     public PopupDataAnggota() {
         initComponents();
+        setTabelModel();
+        loadData();
+        
     }
+    
+    private void setTabelModel() {
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("No");
+    model.addColumn("NIS");
+    model.addColumn("Nama");
+    model.addColumn("Alamat");
+    model.addColumn("Telepon");
+    model.addColumn("Jenis Kelamin");
+    model.addColumn("Tgl Bergabung");
+    tblAnggota.setModel(model);
+    
+    
+}
+    
+    private void loadData() {
+    DefaultTableModel model = (DefaultTableModel) tblAnggota.getModel();
+    model.setRowCount(0); 
 
+    try {
+        // 1. Ambil koneksi
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // 2. Cek apakah koneksi berhasil atau tidak
+        if (conn == null) {
+            System.out.println("Gagal terhubung ke database. Cek konfigurasi koneksi Anda.");
+            return;
+        }
+        
+        // 3. Eksekusi query
+        String sql = "SELECT * FROM data_anggota"; 
+        PreparedStatement st = conn.prepareStatement(sql);
+        ResultSet rs = st.executeQuery();
+        
+        int no = 1;
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no ++,
+                rs.getString("nis"),
+                rs.getString("Nama"),
+                rs.getString("alamat"),
+                rs.getString("No_hp"),
+                rs.getString("Jenis_Kelamin"),
+                rs.getString("Tanggal_Bergabung")
+            });
+        }
+    } catch (Exception e) {
+        // Ini akan memberitahu Anda persis error-nya di Output NetBeans
+        System.out.println("Error pada loadData: " + e.toString());
+        e.printStackTrace(); 
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -47,6 +107,11 @@ public class PopupDataAnggota extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblAnggota.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblAnggotaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblAnggota);
 
         btnCari.setText("Cari");
@@ -95,6 +160,24 @@ public class PopupDataAnggota extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void tblAnggotaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblAnggotaMouseClicked
+int tabelPilih = tblAnggota.getSelectedRow();
+    
+    // Pastikan user benar-benar mengklik baris yang valid
+    if (tabelPilih >= 0) {
+        // Ambil data dari tabel popup
+        anggota.nis = tblAnggota.getValueAt(tabelPilih, 0).toString();
+        anggota.namaAnggota = tblAnggota.getValueAt(tabelPilih, 1).toString();
+        anggota.email = tblAnggota.getValueAt(tabelPilih, 2).toString();
+        anggota.telepon = tblAnggota.getValueAt(tabelPilih, 3).toString();
+        
+        // Jalankan fungsi pengisian di form utama
+        anggota.itemTerpilihAnggota();
+        
+        // Tutup popup
+        dispose();  }      // TODO add your handling code here:
+    }//GEN-LAST:event_tblAnggotaMouseClicked
 
     /**
      * @param args the command line arguments

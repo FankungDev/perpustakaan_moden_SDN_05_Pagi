@@ -16,8 +16,53 @@ public class PopupDataBuku extends javax.swing.JFrame {
      */
     public PopupDataBuku() {
         initComponents();
+        tampilData();
     }
+public void tampilData() {
+    // 1. Definisikan model tabel sesuai dengan kolom di database
+    // Sesuaikan urutan dengan tampilan di tabel Anda
+    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel();
+    model.addColumn("No");
+    model.addColumn("Id Buku");
+    model.addColumn("Judul Buku");
+    model.addColumn("Pengarang");
+    model.addColumn("ID Kategori");
+    model.addColumn("Tahun Terbit");
+    model.addColumn("Stok");
+    model.addColumn("Cover");
+    model.addColumn("Jumlah Halaman");
+    model.addColumn("ID Penerbit");
 
+    try {
+        // 2. Query untuk mengambil semua data
+        String sql = "SELECT * FROM buku"; 
+        java.sql.Connection conn = (java.sql.Connection) Koneksi.koneksi.getKoneksi();
+        java.sql.Statement stm = conn.createStatement();
+        java.sql.ResultSet res = stm.executeQuery(sql);
+
+        int no = 1;// 3. Masukkan data ke dalam model tabel
+        while (res.next()) {
+            model.addRow(new Object[]{
+                no ++,
+                res.getString("Id_Buku"),
+                res.getString("Judul_Buku"),
+                res.getString("Pengarang"),
+                res.getString("Id_Kategori"),
+                res.getString("Tahun_Terbit"),
+                res.getString("Stok"),
+                res.getString("Cover"),
+                res.getString("Jumlah_Halaman"),
+                res.getString("id_penerbit")
+            });
+        }
+        
+        // 4. Set model ke JTable Anda (tblPinjam)
+        tblBuku.setModel(model);
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,14 +74,20 @@ public class PopupDataBuku extends javax.swing.JFrame {
 
         txtCari = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblAnggota = new javax.swing.JTable();
+        tblBuku = new javax.swing.JTable();
         btnCari = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        tblAnggota.setModel(new javax.swing.table.DefaultTableModel(
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCariActionPerformed(evt);
+            }
+        });
+
+        tblBuku.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -47,7 +98,7 @@ public class PopupDataBuku extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tblAnggota);
+        jScrollPane1.setViewportView(tblBuku);
 
         btnCari.setText("Cari");
 
@@ -96,6 +147,10 @@ public class PopupDataBuku extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -137,7 +192,7 @@ public class PopupDataBuku extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblAnggota;
+    private javax.swing.JTable tblBuku;
     private javax.swing.JTextField txtCari;
     // End of variables declaration//GEN-END:variables
 }
