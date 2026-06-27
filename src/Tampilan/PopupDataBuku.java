@@ -5,12 +5,14 @@
  */
 package Tampilan;
 
+import View.menuCRUDPeminjaman;
+
 /**
  *
  * @author aditya
  */
 public class PopupDataBuku extends javax.swing.JFrame {
-
+public menuCRUDPeminjaman peminjaman = null;
     /**
      * Creates new form PopupDataAnggota
      */
@@ -98,6 +100,11 @@ public void tampilData() {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblBuku.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblBukuMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblBuku);
 
         btnCari.setText("Cari");
@@ -150,6 +157,23 @@ public void tampilData() {
     private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCariActionPerformed
+
+    private void tblBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBukuMouseClicked
+int tabelPilih = tblBuku.getSelectedRow();
+    
+    if (tabelPilih >= 0 && peminjaman != null) {
+        // Ambil data dari tabel popup
+        // Sesuaikan indeks kolom (0: No, 1: ID Buku, 2: Judul Buku, dst)
+        peminjaman.idBuku = tblBuku.getValueAt(tabelPilih, 1).toString();
+        peminjaman.judulBuku = tblBuku.getValueAt(tabelPilih, 2).toString();
+        
+        // Jalankan fungsi di form utama untuk mengisi textfield
+        peminjaman.itemTerpilihBuku();
+        
+        // Tutup popup
+        dispose();
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_tblBukuMouseClicked
 
     /**
      * @param args the command line arguments

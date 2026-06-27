@@ -6,7 +6,9 @@
 package View;
 import javax.swing.table.DefaultTableModel;
 import Koneksi.koneksi; // Sesuaikan dengan package koneksi Anda
+import Tampilan.MenuUtama;
 import Tampilan.PopupDataAnggota;
+import Tampilan.PopupDataBuku;
 import java.sql.Connection;
 import java.sql.PreparedStatement; // INI YANG TADI KURANG
 import java.sql.ResultSet;
@@ -37,6 +39,15 @@ public void itemTerpilihAnggota() {
     txtEmailPeminjaman.setText(email);
     txtTeleponPeminjaman.setText(telepon);
 }
+
+public String idBuku, judulBuku, pengarangBuku, penerbitBuku;
+
+public void itemTerpilihBuku() {
+    txtBuku.setText(idBuku);
+    txtJudul.setText(judulBuku);
+    txtPengarang.setText(pengarangBuku);
+    txtPenerbit.setText(penerbitBuku);
+    }
     
     private void setTabelModel() {
     DefaultTableModel model = new DefaultTableModel();
@@ -206,6 +217,11 @@ public void itemTerpilihAnggota() {
         jLabel16.setText("Jumlah");
 
         btnCariBuku.setText("...");
+        btnCariBuku.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCariBukuActionPerformed(evt);
+            }
+        });
 
         btnUbah.setText("Ubah");
 
@@ -372,7 +388,10 @@ public void itemTerpilihAnggota() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        // TODO add your handling code here:
+MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (menuUtama != null) {
+            menuUtama.showPanel(new menuCRUDPeminjaman());
+        }        // TODO add your handling code here:
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
@@ -434,6 +453,12 @@ PopupDataAnggota pop = new PopupDataAnggota(); // Sesuaikan dengan nama class JF
     pop.anggota = this; // Mengirim referensi class ini ke popup
     pop.setVisible(true);        // TODO add your handling code here:
     }//GEN-LAST:event_btnCariAnggotaActionPerformed
+
+    private void btnCariBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariBukuActionPerformed
+System.out.println("Tombol diklik!"); // Cek di Output NetBeans apakah tulisan ini muncul
+    PopupDataBuku pop = new PopupDataBuku();
+    pop.setVisible(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCariBukuActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
