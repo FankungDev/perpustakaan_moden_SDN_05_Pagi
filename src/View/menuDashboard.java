@@ -319,7 +319,7 @@ public class menuDashboard extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(13, 13, 13)
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -336,7 +336,7 @@ public class menuDashboard extends javax.swing.JPanel {
                                 .addComponent(custom_JPanelRounded3, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(30, 30, 30)
                                 .addComponent(custom_JPanelRounded4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 254, Short.MAX_VALUE)))
+                        .addGap(0, 252, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
