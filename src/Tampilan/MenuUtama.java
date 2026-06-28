@@ -4,13 +4,13 @@
  * and open the template in the editor.
  */
 package Tampilan;
-import View.menuDashboard;
-import View.menuAnggota;
-import View.menuKategori;
-import View.menuPetugas;
-import View.menuPenerbit;
-import View.MenuPengembalian;
-import View.menuBuku;
+import Menu.menuDashboard;
+import Menu.menuAnggota;
+import Menu.menuKategori;
+import Menu.menuPetugas;
+import Menu.menuPenerbit;
+import Menu.MenuPengembalian;
+import Menu.menuBuku;
 
 /**
  *

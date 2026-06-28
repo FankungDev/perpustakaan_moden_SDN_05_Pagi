@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package View;
+import Menu.menuKategori;
 import javax.swing.table.DefaultTableModel;
 import Koneksi.koneksi; // Sesuaikan dengan package koneksi Anda
 import Tampilan.MenuUtama;

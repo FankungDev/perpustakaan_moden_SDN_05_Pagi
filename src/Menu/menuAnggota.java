@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package View;
+package Menu;
 import javax.swing.table.DefaultTableModel;
 import Koneksi.koneksi; 
 import java.sql.Connection;
@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
 import Tampilan.MenuUtama;
+import View.menuCRUDAnggota;
 
 /**
  *
