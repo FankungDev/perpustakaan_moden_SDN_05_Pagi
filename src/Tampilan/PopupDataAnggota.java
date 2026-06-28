@@ -1,21 +1,56 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+
 package Tampilan;
 
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import Koneksi.koneksi;
+import View.menuCRUDPeminjaman;
 /**
  *
  * @author rafli
  */
 public class PopupDataAnggota extends javax.swing.JFrame {
+    private Connection Conn = koneksi.getKoneksi();
+    private DefaultTableModel tabmode;
+    
+    public menuCRUDPeminjaman agt;
+    
 
     /**
      * Creates new form PopupAnggota
      */
     public PopupDataAnggota() {
         initComponents();
+        datatable();
+        setResizable(false);
+        setLocationRelativeTo(null);
+    }
+    
+    protected void datatable() {
+        // Struktur kolom tabel data anggota
+        Object[] Baris = {"NIS", "NAMA ANGGOTA", "JENIS KELAMIN", "TELEPON","EMAIL"};
+        tabmode = new DefaultTableModel(null, Baris);
+        tabelDataAnggota.setModel(tabmode);
+        
+        String sql = "SELECT * FROM data_anggota"; 
+        try {
+            Statement stat = Conn.createStatement();
+            ResultSet hasil = stat.executeQuery(sql);
+            while (hasil.next()) {
+                String a = hasil.getString("nis"); 
+                String b = hasil.getString("nama");
+                String c = hasil.getString("jenis_kelamin");
+                String d = hasil.getString("no_hp");
+                String e = hasil.getString("email");
+                
+                String[] data = {a, b, c, d, e};
+                tabmode.addRow(data);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Gagal memuat data awal: " + e.getMessage());
+        }
     }
 
     /**
@@ -45,10 +80,26 @@ public class PopupDataAnggota extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tabelDataAnggota.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabelDataAnggotaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabelDataAnggota);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel1.setText("Data Anggota");
+
+        txtCariAnggota.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtCariAnggotaMouseClicked(evt);
+            }
+        });
+        txtCariAnggota.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCariAnggotaKeyPressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -57,7 +108,7 @@ public class PopupDataAnggota extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1048, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 661, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -78,6 +129,58 @@ public class PopupDataAnggota extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtCariAnggotaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtCariAnggotaMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariAnggotaMouseClicked
+
+    private void txtCariAnggotaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariAnggotaKeyPressed
+    Object[] Baris = {"NIS", "NAMA ANGGOTA", "JENIS KELAMIN", "TELEPON", "EMAIL"};
+        tabmode = new DefaultTableModel(null, Baris);
+        
+        String sql = "SELECT * FROM data_anggota WHERE nama LIKE '%" + txtCariAnggota.getText() 
+                   + "%' OR nis LIKE '%" + txtCariAnggota.getText() + "%'";
+        try {
+            Statement stat = Conn.createStatement();
+            ResultSet hasil = stat.executeQuery(sql);
+            while(hasil.next()){
+                String a = hasil.getString("nis");
+                String b = hasil.getString("nama");
+                String c = hasil.getString("jenis_kelamin");
+                String d = hasil.getString("no_hp");
+                String e = hasil.getString("email");
+
+                String[] data = {a, b, c, d, e};
+                tabmode.addRow(data);
+            }
+            tabelDataAnggota.setModel(tabmode);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Gagal memuat pencarian: " + e.getMessage());
+        }
+    }//GEN-LAST:event_txtCariAnggotaKeyPressed
+
+    private void tabelDataAnggotaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelDataAnggotaMouseClicked
+    int bar = tabelDataAnggota.getSelectedRow();
+    
+    // 1. Ambil data dari kolom tabel sesuai indeksnya
+    String nis_terpilih = tabelDataAnggota.getValueAt(bar, 0).toString();  // Kolom NIS
+    String nama_terpilih = tabelDataAnggota.getValueAt(bar, 1).toString(); // Kolom NAMA ANGGOTA
+    // Kolom indeks 2 adalah JENIS KELAMIN (tidak kita kirim)
+    String telp_terpilih = tabelDataAnggota.getValueAt(bar, 3).toString(); // Kolom TELEPON (Indeks 3)
+    String email_terpilih = tabelDataAnggota.getValueAt(bar, 4).toString(); // Kolom EMAIL (Indeks 4)
+
+    // 2. Kirimkan data ke variabel global yang ada di menuCRUDPeminjaman
+    agt.nis = nis_terpilih;
+    agt.nama_anggota = nama_terpilih;
+    agt.telp_anggota = telp_terpilih;   // Ini yang tadi terlewat
+    agt.email_anggota = email_terpilih; // Ini yang tadi terlewat
+    
+    // 3. Panggil method di menuCRUDPeminjaman untuk set teks ke field
+    agt.itemTerpilihAnggota();
+    
+    // 4. Tutup popup data anggota
+    this.dispose();      // TODO add your handling code here:
+    }//GEN-LAST:event_tabelDataAnggotaMouseClicked
 
     /**
      * @param args the command line arguments

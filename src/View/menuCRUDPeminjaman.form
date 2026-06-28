@@ -7,6 +7,12 @@
         <Property name="text" type="java.lang.String" value="jRadioButton1"/>
       </Properties>
     </Component>
+    <Component class="javax.swing.JRadioButtonMenuItem" name="jRadioButtonMenuItem1">
+      <Properties>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="jRadioButtonMenuItem1"/>
+      </Properties>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -29,7 +35,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
@@ -57,14 +63,14 @@
                               </Group>
                               <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="tfDeskripsi" pref="289" max="32767" attributes="0"/>
+                                  <Component id="tfDeskripsi" max="32767" attributes="0"/>
                                   <Component id="tfNamaKategori" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="tfIdKategori" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="tfDeskripsi1" max="32767" attributes="0"/>
+                                  <Component id="txtNIS" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txtTelpon" min="-2" pref="289" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="btnTambah1" min="-2" pref="72" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="btnCariDataAnggota" min="-2" pref="72" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -73,25 +79,25 @@
                               </Group>
                               <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="tfDeskripsi2" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="tfNamaKategori1" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="tfIdKategori1" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="tfDeskripsi3" alignment="1" min="-2" pref="289" max="-2" attributes="0"/>
+                                  <Component id="txtPengarang" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="txtJudul" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txtIdBuku" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txtPenerbit" alignment="1" min="-2" pref="289" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="btnTambah2" min="-2" pref="72" max="-2" attributes="0"/>
+                              <Component id="btnCariDataBuku" min="-2" pref="72" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="76" max="-2" attributes="0"/>
-                              <Component id="jLabel11" min="-2" pref="170" max="-2" attributes="0"/>
+                              <Component id="lblGambar" min="-2" pref="170" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
-                                  <Component id="tfIdKategori2" min="-2" pref="204" max="-2" attributes="0"/>
+                                  <Component id="txtTotalBuku" min="-2" pref="204" max="-2" attributes="0"/>
                                   <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel15" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblTotalPinjam" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace min="0" pref="79" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="86" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -116,13 +122,13 @@
               </Group>
               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="tfIdKategori" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                          <Component id="txtNIS" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnTambah1" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                          <Component id="btnCariDataAnggota" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -136,29 +142,29 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="tfDeskripsi1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                          <Component id="txtTelpon" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                           <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="tfIdKategori1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                          <Component id="txtIdBuku" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                           <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnTambah2" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                          <Component id="btnCariDataBuku" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tfNamaKategori1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                          <Component id="txtJudul" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="tfDeskripsi2" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                          <Component id="txtPengarang" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                           <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="tfDeskripsi3" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                          <Component id="txtPenerbit" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                           <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -166,18 +172,15 @@
                       <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                       <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="tfIdKategori2" min="-2" pref="38" max="-2" attributes="0"/>
+                      <Component id="txtTotalBuku" min="-2" pref="38" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                       <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblTotalPinjam" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                      <Component id="jLabel11" min="-2" pref="202" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="lblGambar" min="-2" pref="220" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="17" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
               <Component id="btnTambah" min="-2" pref="36" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="527" max="-2" attributes="0"/>
@@ -236,7 +239,7 @@
         <Property name="text" type="java.lang.String" value="NIS"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="tfIdKategori">
+    <Component class="javax.swing.JTextField" name="txtNIS">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
@@ -283,26 +286,26 @@
         <Property name="text" type="java.lang.String" value="Telepon"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="tfDeskripsi1">
+    <Component class="javax.swing.JTextField" name="txtTelpon">
     </Component>
-    <Component class="javax.swing.JButton" name="btnTambah1">
+    <Component class="javax.swing.JButton" name="btnCariDataAnggota">
       <Properties>
         <Property name="text" type="java.lang.String" value="...."/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTambah1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCariDataAnggotaActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JTextField" name="tfIdKategori1">
+    <Component class="javax.swing.JTextField" name="txtIdBuku">
     </Component>
-    <Component class="javax.swing.JTextField" name="tfNamaKategori1">
+    <Component class="javax.swing.JTextField" name="txtJudul">
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfNamaKategori1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtJudulActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JTextField" name="tfDeskripsi2">
+    <Component class="javax.swing.JTextField" name="txtPengarang">
     </Component>
-    <Component class="javax.swing.JTextField" name="tfDeskripsi3">
+    <Component class="javax.swing.JTextField" name="txtPenerbit">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel7">
       <Properties>
@@ -316,23 +319,23 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel9">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Email"/>
+        <Property name="text" type="java.lang.String" value="Pengarang"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel10">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Telepon"/>
+        <Property name="text" type="java.lang.String" value="Penerbit"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="btnTambah2">
+    <Component class="javax.swing.JButton" name="btnCariDataBuku">
       <Properties>
         <Property name="text" type="java.lang.String" value="...."/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTambah2ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCariDataBukuActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel11">
+    <Component class="javax.swing.JLabel" name="lblGambar">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -349,7 +352,7 @@
         <Property name="text" type="java.lang.String" value="Jumlah"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="tfIdKategori2">
+    <Component class="javax.swing.JTextField" name="txtTotalBuku">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel14">
       <Properties>
@@ -359,7 +362,7 @@
         <Property name="text" type="java.lang.String" value="Total Pinjam"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel15">
+    <Component class="javax.swing.JLabel" name="lblTotalPinjam">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="24" style="1"/>
@@ -374,7 +377,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="jTable1">
+        <Component class="javax.swing.JTable" name="dataTabelPinjam">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
@@ -387,7 +390,7 @@
             <Property name="rowHeight" type="int" value="50"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTable1MouseClicked"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="dataTabelPinjamMouseClicked"/>
           </Events>
         </Component>
       </SubComponents>
