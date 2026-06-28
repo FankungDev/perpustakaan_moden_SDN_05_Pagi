@@ -12,17 +12,18 @@ import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
 import Tampilan.MenuUtama;
 import View.menuCRUDKategori;
+import View.menuCRUDPeminjaman;
 
 /**
  *
  * @author rafli
  */
-public class menuKategori extends javax.swing.JPanel {
+public class menuPeminjaman extends javax.swing.JPanel {
 
     /**
      * Creates new form menuAnggota
      */
-    public menuKategori() {
+    public menuPeminjaman() {
         initComponents();
         setTabelModel();
         loadData();
@@ -119,11 +120,11 @@ public class menuKategori extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(jTable1);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/KategoriMini.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/LogoPeminjamanMini.png"))); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Data Kategori Buku");
+        jLabel2.setText("Data Peminjaman Buku");
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(153, 153, 153));
@@ -272,7 +273,7 @@ public class menuKategori extends javax.swing.JPanel {
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
         if (menuUtama != null) {
-            menuUtama.showPanel(new menuCRUDKategori());
+            menuUtama.showPanel(new menuCRUDPeminjaman());
         }
 
         // TODO add your handling code here:
