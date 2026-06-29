@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package View;
+import Menu.menuAnggota;
 import javax.swing.table.DefaultTableModel;
 import Koneksi.koneksi; 
 import java.sql.Connection;

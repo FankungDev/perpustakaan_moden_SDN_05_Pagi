@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package View;
+package Menu;
 
 import Koneksi.koneksi;
 import java.sql.Connection;
@@ -25,8 +25,9 @@ public class menuDashboard extends javax.swing.JPanel {
         hitungData();
         loadTable();
     }
+    
     private void hitungData() {
-    try {
+   try {
         Connection conn = Koneksi.koneksi.getKoneksi();
         Statement st = conn.createStatement();
 
@@ -34,72 +35,85 @@ public class menuDashboard extends javax.swing.JPanel {
         ResultSet rsAnggota = st.executeQuery("SELECT COUNT(*) FROM data_anggota");
         if (rsAnggota.next()) txtAnggota.setText(rsAnggota.getString(1));
 
-        // 2. Hitung Stok Buku (Total buku di perpustakaan)
+        // 2. Hitung Stok Buku (Total semua unit buku di perpustakaan)
         ResultSet rsBuku = st.executeQuery("SELECT SUM(Stok) FROM buku");
-        if (rsBuku.next()) txtBuku.setText(rsBuku.getString(1));
+        if (rsBuku.next()) txtBuku.setText(rsBuku.getString(1) != null ? rsBuku.getString(1) : "0");
 
-        // 3. Hitung Total Buku Sedang Dipinjam
-        ResultSet rsPinjam = st.executeQuery("SELECT SUM(Jumlah_Pinjam) FROM peminjaman WHERE Tanggal_Kembali IS NULL OR Tanggal_Kembali = '0000-00-00'");
-        if (rsPinjam.next()) txtPeminjaman.setText(rsPinjam.getString(1) != null ? rsPinjam.getString(1) : "0");
+        // 3. PERBAIKAN: Hitung jumlah TRANSAKSI yang sedang dipinjam (bukan jumlah buku)
+        ResultSet rsPinjam = st.executeQuery(
+            "SELECT COUNT(DISTINCT Id_Pinjam) FROM peminjaman WHERE status = 'Sedang dipinjam'"
+        );
+        if (rsPinjam.next()) txtPeminjaman.setText(rsPinjam.getString(1));
 
-        // 4. Hitung Total Buku Sudah Kembali
-        ResultSet rsKembali = st.executeQuery("SELECT SUM(Jumlah_Pinjam) FROM peminjaman WHERE Tanggal_Kembali IS NOT NULL AND Tanggal_Kembali != '0000-00-00'");
-        if (rsKembali.next()) txtPengembalian.setText(rsKembali.getString(1) != null ? rsKembali.getString(1) : "0");
+        // 4. PERBAIKAN: Hitung jumlah TRANSAKSI yang sudah kembali
+        ResultSet rsKembali = st.executeQuery(
+            "SELECT COUNT(DISTINCT Id_Pinjam) FROM peminjaman WHERE status != 'Sedang dipinjam'"
+        );
+        if (rsKembali.next()) txtPengembalian.setText(rsKembali.getString(1));
 
     } catch (Exception e) {
         System.out.println("Error hitungData: " + e.getMessage());
     }
 }
     
-    private void loadTable() {
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("No.");
-        model.addColumn("ID Pinjam");
-        model.addColumn("Nama Anggota");
-        model.addColumn("Judul Buku");
-        model.addColumn("Jumlah");
-        model.addColumn("Tgl Pinjam");
-        model.addColumn("Tgl Kembali");
-        model.addColumn("Status");
-
-        try {
-            Connection conn = Koneksi.koneksi.getKoneksi();
-            String sql = "SELECT p.Id_Pinjam, a.Nama, b.Judul_Buku, p.Jumlah_Pinjam, p.Tanggal_Pinjam, p.Tanggal_Kembali " +
-                         "FROM peminjaman p " +
-                         "JOIN data_anggota a ON p.Nis = a.Nis " +
-                         "JOIN buku b ON p.Id_Buku = b.Id_Buku";
-
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sql);
-
-            int no = 1;
-            while (rs.next()) {
-                // PERBAIKAN: Gunakan penggabungan string biasa
-                String formatID = "PJM" + rs.getString("Id_Pinjam");
-
-                String tglKembali = rs.getString("Tanggal_Kembali");
-                String status = (tglKembali == null || tglKembali.equals("0000-00-00")) ? "Sedang dipinjam" : "Sudah dikembalikan";
-
-                model.addRow(new Object[]{
-                    no++,
-                    formatID,
-                    rs.getString("Nama"),
-                    rs.getString("Judul_Buku"),
-                    rs.getString("Jumlah_Pinjam"),
-                    rs.getString("Tanggal_Pinjam"),
-                    (tglKembali == null || tglKembali.equals("0000-00-00")) ? "-" : tglKembali,
-                    status
-                });
-            }
-            tblDataDashboard.setModel(model);
-
-            // Mengatur lebar kolom "No"
-            tblDataDashboard.getColumnModel().getColumn(0).setPreferredWidth(30);
-
-        } catch (Exception e) {
-            System.out.println("Error loadTable: " + e.getMessage());
+   private void loadTable() {
+    // 1. Membuat DefaultTableModel khusus agar sel tabel TIDAK BISA DIEDIT (Read-Only)
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // Mengunci sel agar tidak bisa diedit manual oleh user
         }
-}   
+    };
+    
+    // 2. Menata kolom JTable Dashboard
+    model.addColumn("No.");
+    model.addColumn("ID Pinjam");
+    model.addColumn("Nama Anggota");
+    model.addColumn("Judul Buku");
+    model.addColumn("Jumlah");
+    model.addColumn("Tgl Pinjam");
+    model.addColumn("Status");
+
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // 3. KUERI SQL: Cukup panggil nama View yang sudah kita buat di database
+        String sql = "SELECT * FROM view_dashboard";
+
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        int no = 1;
+        while (rs.next()) {
+            // 4. Memasukkan data dari database sesuai dengan alias kolom yang ada di View
+            model.addRow(new Object[]{
+                no++,                               
+                rs.getString("Id_Pinjam"),         
+                rs.getString("Nama_Anggota"),  // Menggunakan alias 'Nama_Anggota' dari View
+                rs.getString("Judul_Buku"),        
+                rs.getString("Jumlah_Pinjam"),     
+                rs.getString("Tanggal_Pinjam"),    
+                rs.getString("Status_Pinjam")   // Menggunakan alias 'Status_Pinjam' dari View
+            });
+        }
+        
+        // 5. Set model data terbaru ke tabel JTable dashboard-mu
+        tblDataDashboard.setModel(model);
+
+        // 6. Pengaturan kosmetik/lebar kolom agar presisi dan pas dilihat
+        tblDataDashboard.getColumnModel().getColumn(0).setPreferredWidth(40);  // No
+        tblDataDashboard.getColumnModel().getColumn(1).setPreferredWidth(90);  // ID Pinjam
+        tblDataDashboard.getColumnModel().getColumn(2).setPreferredWidth(150); // Nama Anggota
+        tblDataDashboard.getColumnModel().getColumn(3).setPreferredWidth(220); // Judul Buku (Paling Lebar)
+        tblDataDashboard.getColumnModel().getColumn(4).setPreferredWidth(60);  // Jumlah
+        tblDataDashboard.getColumnModel().getColumn(5).setPreferredWidth(100); // Tgl Pinjam
+        tblDataDashboard.getColumnModel().getColumn(6).setPreferredWidth(120); // Status
+
+    } catch (Exception e) {
+        System.out.println("Error loadTable Dashboard (View): " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data dashboard: " + e.getMessage());
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -113,19 +127,19 @@ public class menuDashboard extends javax.swing.JPanel {
         custom_JPanelRounded1 = new palette.Custom_JPanelRounded();
         jLabel1 = new javax.swing.JLabel();
         txtAnggota = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
         custom_JPanelRounded2 = new palette.Custom_JPanelRounded();
         jLabel4 = new javax.swing.JLabel();
         txtBuku = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
         custom_JPanelRounded3 = new palette.Custom_JPanelRounded();
         jLabel7 = new javax.swing.JLabel();
         txtPeminjaman = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
         custom_JPanelRounded4 = new palette.Custom_JPanelRounded();
         jLabel10 = new javax.swing.JLabel();
         txtPengembalian = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -143,37 +157,39 @@ public class menuDashboard extends javax.swing.JPanel {
         txtAnggota.setForeground(new java.awt.Color(255, 255, 255));
         txtAnggota.setText("999");
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconOrang.png"))); // NOI18N
+        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconOrang.png"))); // NOI18N
 
         javax.swing.GroupLayout custom_JPanelRounded1Layout = new javax.swing.GroupLayout(custom_JPanelRounded1);
         custom_JPanelRounded1.setLayout(custom_JPanelRounded1Layout);
         custom_JPanelRounded1Layout.setHorizontalGroup(
             custom_JPanelRounded1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded1Layout.createSequentialGroup()
-                .addContainerGap(22, Short.MAX_VALUE)
+                .addGap(22, 22, 22)
                 .addGroup(custom_JPanelRounded1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, custom_JPanelRounded1Layout.createSequentialGroup()
-                        .addComponent(txtAnggota)
-                        .addGap(39, 39, 39))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, custom_JPanelRounded1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(txtAnggota))
+                .addGap(116, 116, 116))
+            .addGroup(custom_JPanelRounded1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, custom_JPanelRounded1Layout.createSequentialGroup()
+                    .addContainerGap(99, Short.MAX_VALUE)
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(22, 22, 22)))
         );
         custom_JPanelRounded1Layout.setVerticalGroup(
             custom_JPanelRounded1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded1Layout.createSequentialGroup()
-                .addGroup(custom_JPanelRounded1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(custom_JPanelRounded1Layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(jLabel3))
-                    .addGroup(custom_JPanelRounded1Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtAnggota)))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(25, 25, 25)
+                .addComponent(txtAnggota)
+                .addContainerGap())
+            .addGroup(custom_JPanelRounded1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, custom_JPanelRounded1Layout.createSequentialGroup()
+                    .addContainerGap(68, Short.MAX_VALUE)
+                    .addComponent(jLabel17)
+                    .addGap(15, 15, 15)))
         );
 
         custom_JPanelRounded2.setBackground(new java.awt.Color(0, 102, 255));
@@ -186,32 +202,39 @@ public class menuDashboard extends javax.swing.JPanel {
         txtBuku.setForeground(new java.awt.Color(255, 255, 255));
         txtBuku.setText("999");
 
-        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconBuku_1.png"))); // NOI18N
+        jLabel18.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel18.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/BookIcon.png"))); // NOI18N
 
         javax.swing.GroupLayout custom_JPanelRounded2Layout = new javax.swing.GroupLayout(custom_JPanelRounded2);
         custom_JPanelRounded2.setLayout(custom_JPanelRounded2Layout);
         custom_JPanelRounded2Layout.setHorizontalGroup(
             custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
-                .addContainerGap(22, Short.MAX_VALUE)
-                .addGroup(custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtBuku)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
-                .addComponent(jLabel6)
-                .addGap(26, 26, 26))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, custom_JPanelRounded2Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(txtBuku))
+                .addGap(146, 146, 146))
+            .addGroup(custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, custom_JPanelRounded2Layout.createSequentialGroup()
+                    .addContainerGap(128, Short.MAX_VALUE)
+                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(1, 1, 1)))
         );
         custom_JPanelRounded2Layout.setVerticalGroup(
             custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
                 .addGap(26, 26, 26)
-                .addGroup(custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(35, 35, 35)
-                        .addComponent(txtBuku)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(txtBuku)
+                .addContainerGap())
+            .addGroup(custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, custom_JPanelRounded2Layout.createSequentialGroup()
+                    .addContainerGap(69, Short.MAX_VALUE)
+                    .addComponent(jLabel18)
+                    .addGap(11, 11, 11)))
         );
 
         custom_JPanelRounded3.setBackground(new java.awt.Color(0, 102, 255));
@@ -224,34 +247,34 @@ public class menuDashboard extends javax.swing.JPanel {
         txtPeminjaman.setForeground(new java.awt.Color(255, 255, 255));
         txtPeminjaman.setText("999");
 
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconPinjamBuku.png"))); // NOI18N
+        jLabel19.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel19.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconPinjamBuku.png"))); // NOI18N
 
         javax.swing.GroupLayout custom_JPanelRounded3Layout = new javax.swing.GroupLayout(custom_JPanelRounded3);
         custom_JPanelRounded3.setLayout(custom_JPanelRounded3Layout);
         custom_JPanelRounded3Layout.setHorizontalGroup(
             custom_JPanelRounded3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(23, 23, 23)
                 .addGroup(custom_JPanelRounded3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addGroup(custom_JPanelRounded3Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(txtPeminjaman)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel9)
-                .addContainerGap())
+                        .addComponent(txtPeminjaman)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12))
         );
         custom_JPanelRounded3Layout.setVerticalGroup(
             custom_JPanelRounded3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7)
                 .addGap(26, 26, 26)
-                .addGroup(custom_JPanelRounded3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel9)
-                    .addGroup(custom_JPanelRounded3Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addGap(35, 35, 35)
-                        .addComponent(txtPeminjaman)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(custom_JPanelRounded3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtPeminjaman)
+                    .addComponent(jLabel19))
+                .addContainerGap())
         );
 
         custom_JPanelRounded4.setBackground(new java.awt.Color(0, 102, 255));
@@ -264,32 +287,37 @@ public class menuDashboard extends javax.swing.JPanel {
         txtPengembalian.setForeground(new java.awt.Color(255, 255, 255));
         txtPengembalian.setText("999");
 
-        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconKembaliBuku.png"))); // NOI18N
+        jLabel16.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel16.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/IconKembaliBuku.png"))); // NOI18N
 
         javax.swing.GroupLayout custom_JPanelRounded4Layout = new javax.swing.GroupLayout(custom_JPanelRounded4);
         custom_JPanelRounded4.setLayout(custom_JPanelRounded4Layout);
         custom_JPanelRounded4Layout.setHorizontalGroup(
             custom_JPanelRounded4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded4Layout.createSequentialGroup()
-                .addContainerGap(22, Short.MAX_VALUE)
                 .addGroup(custom_JPanelRounded4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPengembalian)
-                    .addComponent(jLabel10))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel12)
-                .addGap(1, 1, 1))
+                    .addGroup(custom_JPanelRounded4Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(txtPengembalian)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE))
+                    .addGroup(custom_JPanelRounded4Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel10)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         custom_JPanelRounded4Layout.setVerticalGroup(
             custom_JPanelRounded4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded4Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap()
+                .addComponent(jLabel10)
+                .addGap(28, 28, 28)
                 .addGroup(custom_JPanelRounded4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel12)
-                    .addGroup(custom_JPanelRounded4Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(35, 35, 35)
-                        .addComponent(txtPengembalian)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtPengembalian)
+                    .addComponent(jLabel16))
+                .addContainerGap())
         );
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -319,7 +347,7 @@ public class menuDashboard extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(13, 13, 13)
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -333,10 +361,10 @@ public class menuDashboard extends javax.swing.JPanel {
                                 .addGap(30, 30, 30)
                                 .addComponent(custom_JPanelRounded2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(30, 30, 30)
-                                .addComponent(custom_JPanelRounded3, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(30, 30, 30)
+                                .addComponent(custom_JPanelRounded3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(37, 37, 37)
                                 .addComponent(custom_JPanelRounded4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 254, Short.MAX_VALUE)))
+                        .addGap(0, 215, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -349,11 +377,11 @@ public class menuDashboard extends javax.swing.JPanel {
                     .addComponent(custom_JPanelRounded4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(custom_JPanelRounded3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(custom_JPanelRounded2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(custom_JPanelRounded1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(custom_JPanelRounded1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(19, 19, 19)
                 .addComponent(jLabel14)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -366,14 +394,14 @@ public class menuDashboard extends javax.swing.JPanel {
     private palette.Custom_JPanelRounded custom_JPanelRounded4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblDataDashboard;
     private javax.swing.JLabel txtAnggota;
