@@ -4,27 +4,30 @@
  * and open the template in the editor.
  */
 package Tampilan;
-
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author User
  */
-public class DialongPilihPinjam extends javax.swing.JDialog {
+public class DialongPilihPengembalian extends javax.swing.JDialog {
 private String idPeminjaman;
     /**
      * Creates new form DialongPilihPinjam
      */
-    public DialongPilihPinjam(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-        loadData("");
+    private View.menuPengembalian parentForm;
+
+public DialongPilihPengembalian(java.awt.Frame owner, boolean modal, View.menuPengembalian parent) {
+    super(owner, modal);
+    this.parentForm = parent;
+    initComponents();
+    loadData("");
     }
     public String getIdPeminjaman() {
         return idPeminjaman;
     }
 private void loadData(String keyword) {
     javax.swing.table.DefaultTableModel model = 
-        (javax.swing.table.DefaultTableModel) JTable1.getModel();
+        (javax.swing.table.DefaultTableModel) jTable1.getModel();
     model.setRowCount(0);
     
     try {
@@ -53,6 +56,38 @@ private void loadData(String keyword) {
         javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
     }
 }
+public void tampilData(String cari) {
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("ID Pinjam");
+    model.addColumn("Tanggal Pinjam");
+    model.addColumn("Tanggal Kembali");
+
+    try {
+        Koneksi.koneksi kon = new Koneksi.koneksi();
+        java.sql.Connection conn = kon.getKoneksi();
+        
+        // Query mendeteksi inputan pencarian berdasarkan id_peminjaman
+        String sql = "SELECT id_peminjaman, tgl_peminjaman, tgl_kembali FROM peminjaman WHERE id_peminjaman LIKE ?";
+        
+        java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, "%" + cari + "%"); // Menangkap teks pencarian secara fleksibel
+        
+        java.sql.ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                rs.getString("id_peminjaman"),
+                rs.getString("tgl_peminjaman"),
+                rs.getString("tgl_kembali")
+            });
+        }
+        
+        // Ganti jTable1 sesuai dengan nama variabel komponen tabel di design Anda
+        jTable1.setModel(model); 
+        
+    } catch (Exception e) {
+        System.out.println("Error memuat tabel pencarian: " + e.getMessage());
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -70,9 +105,9 @@ private void loadData(String keyword) {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        txtCari = new palette.Custom_JTextField();
+        txtSerch = new palette.Custom_JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        JTable1 = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(700, 500));
@@ -96,11 +131,16 @@ private void loadData(String keyword) {
         jLabel3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel3.setText("Transaksi Peminjaman");
 
-        txtCari.setPlaceholder("Serch");
+        txtSerch.setPlaceholder("Serch");
+        txtSerch.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txtSerchCaretUpdate(evt);
+            }
+        });
 
-        JTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        JTable1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        JTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        jTable1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -111,13 +151,13 @@ private void loadData(String keyword) {
                 "ID Pinjam", "Tanggal PInjam", "Tanggal Kembali", "Nama Anggota"
             }
         ));
-        JTable1.setRowHeight(50);
-        JTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTable1.setRowHeight(50);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                JTable1MouseClicked(evt);
+                jTable1MouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(JTable1);
+        jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -139,7 +179,7 @@ private void loadData(String keyword) {
                         .addComponent(jButton3)))
                 .addGap(490, 490, 490))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtSerch, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -161,7 +201,7 @@ private void loadData(String keyword) {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtSerch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
@@ -179,16 +219,64 @@ private void loadData(String keyword) {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void JTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTable1MouseClicked
-     if (evt.getClickCount() == 2) {
-        int row = JTable1.getSelectedRow();
-        if (row >= 0) {
-            idPeminjaman = JTable1.getValueAt(row, 0).toString();
-            dispose();
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+   // Menggunakan sekali klik agar lebih responsif
+    int row = jTable1.getSelectedRow();
+    if (row >= 0) {
+        String idPinjam = jTable1.getValueAt(row, 0).toString();
+        String tglPinjam = jTable1.getValueAt(row, 1) != null ? jTable1.getValueAt(row, 1).toString() : "";
+        String tglKembali = jTable1.getValueAt(row, 2) != null ? jTable1.getValueAt(row, 2).toString() : "";
+        
+        if (parentForm != null) {
+            try {
+                Koneksi.koneksi kon = new Koneksi.koneksi();
+                java.sql.Connection conn = kon.getKoneksi();
+                
+                // Menambahkan LIMIT 1 agar baris data ganda tidak membuat textfield crash
+                String sql = "SELECT p.Nis, a.nama, dp.Id_Buku, b.Judul_Buku, b.Pengarang, pb.nama_penerbit " +
+                             "FROM peminjaman p " +
+                             "JOIN data_anggota a ON p.Nis = a.Nis " +
+                             "JOIN detail_pinjam dp ON p.Id_Pinjam = dp.Id_Pinjam " +
+                             "JOIN buku b ON dp.Id_Buku = b.Id_Buku " +
+                             "JOIN penerbit pb ON b.id_penerbit = pb.id_penerbit " +
+                             "WHERE p.Id_Pinjam = ? " +
+                             "LIMIT 1"; 
+                
+                java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, idPinjam);
+                java.sql.ResultSet rs = ps.executeQuery();
+                
+                if (rs.next()) {
+                    // Mengirimkan data ke form menuPengembalian
+                    parentForm.itemTerpilihPeminjaman(
+                        idPinjam, 
+                        tglPinjam, 
+                        tglKembali,
+                        rs.getString("Nis"), 
+                        rs.getString("nama"),
+                        rs.getString("Id_Buku"), 
+                        rs.getString("Judul_Buku"),
+                        rs.getString("Pengarang"), 
+                        rs.getString("nama_penerbit")
+                    );
+                    this.dispose(); // Tutup pop-up jDialog setelah sukses mengirim
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Relasi data gagal! Periksa apakah data Anggota atau Penerbit di database terhapus.");
+                }
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Terjadi Error: " + e.getMessage());
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Hubungan ke Form Utama (parentForm) kosong/null!");
         }
     }
 
-    }//GEN-LAST:event_JTable1MouseClicked
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void txtSerchCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtSerchCaretUpdate
+        // TODO add your handling code here:                                    
+      loadData(txtSerch.getText());
+    }//GEN-LAST:event_txtSerchCaretUpdate
 
     /**
      * @param args the command line arguments
@@ -207,20 +295,21 @@ private void loadData(String keyword) {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DialongPilihPinjam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DialongPilihPengembalian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DialongPilihPinjam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DialongPilihPengembalian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DialongPilihPinjam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DialongPilihPengembalian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DialongPilihPinjam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DialongPilihPengembalian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                DialongPilihPinjam dialog = new DialongPilihPinjam(new javax.swing.JFrame(), true);
+               DialongPilihPengembalian dialog = new DialongPilihPengembalian(new javax.swing.JFrame(), true, null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -233,7 +322,6 @@ private void loadData(String keyword) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable JTable1;
     private javax.swing.JButton btnFrist;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -243,6 +331,7 @@ private void loadData(String keyword) {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private palette.Custom_JTextField txtCari;
+    private javax.swing.JTable jTable1;
+    private palette.Custom_JTextField txtSerch;
     // End of variables declaration//GEN-END:variables
 }

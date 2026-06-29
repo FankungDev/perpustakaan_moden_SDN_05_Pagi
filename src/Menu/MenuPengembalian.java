@@ -9,7 +9,7 @@ import java.sql.Connection;
 import Tampilan.MenuUtama;
 import javax.swing.JOptionPane;
 import java.sql.PreparedStatement;
-import Tampilan.DialongPilihPinjam;
+import Tampilan.DialongPilihPengembalian;
 import View.menuCRUDPengembalian;
 
 /**
@@ -319,8 +319,8 @@ public class MenuPengembalian extends javax.swing.JPanel {
 
     private void btnGetPeminjamanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetPeminjamanActionPerformed
 
-    DialongPilihPinjam dialog = new DialongPilihPinjam(
-        (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), true
+    DialongPilihPengembalian dialog = new DialongPilihPengembalian(
+        (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), true, null
     );
     dialog.setVisible(true);
 
