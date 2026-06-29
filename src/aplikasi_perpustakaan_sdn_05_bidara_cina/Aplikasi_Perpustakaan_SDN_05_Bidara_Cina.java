@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package aplikasi_perpustakaan_sdn_05_bidara_cina;
-
+import Tampilan.FormLogin;
 
 
 /**
@@ -17,10 +17,8 @@ public class Aplikasi_Perpustakaan_SDN_05_Bidara_Cina {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        
-   
-        
-        
+            FormLogin login = new FormLogin();
+            login.setVisible(true);
     }
     
 }

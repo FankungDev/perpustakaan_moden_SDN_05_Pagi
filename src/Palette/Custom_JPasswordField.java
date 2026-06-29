@@ -155,4 +155,8 @@ public class Custom_JPasswordField extends JPasswordField implements Serializabl
         g2.draw(shape);
         g2.dispose();
     }
+
+    public void addActionListener() {
+        
+    }
 }

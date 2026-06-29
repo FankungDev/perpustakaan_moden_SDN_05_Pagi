@@ -21,6 +21,7 @@ public class FormLogin extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setBackground(new java.awt.Color(0, 0, 0, 0));
         
+        
         // untuk Logo Utama //
         try {
         javax.swing.ImageIcon iconAsli = new javax.swing.ImageIcon(getClass().getResource("/gambar/LoginPagePng.png"));
@@ -37,9 +38,86 @@ public class FormLogin extends javax.swing.JFrame {
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
+        inisialisasiAksiManual();
         
         // untuk Logo Mata
 }
+    
+    private void inisialisasiAksiManual() {
+        // 1. Aksi ketika tombol LOGIN diklik
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prosesLogin();
+            }
+        });
+
+        // 2. Aksi fitur intip password pada label mata (lblLihatGmbr)
+        lblLihatGmbr.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                // Menampilkan teks password asli saat ikon ditekan/ditahan
+                txtPassword.setEchoChar((char) 0);
+            }
+
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                // Menyembunyikan kembali teks password menjadi bullet bulat saat klik dilepas
+                txtPassword.setEchoChar('\u2022');
+            }
+        });
+    }
+    
+    private void prosesLogin() {
+        String username = txtUsername.getText().trim();
+        String password = new String(txtPassword.getPassword());
+
+        // Validasi inputan tidak boleh kosong
+        if (username.isEmpty() || password.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Username dan Password wajib diisi!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String sql = "SELECT * FROM data_admin WHERE Username = ? AND Password = ?";
+
+        // 1. Ambil instans koneksi global (Jangan ditaruh di dalam try-with-resources agar tidak auto-close)
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        if (conn == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Koneksi database tidak tersedia!", "Error Database", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 2. Hanya PreparedStatement dan ResultSet saja yang boleh auto-close
+        try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, username);
+            ps.setString(2, password);
+            
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String namaAdmin = rs.getString("nama");
+                    String level = rs.getString("level");
+                    
+                    javax.swing.JOptionPane.showMessageDialog(this, "Selamat Datang " + namaAdmin + " (" + level + ")!", "Login Berhasil", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    
+                    // Membuka Frame MenuUtama / Dashboard
+                    MenuUtama utama = new MenuUtama();
+                    utama.setVisible(true);
+                    
+                    // Menutup FormLogin saat ini
+                    this.dispose();
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Username atau Password salah!", "Gagal Login", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    txtPassword.setText("");
+                    txtPassword.requestFocus();
+                }
+            }
+            
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memproses data: " + e.getMessage(), "Error Database", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -53,12 +131,12 @@ public class FormLogin extends javax.swing.JFrame {
         custom_JPanelRounded1 = new palette.Custom_JPanelRounded();
         custom_JPanelRounded2 = new palette.Custom_JPanelRounded();
         jLabelIcon = new javax.swing.JLabel();
-        custom_JTextField1 = new palette.Custom_JTextField();
+        txtUsername = new palette.Custom_JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabelMata = new javax.swing.JLabel();
-        custom_JPasswordField1 = new palette.Custom_JPasswordField();
-        custom_JButton1 = new palette.Custom_JButton();
+        lblLihatGmbr = new javax.swing.JLabel();
+        txtPassword = new palette.Custom_JPasswordField();
+        btnLogin = new palette.Custom_JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
 
@@ -92,9 +170,9 @@ public class FormLogin extends javax.swing.JFrame {
 
         custom_JPanelRounded1.add(custom_JPanelRounded2, new org.netbeans.lib.awtextra.AbsoluteConstraints(398, 0, -1, 388));
 
-        custom_JTextField1.setForeground(new java.awt.Color(153, 153, 153));
-        custom_JTextField1.addActionListener(this::custom_JTextField1ActionPerformed);
-        custom_JPanelRounded1.add(custom_JTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 105, 350, 41));
+        txtUsername.setForeground(new java.awt.Color(153, 153, 153));
+        txtUsername.addActionListener();
+        custom_JPanelRounded1.add(txtUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 105, 350, 41));
 
         jLabel2.setBackground(new java.awt.Color(204, 204, 204));
         jLabel2.setFont(new java.awt.Font("Yu Gothic UI Semibold", 1, 14)); // NOI18N
@@ -107,16 +185,16 @@ public class FormLogin extends javax.swing.JFrame {
         jLabel3.setText("Password");
         custom_JPanelRounded1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 164, -1, -1));
 
-        jLabelMata.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/eyesIconfit.png"))); // NOI18N
-        custom_JPanelRounded1.add(jLabelMata, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 190, 30, 40));
+        lblLihatGmbr.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/eyesIconfit.png"))); // NOI18N
+        custom_JPanelRounded1.add(lblLihatGmbr, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 190, 30, 40));
 
-        custom_JPasswordField1.setForeground(new java.awt.Color(153, 153, 153));
-        custom_JPasswordField1.addActionListener(this::custom_JPasswordField1ActionPerformed);
-        custom_JPanelRounded1.add(custom_JPasswordField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 192, 350, 41));
+        txtPassword.setForeground(new java.awt.Color(153, 153, 153));
+        txtPassword.addActionListener();
+        custom_JPanelRounded1.add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 192, 350, 41));
 
-        custom_JButton1.setText("LOGIN");
-        custom_JButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        custom_JPanelRounded1.add(custom_JButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 258, 350, 41));
+        btnLogin.setText("LOGIN");
+        btnLogin.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        custom_JPanelRounded1.add(btnLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 258, 350, 41));
 
         jLabel4.setBackground(new java.awt.Color(204, 204, 204));
         jLabel4.setForeground(new java.awt.Color(153, 153, 153));
@@ -143,13 +221,13 @@ public class FormLogin extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void custom_JTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custom_JTextField1ActionPerformed
+    private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_custom_JTextField1ActionPerformed
+    }//GEN-LAST:event_txtUsernameActionPerformed
 
-    private void custom_JPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custom_JPasswordField1ActionPerformed
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_custom_JPasswordField1ActionPerformed
+    }//GEN-LAST:event_txtPasswordActionPerformed
 
     /**
      * @param args the command line arguments
@@ -177,16 +255,16 @@ public class FormLogin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private palette.Custom_JButton custom_JButton1;
+    private palette.Custom_JButton btnLogin;
     private palette.Custom_JPanelRounded custom_JPanelRounded1;
     private palette.Custom_JPanelRounded custom_JPanelRounded2;
-    private palette.Custom_JPasswordField custom_JPasswordField1;
-    private palette.Custom_JTextField custom_JTextField1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabelIcon;
-    private javax.swing.JLabel jLabelMata;
+    private javax.swing.JLabel lblLihatGmbr;
+    private palette.Custom_JPasswordField txtPassword;
+    private palette.Custom_JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

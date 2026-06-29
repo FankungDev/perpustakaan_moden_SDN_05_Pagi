@@ -156,4 +156,8 @@ public class Custom_JTextField extends JTextField implements Serializable {
         g2.draw(shape);
         g2.dispose();
     }
+
+    public void addActionListener() {
+       
+    }
 }

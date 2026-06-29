@@ -24,16 +24,16 @@ public class MenuUtama extends javax.swing.JFrame {
      */
     public MenuUtama() {
         initComponents();
+        setLocationRelativeTo(null);
         
         pKanan.setLayout(new java.awt.BorderLayout());
         pDasar.setLayout(new java.awt.BorderLayout());
         pUtama.setLayout(new java.awt.BorderLayout());
-
-        // 2. KUNCI UTAMA: Paksa JScrollPane masuk ke CENTER-nya pDasar secara mutlak
+        
         pDasar.removeAll(); // Hapus dulu sisa-sisa layout absolute bawaan NetBeans
         pDasar.add(jScrollPane1, java.awt.BorderLayout.CENTER); 
 
-        // 3. Pastikan pUtama nempel di dalam JScrollPane
+        // Pastikan pUtama nempel di dalam JScrollPane
         jScrollPane1.setViewportView(pUtama);
 
         // Tampilkan dashboard pas pertama kali buka
