@@ -25,8 +25,23 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
      */
     public menuCRUDPeminjaman() {
         initComponents();
-        btnSimpan.setVisible(true); // Sembunyikan Simpan, tampilkan Tambah
-        btnTambah.setVisible(true);
+        java.awt.Dimension ukuranTetap = new java.awt.Dimension(289, 38);
+    
+        txtIdBuku.setPreferredSize(ukuranTetap);
+        txtIdBuku.setMaximumSize(ukuranTetap);
+        txtIdBuku.setMinimumSize(ukuranTetap);
+
+        txtJudul.setPreferredSize(ukuranTetap);
+        txtJudul.setMaximumSize(ukuranTetap);
+        txtJudul.setMinimumSize(ukuranTetap);
+
+        txtPengarang.setPreferredSize(ukuranTetap);
+        txtPengarang.setMaximumSize(ukuranTetap);
+        txtPengarang.setMinimumSize(ukuranTetap);
+
+        txtPenerbit.setPreferredSize(ukuranTetap);
+        txtPenerbit.setMaximumSize(ukuranTetap);
+        txtPenerbit.setMinimumSize(ukuranTetap);
 
         // Atur kolom untuk tabel keranjang sementara
         DefaultTableModel model = new DefaultTableModel();
@@ -191,6 +206,12 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         tfDeskripsi = new javax.swing.JTextField();
         btnTambah = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
+        txtIDPinjam = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        txtTglPinjam = new com.toedter.calendar.JDateChooser();
+        txtTglKembali = new com.toedter.calendar.JDateChooser();
+        jLabel16 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         txtTelpon = new javax.swing.JTextField();
         btnCariDataAnggota = new javax.swing.JButton();
@@ -261,15 +282,47 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
             }
         });
 
+        jLabel11.setText("ID Pinjam");
+
+        jLabel15.setText("Tanggal Pinjam");
+
+        jLabel16.setText("Tanggal Kembali");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel11)
+                .addGap(46, 46, 46)
+                .addComponent(txtIDPinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(224, 224, 224)
+                .addComponent(jLabel15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtTglPinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel16)
+                .addGap(18, 18, 18)
+                .addComponent(txtTglKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(100, 100, 100))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 64, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(txtTglKembali, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtIDPinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel11)
+                        .addComponent(jLabel15))
+                    .addComponent(txtTglPinjam, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jLabel16)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel6.setText("Telepon");
@@ -390,7 +443,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
                                     .addComponent(txtTotalBuku, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel14)
                                     .addComponent(lblTotalPinjam))))
-                        .addGap(0, 86, Short.MAX_VALUE)))
+                        .addGap(0, 10, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -500,7 +553,21 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        // Membuka Jframe/JDialog Popup data anggota
+        DefaultTableModel model = (DefaultTableModel) dataTabelPinjam.getModel();
+        model.addRow(new Object[]{
+            txtIdBuku.getText(),
+            txtJudul.getText(),
+            txtPengarang.getText(),
+            txtPenerbit.getText(),
+            txtJumlahPinjam.getText() // misal ambil dari input jumlah
+        });
+
+        hitungTotalPinjam();
+
+        // KUNCI INPUT DATA ANGGOTA DISINI
+        // Supaya selama keranjang ada isinya, data anggota tidak bisa diganti
+        txtNIS.setEditable(false);
+        btnCariDataAnggota.setEnabled(false);
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void tfNamaKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfNamaKategoriActionPerformed
@@ -537,9 +604,12 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     private javax.swing.JTable dataTabelPinjam;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -556,12 +626,15 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     private javax.swing.JLabel lblTotalPinjam;
     private javax.swing.JTextField tfDeskripsi;
     private javax.swing.JTextField tfNamaKategori;
+    private javax.swing.JTextField txtIDPinjam;
     private javax.swing.JTextField txtIdBuku;
     private javax.swing.JTextField txtJudul;
     private javax.swing.JTextField txtNIS;
     private javax.swing.JTextField txtPenerbit;
     private javax.swing.JTextField txtPengarang;
     private javax.swing.JTextField txtTelpon;
+    private com.toedter.calendar.JDateChooser txtTglKembali;
+    private com.toedter.calendar.JDateChooser txtTglPinjam;
     private javax.swing.JTextField txtTotalBuku;
     // End of variables declaration//GEN-END:variables
 }

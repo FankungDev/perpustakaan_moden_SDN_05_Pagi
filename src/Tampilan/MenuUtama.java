@@ -24,6 +24,21 @@ public class MenuUtama extends javax.swing.JFrame {
      */
     public MenuUtama() {
         initComponents();
+        
+        pKanan.setLayout(new java.awt.BorderLayout());
+        pDasar.setLayout(new java.awt.BorderLayout());
+        pUtama.setLayout(new java.awt.BorderLayout());
+
+        // 2. KUNCI UTAMA: Paksa JScrollPane masuk ke CENTER-nya pDasar secara mutlak
+        pDasar.removeAll(); // Hapus dulu sisa-sisa layout absolute bawaan NetBeans
+        pDasar.add(jScrollPane1, java.awt.BorderLayout.CENTER); 
+
+        // 3. Pastikan pUtama nempel di dalam JScrollPane
+        jScrollPane1.setViewportView(pUtama);
+
+        // Tampilkan dashboard pas pertama kali buka
+        showPanel(new menuDashboard());
+        
         pUtama.setLayout(new java.awt.BorderLayout());
         BpnlDashboard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BpnlAnggota.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -657,7 +672,7 @@ public class MenuUtama extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1595, Short.MAX_VALUE)
+            .addGap(0, 1483, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -670,27 +685,17 @@ public class MenuUtama extends javax.swing.JFrame {
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         pUtama.setBackground(new java.awt.Color(255, 255, 255));
-
-        javax.swing.GroupLayout pUtamaLayout = new javax.swing.GroupLayout(pUtama);
-        pUtama.setLayout(pUtamaLayout);
-        pUtamaLayout.setHorizontalGroup(
-            pUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1699, Short.MAX_VALUE)
-        );
-        pUtamaLayout.setVerticalGroup(
-            pUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 904, Short.MAX_VALUE)
-        );
-
+        pUtama.setLayout(new java.awt.BorderLayout());
         jScrollPane1.setViewportView(pUtama);
 
         javax.swing.GroupLayout pDasarLayout = new javax.swing.GroupLayout(pDasar);
         pDasar.setLayout(pDasarLayout);
         pDasarLayout.setHorizontalGroup(
             pDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1595, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1483, Short.MAX_VALUE)
         );
         pDasarLayout.setVerticalGroup(
             pDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
