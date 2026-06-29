@@ -6,8 +6,8 @@
 package View;
 import Menu.MenuPengembalian;
 import Koneksi.koneksi;
-
 import Tampilan.MenuUtama;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,10 +21,11 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
     public menuCRUDPengembalian() {
         initComponents();
        insertData();
+       tampilData("");
     }
     private void insertData() {
     javax.swing.table.DefaultTableModel model = 
-        (javax.swing.table.DefaultTableModel) jTabel.getModel();
+        (javax.swing.table.DefaultTableModel) jTable1.getModel();
     model.setRowCount(0);
     
     try {
@@ -50,6 +51,43 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
         javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
     }
 }
+    public void tampilData(String cari) {
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("ID Pengembalian");
+    model.addColumn("Tanggal Pengembalian");
+    model.addColumn("ID Peminjaman");
+    model.addColumn("Petugas"); // Sesuai kolom ke-4 di design Anda
+
+    try {
+        Koneksi.koneksi kon = new Koneksi.koneksi();
+        java.sql.Connection conn = kon.getKoneksi();
+        
+        // Query SQL menggunakan LIKE untuk mencari berdasarkan ID Pengembalian atau ID Peminjaman
+        String sql = "SELECT id_pengembalian, tgl_pengembalian, id_peminjaman, denda " +
+                     "FROM pengembalian " +
+                     "WHERE id_pengembalian LIKE ? OR id_peminjaman LIKE ?";
+        
+        java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, "%" + cari + "%");
+        ps.setString(2, "%" + cari + "%");
+        
+        java.sql.ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                rs.getString("id_pengembalian"),
+                rs.getString("tgl_pengembalian"),
+                rs.getString("id_peminjaman"),
+                rs.getString("denda") // Menampilkan nilai denda/petugas sesuai struktur database Anda
+            });
+        }
+        
+        // Sesuaikan jTable1 dengan nama variabel tabel utama Anda di halaman ini
+        jTable1.setModel(model);
+        
+    } catch (Exception e) {
+        System.out.println("Error memuat tabel pengembalian: " + e.getMessage());
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -63,9 +101,9 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         btnTambah = new palette.Custom_JButton();
         jLabel2 = new javax.swing.JLabel();
-        btnCari = new palette.Custom_JTextField();
+        txtSerch = new palette.Custom_JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTabel = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         btn2 = new javax.swing.JButton();
@@ -88,11 +126,16 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel2.setText("Transaksi > Pengembalian");
 
-        btnCari.setPlaceholder("Serch");
+        txtSerch.setPlaceholder("Serch");
+        txtSerch.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txtSerchCaretUpdate(evt);
+            }
+        });
 
-        jTabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        jTabel.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        jTabel.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        jTable1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -103,8 +146,8 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
                 "ID Pengembalian", "Tanggal Pengembalian", "ID Peminjaman ", "Petugas"
             }
         ));
-        jTabel.setRowHeight(50);
-        jScrollPane1.setViewportView(jTabel);
+        jTable1.setRowHeight(50);
+        jScrollPane1.setViewportView(jTable1);
 
         jLabel3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel3.setText("Halaman 1 Dari Total Data 2");
@@ -166,7 +209,7 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtSerch, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -182,7 +225,7 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtSerch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -205,9 +248,14 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
         if (menuUtama != null){
-        menuUtama.showPanel(new MenuPengembalian());
+      menuUtama.showPanel(new menuPengembalian());
     }
     }//GEN-LAST:event_btnTambahActionPerformed
+
+    private void txtSerchCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtSerchCaretUpdate
+        // TODO add your handling code here:
+        tampilData(txtSerch.getText());
+    }//GEN-LAST:event_txtSerchCaretUpdate
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -215,7 +263,6 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
     private javax.swing.JLabel IconBuku1;
     private javax.swing.JButton btn2;
     private javax.swing.JButton btn3;
-    private palette.Custom_JTextField btnCari;
     private palette.Custom_JButton btnTambah;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton4;
@@ -224,6 +271,7 @@ public class menuCRUDPengembalian extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTabel;
+    private javax.swing.JTable jTable1;
+    private palette.Custom_JTextField txtSerch;
     // End of variables declaration//GEN-END:variables
 }

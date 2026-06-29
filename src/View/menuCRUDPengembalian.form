@@ -50,7 +50,7 @@
                   <Group type="102" attributes="0">
                       <Component id="btnTambah" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="btnCari" min="-2" pref="311" max="-2" attributes="0"/>
+                      <Component id="txtSerch" min="-2" pref="311" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -72,7 +72,7 @@
               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnTambah" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnCari" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtSerch" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="405" max="-2" attributes="0"/>
@@ -116,10 +116,13 @@
         <Property name="text" type="java.lang.String" value="Transaksi &gt; Pengembalian"/>
       </Properties>
     </Component>
-    <Component class="palette.Custom_JTextField" name="btnCari">
+    <Component class="palette.Custom_JTextField" name="txtSerch">
       <Properties>
         <Property name="placeholder" type="java.lang.String" value="Serch"/>
       </Properties>
+      <Events>
+        <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="txtSerchCaretUpdate"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
@@ -128,7 +131,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="jTabel">
+        <Component class="javax.swing.JTable" name="jTable1">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
