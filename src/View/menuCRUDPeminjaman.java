@@ -25,6 +25,8 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
      */
     public menuCRUDPeminjaman() {
         initComponents();
+        this.btnBatalUpdate.setVisible(false);
+        this.btnUpdate.setVisible(false);
         java.awt.Dimension ukuranTetap = new java.awt.Dimension(289, 38);
     
         txtIdBuku.setPreferredSize(ukuranTetap);
@@ -51,6 +53,39 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         model.addColumn("Penerbit");
         model.addColumn("Jumlah Pinjam");
         dataTabelPinjam.setModel(model);
+        generateIdPinjam();
+    }
+
+        private void clearFormBuku() {
+        txtIdBuku.setText("");
+        txtJudul.setText("");
+        txtPengarang.setText("");
+        txtPenerbit.setText("");
+        txtJumlahBuku.setText("");
+    }   
+    
+        private String generateIdPinjam() {
+        String idBaru = "PJM001";
+        try {
+            Connection conn = Koneksi.koneksi.getKoneksi();
+            // Mencari Id_Pinjam yang paling besar/terakhir
+            String sql = "SELECT Id_Pinjam FROM peminjaman ORDER BY Id_Pinjam DESC LIMIT 1";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String idTerakhir = rs.getString("Id_Pinjam"); // contoh: "PJM002"
+                // Mengambil angka di belakang "PJM" (indeks ke-3 dst)
+                int angka = Integer.parseInt(idTerakhir.substring(3)); 
+                angka++; // Naikkan 1 angka menjadi 3
+
+                // Format kembali menjadi PJM003
+                idBaru = String.format("PJM%03d", angka); 
+            }
+        } catch (Exception e) {
+            System.out.println("Error generate ID Pinjam: " + e.getMessage());
+        }
+        return idBaru;
     }
     
     private void hitungTotalPinjam() {
@@ -226,11 +261,13 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         btnCariDataBuku = new javax.swing.JButton();
         lblGambar = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        txtTotalBuku = new javax.swing.JTextField();
+        txtJumlahBuku = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         lblTotalPinjam = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         dataTabelPinjam = new javax.swing.JTable();
+        btnUpdate = new javax.swing.JButton();
+        btnBatalUpdate = new javax.swing.JButton();
 
         jRadioButton1.setText("jRadioButton1");
 
@@ -385,6 +422,20 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(dataTabelPinjam);
 
+        btnUpdate.setText("UBAH");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
+
+        btnBatalUpdate.setText("BATAL");
+        btnBatalUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalUpdateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -406,7 +457,12 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
                                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnBatalUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel4)
@@ -440,7 +496,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel12)
-                                    .addComponent(txtTotalBuku, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtJumlahBuku, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel14)
                                     .addComponent(lblTotalPinjam))))
                         .addGap(0, 10, Short.MAX_VALUE)))
@@ -501,14 +557,17 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
                         .addGap(15, 15, 15)
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtTotalBuku, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtJumlahBuku, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(34, 34, 34)
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblTotalPinjam))
                     .addComponent(lblGambar, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatalUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -522,7 +581,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-        if(txtIdBuku.getText().isEmpty() || txtTotalBuku.getText().isEmpty()) {
+        if(txtIdBuku.getText().isEmpty() || txtJumlahBuku.getText().isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this, "Pilih buku dan isi jumlah pinjam terlebih dahulu!");
         return;
     }
@@ -536,7 +595,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
             txtJudul.getText(),
             txtPengarang.getText(),
             txtPenerbit.getText(),
-            txtTotalBuku.getText() // Mengambil jumlah yang diinput di txtTotalBuku
+            txtJumlahBuku.getText() // Mengambil jumlah yang diinput di txtTotalBuku
         });
 
         // 4. Hitung ulang total pinjam dari semua baris di tabel
@@ -547,27 +606,127 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         txtJudul.setText("");
         txtPengarang.setText("");
         txtPenerbit.setText("");
-        txtTotalBuku.setText("");
+        txtJumlahBuku.setText("");
         lblGambar.setIcon(null);
         lblGambar.setText("No Image");
     }//GEN-LAST:event_btnTambahActionPerformed
-
+    
+    
+    
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        // 1. VALIDASI UTAMA: Cek isi keranjang dan komponen input wajib
+    int jumlahBaris = dataTabelPinjam.getRowCount();
+    
+    // Validasi tabel keranjang
+    if (jumlahBaris == 0) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Tabel pinjaman masih kosong! Tambahkan buku terlebih dahulu.", 
+            "Peringatan", 
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+        return; 
+    }
+    
+    // Validasi ID Pinjam (Input Text)
+    if (txtIDPinjam.getText().trim().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "ID Pinjam wajib diisi!", 
+            "Peringatan", 
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+        txtIDPinjam.requestFocus(); // Garis kursor langsung fokus ke ID Pinjam
+        return;
+    }
+    
+    // Validasi Tanggal Pinjam (JDateChooser)
+    if (txtTglPinjam.getDate() == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Tanggal Pinjam wajib dipilih!", 
+            "Peringatan", 
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    
+    // Validasi Tanggal Kembali (JDateChooser)
+    if (txtTglKembali.getDate() == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Tanggal Kembali wajib dipilih!", 
+            "Peringatan", 
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // 2. PROSES SIMPAN KE DUA TABEL (HEADER & DETAIL)
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // Mengambil data dari komponen input form yang sudah diisi
+        String idPinjamUtama = txtIDPinjam.getText().trim(); 
+        String nisPeminjam = txtNIS.getText();                             
+        
+        // Konversi tanggal dari JDateChooser ke Format java.sql.Date untuk Database
+        java.sql.Date tglPinjamSql = new java.sql.Date(txtTglPinjam.getDate().getTime());
+        java.sql.Date tglKembaliSql = new java.sql.Date(txtTglKembali.getDate().getTime());
+
+        // =======================================================
+        // PROSES A: INSERT KE TABEL PEMINJAMAN (HEADER) - Cukup 1x Insert
+        // =======================================================
+        String sqlHeader = "INSERT INTO peminjaman (Id_Pinjam, Nis, Tanggal_Pinjam, Tanggal_Kembali, Point, status) "
+                         + "VALUES (?, ?, ?, ?, 0, 'Sedang dipinjam')";
+        PreparedStatement psHeader = conn.prepareStatement(sqlHeader);
+        psHeader.setString(1, idPinjamUtama);
+        psHeader.setString(2, nisPeminjam);
+        psHeader.setDate(3, tglPinjamSql);   // Menggunakan tgl pilihan dari form
+        psHeader.setDate(4, tglKembaliSql);  // Menggunakan tgl pilihan dari form
+        psHeader.executeUpdate(); 
+        
+        // =======================================================
+        // PROSES B: INSERT KE TABEL DETAIL_PINJAM (DETAIL) - Looping Batch
+        // =======================================================
+        String sqlDetail = "INSERT INTO detail_pinjam (Id_Pinjam, Id_Buku, Jumlah_Pinjam) VALUES (?, ?, ?)";
+        PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
+        
+        for (int i = 0; i < jumlahBaris; i++) {
+            String idBuku = dataTabelPinjam.getValueAt(i, 0).toString();             
+            int qty = Integer.parseInt(dataTabelPinjam.getValueAt(i, 4).toString()); 
+            
+            psDetail.setString(1, idPinjamUtama);
+            psDetail.setString(2, idBuku);
+            psDetail.setInt(3, qty);
+            
+            psDetail.addBatch(); 
+        }
+        
+        psDetail.executeBatch(); 
+        
+        // Tampilkan pesan sukses
+        javax.swing.JOptionPane.showMessageDialog(this, "Berhasil menyimpan transaksi " + idPinjamUtama + " dengan " + jumlahBaris + " buku!");
+        
+        // =======================================================
+        // RESET & BUKA KEMBALI KUNCI UNTUK TRANSAKSI BERIKUTNYA
+        // =======================================================
+        
+        // Bersihkan isi tabel keranjang di aplikasi
         DefaultTableModel model = (DefaultTableModel) dataTabelPinjam.getModel();
-        model.addRow(new Object[]{
-            txtIdBuku.getText(),
-            txtJudul.getText(),
-            txtPengarang.getText(),
-            txtPenerbit.getText(),
-            txtJumlahPinjam.getText() // misal ambil dari input jumlah
-        });
-
-        hitungTotalPinjam();
-
-        // KUNCI INPUT DATA ANGGOTA DISINI
-        // Supaya selama keranjang ada isinya, data anggota tidak bisa diganti
-        txtNIS.setEditable(false);
-        btnCariDataAnggota.setEnabled(false);
+        model.setRowCount(0);
+        lblTotalPinjam.setText("0");
+        
+        // Buka kembali akses cari data anggota baru
+        txtNIS.setEditable(true);
+        btnCariDataAnggota.setEnabled(true);
+        
+        // Kosongkan form identitas, kode pinjam, serta tanggalan agar bersih kembali
+        txtIDPinjam.setText("");
+        txtTglPinjam.setDate(null);
+        txtTglKembali.setDate(null);
+        txtNIS.setText("");
+        tfNamaKategori.setText(""); 
+        tfDeskripsi.setText("");    
+        txtTelpon.setText("");
+        clearFormBuku(); // Bersihkan juga sisa form buku jika ada
+        
+    } catch (Exception e) {
+        System.out.println("Error saat simpan database: " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan data transaksi: " + e.getMessage());
+    }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void tfNamaKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfNamaKategoriActionPerformed
@@ -585,7 +744,27 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_btnCariDataBukuActionPerformed
 
     private void dataTabelPinjamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dataTabelPinjamMouseClicked
-      
+    int barisTerpilih = dataTabelPinjam.getSelectedRow();
+    
+    if (barisTerpilih != -1) {
+        // Ambil data buku dari baris tabel yang diklik
+        String idBuku = dataTabelPinjam.getValueAt(barisTerpilih, 0).toString();      // Kolom 0 = ID Buku
+        String judulBuku = dataTabelPinjam.getValueAt(barisTerpilih, 1).toString();   // Kolom 1 = Judul Buku
+        String pengarang = dataTabelPinjam.getValueAt(barisTerpilih, 2).toString();   // Kolom 2 = Pengarang
+        String penerbit = dataTabelPinjam.getValueAt(barisTerpilih, 3).toString();    // Kolom 3 = Penerbit
+        String jumlahPinjam = dataTabelPinjam.getValueAt(barisTerpilih, 4).toString(); // Kolom 4 = Jumlah Pinjam
+        
+        // Set data ke komponen form input agar siap diedit/diubah bukunya
+        txtIdBuku.setText(idBuku);
+        txtJudul.setText(judulBuku);
+        txtPengarang.setText(pengarang);
+        txtPenerbit.setText(penerbit);
+        txtJumlahBuku.setText(jumlahPinjam);
+        
+        // Memunculkan tombol update dan batal update
+        this.btnBatalUpdate.setVisible(true);
+        this.btnUpdate.setVisible(true);
+    }
     }//GEN-LAST:event_dataTabelPinjamMouseClicked
 
     private void btnCariDataAnggotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariDataAnggotaActionPerformed
@@ -594,13 +773,81 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         popup.setVisible(true);    // TODO add your handling code here:
     }//GEN-LAST:event_btnCariDataAnggotaActionPerformed
 
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+// 1. Ambil baris indeks ke berapa yang sedang dipilih di tabel
+    int barisTerpilih = dataTabelPinjam.getSelectedRow();
+    
+    // Validasi: Pastikan ada baris yang terpilih
+    if (barisTerpilih == -1) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+                "Silakan klik salah satu baris buku di tabel terlebih dahulu!", 
+                "Peringatan", 
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    
+    // Validasi: Pastikan data buku input tidak kosong
+    if (txtIdBuku.getText().trim().isEmpty() || txtJumlahBuku.getText().trim().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+                "Data buku dan Jumlah buku tidak boleh kosong!", 
+                "Peringatan", 
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    
+    try {
+        int jumlahBaru = Integer.parseInt(txtJumlahBuku.getText().trim());
+        
+        // Validasi: Jumlah tidak boleh 0 atau negatif
+        if (jumlahBaru <= 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                    "Jumlah pinjam harus lebih dari 0!", 
+                    "Peringatan", 
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // 2. UPDATE data tabel secara keseluruhan berdasarkan inputan form terbaru
+        dataTabelPinjam.setValueAt(txtIdBuku.getText(), barisTerpilih, 0);       // Kolom 0 = ID Buku
+        dataTabelPinjam.setValueAt(txtJudul.getText(), barisTerpilih, 1);        // Kolom 1 = Judul Buku
+        dataTabelPinjam.setValueAt(txtPengarang.getText(), barisTerpilih, 2);    // Kolom 2 = Pengarang
+        dataTabelPinjam.setValueAt(txtPenerbit.getText(), barisTerpilih, 3);     // Kolom 3 = Penerbit
+        dataTabelPinjam.setValueAt(jumlahBaru, barisTerpilih, 4);                // Kolom 4 = Jumlah Pinjam
+        
+        // 3. Hitung ulang total keseluruhan pinjam di label GUI
+        hitungTotalPinjam();
+        
+        // 4. Bersihkan form inputan buku kembali
+        clearFormBuku();
+        
+        // 5. Sembunyikan kembali tombol update
+        this.btnBatalUpdate.setVisible(false);
+        this.btnUpdate.setVisible(false);
+        
+        javax.swing.JOptionPane.showMessageDialog(this, "Data buku di keranjang berhasil diperbarui!");
+        
+    } catch (NumberFormatException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+                "Masukkan jumlah harus berupa angka yang valid!", 
+                "Error", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+    }   // TODO add your handling code here:
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnBatalUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalUpdateActionPerformed
+     this.btnBatalUpdate.setVisible(false);
+     this.btnUpdate.setVisible(false);        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBatalUpdateActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnBatalUpdate;
     private javax.swing.JButton btnCariDataAnggota;
     private javax.swing.JButton btnCariDataBuku;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JTable dataTabelPinjam;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -629,12 +876,12 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     private javax.swing.JTextField txtIDPinjam;
     private javax.swing.JTextField txtIdBuku;
     private javax.swing.JTextField txtJudul;
+    private javax.swing.JTextField txtJumlahBuku;
     private javax.swing.JTextField txtNIS;
     private javax.swing.JTextField txtPenerbit;
     private javax.swing.JTextField txtPengarang;
     private javax.swing.JTextField txtTelpon;
     private com.toedter.calendar.JDateChooser txtTglKembali;
     private com.toedter.calendar.JDateChooser txtTglPinjam;
-    private javax.swing.JTextField txtTotalBuku;
     // End of variables declaration//GEN-END:variables
 }

@@ -25,8 +25,9 @@ public class menuDashboard extends javax.swing.JPanel {
         hitungData();
         loadTable();
     }
+    
     private void hitungData() {
-    try {
+   try {
         Connection conn = Koneksi.koneksi.getKoneksi();
         Statement st = conn.createStatement();
 
@@ -34,72 +35,85 @@ public class menuDashboard extends javax.swing.JPanel {
         ResultSet rsAnggota = st.executeQuery("SELECT COUNT(*) FROM data_anggota");
         if (rsAnggota.next()) txtAnggota.setText(rsAnggota.getString(1));
 
-        // 2. Hitung Stok Buku (Total buku di perpustakaan)
+        // 2. Hitung Stok Buku (Total semua unit buku di perpustakaan)
         ResultSet rsBuku = st.executeQuery("SELECT SUM(Stok) FROM buku");
-        if (rsBuku.next()) txtBuku.setText(rsBuku.getString(1));
+        if (rsBuku.next()) txtBuku.setText(rsBuku.getString(1) != null ? rsBuku.getString(1) : "0");
 
-        // 3. Hitung Total Buku Sedang Dipinjam
-        ResultSet rsPinjam = st.executeQuery("SELECT SUM(Jumlah_Pinjam) FROM peminjaman WHERE Tanggal_Kembali IS NULL OR Tanggal_Kembali = '0000-00-00'");
-        if (rsPinjam.next()) txtPeminjaman.setText(rsPinjam.getString(1) != null ? rsPinjam.getString(1) : "0");
+        // 3. PERBAIKAN: Hitung jumlah TRANSAKSI yang sedang dipinjam (bukan jumlah buku)
+        ResultSet rsPinjam = st.executeQuery(
+            "SELECT COUNT(DISTINCT Id_Pinjam) FROM peminjaman WHERE status = 'Sedang dipinjam'"
+        );
+        if (rsPinjam.next()) txtPeminjaman.setText(rsPinjam.getString(1));
 
-        // 4. Hitung Total Buku Sudah Kembali
-        ResultSet rsKembali = st.executeQuery("SELECT SUM(Jumlah_Pinjam) FROM peminjaman WHERE Tanggal_Kembali IS NOT NULL AND Tanggal_Kembali != '0000-00-00'");
-        if (rsKembali.next()) txtPengembalian.setText(rsKembali.getString(1) != null ? rsKembali.getString(1) : "0");
+        // 4. PERBAIKAN: Hitung jumlah TRANSAKSI yang sudah kembali
+        ResultSet rsKembali = st.executeQuery(
+            "SELECT COUNT(DISTINCT Id_Pinjam) FROM peminjaman WHERE status != 'Sedang dipinjam'"
+        );
+        if (rsKembali.next()) txtPengembalian.setText(rsKembali.getString(1));
 
     } catch (Exception e) {
         System.out.println("Error hitungData: " + e.getMessage());
     }
 }
     
-    private void loadTable() {
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("No.");
-        model.addColumn("ID Pinjam");
-        model.addColumn("Nama Anggota");
-        model.addColumn("Judul Buku");
-        model.addColumn("Jumlah");
-        model.addColumn("Tgl Pinjam");
-        model.addColumn("Tgl Kembali");
-        model.addColumn("Status");
-
-        try {
-            Connection conn = Koneksi.koneksi.getKoneksi();
-            String sql = "SELECT p.Id_Pinjam, a.Nama, b.Judul_Buku, p.Jumlah_Pinjam, p.Tanggal_Pinjam, p.Tanggal_Kembali " +
-                         "FROM peminjaman p " +
-                         "JOIN data_anggota a ON p.Nis = a.Nis " +
-                         "JOIN buku b ON p.Id_Buku = b.Id_Buku";
-
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sql);
-
-            int no = 1;
-            while (rs.next()) {
-                // PERBAIKAN: Gunakan penggabungan string biasa
-                String formatID = "PJM" + rs.getString("Id_Pinjam");
-
-                String tglKembali = rs.getString("Tanggal_Kembali");
-                String status = (tglKembali == null || tglKembali.equals("0000-00-00")) ? "Sedang dipinjam" : "Sudah dikembalikan";
-
-                model.addRow(new Object[]{
-                    no++,
-                    formatID,
-                    rs.getString("Nama"),
-                    rs.getString("Judul_Buku"),
-                    rs.getString("Jumlah_Pinjam"),
-                    rs.getString("Tanggal_Pinjam"),
-                    (tglKembali == null || tglKembali.equals("0000-00-00")) ? "-" : tglKembali,
-                    status
-                });
-            }
-            tblDataDashboard.setModel(model);
-
-            // Mengatur lebar kolom "No"
-            tblDataDashboard.getColumnModel().getColumn(0).setPreferredWidth(30);
-
-        } catch (Exception e) {
-            System.out.println("Error loadTable: " + e.getMessage());
+   private void loadTable() {
+    // 1. Membuat DefaultTableModel khusus agar sel tabel TIDAK BISA DIEDIT (Read-Only)
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // Mengunci sel agar tidak bisa diedit manual oleh user
         }
-}   
+    };
+    
+    // 2. Menata kolom JTable Dashboard
+    model.addColumn("No.");
+    model.addColumn("ID Pinjam");
+    model.addColumn("Nama Anggota");
+    model.addColumn("Judul Buku");
+    model.addColumn("Jumlah");
+    model.addColumn("Tgl Pinjam");
+    model.addColumn("Status");
+
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        
+        // 3. KUERI SQL: Cukup panggil nama View yang sudah kita buat di database
+        String sql = "SELECT * FROM view_dashboard";
+
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        int no = 1;
+        while (rs.next()) {
+            // 4. Memasukkan data dari database sesuai dengan alias kolom yang ada di View
+            model.addRow(new Object[]{
+                no++,                               
+                rs.getString("Id_Pinjam"),         
+                rs.getString("Nama_Anggota"),  // Menggunakan alias 'Nama_Anggota' dari View
+                rs.getString("Judul_Buku"),        
+                rs.getString("Jumlah_Pinjam"),     
+                rs.getString("Tanggal_Pinjam"),    
+                rs.getString("Status_Pinjam")   // Menggunakan alias 'Status_Pinjam' dari View
+            });
+        }
+        
+        // 5. Set model data terbaru ke tabel JTable dashboard-mu
+        tblDataDashboard.setModel(model);
+
+        // 6. Pengaturan kosmetik/lebar kolom agar presisi dan pas dilihat
+        tblDataDashboard.getColumnModel().getColumn(0).setPreferredWidth(40);  // No
+        tblDataDashboard.getColumnModel().getColumn(1).setPreferredWidth(90);  // ID Pinjam
+        tblDataDashboard.getColumnModel().getColumn(2).setPreferredWidth(150); // Nama Anggota
+        tblDataDashboard.getColumnModel().getColumn(3).setPreferredWidth(220); // Judul Buku (Paling Lebar)
+        tblDataDashboard.getColumnModel().getColumn(4).setPreferredWidth(60);  // Jumlah
+        tblDataDashboard.getColumnModel().getColumn(5).setPreferredWidth(100); // Tgl Pinjam
+        tblDataDashboard.getColumnModel().getColumn(6).setPreferredWidth(120); // Status
+
+    } catch (Exception e) {
+        System.out.println("Error loadTable Dashboard (View): " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data dashboard: " + e.getMessage());
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -53,7 +53,13 @@
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="btnBatal" min="-2" pref="102" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="btnTambah" min="-2" pref="102" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="btnTambah" min="-2" pref="102" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="btnUpdate" min="-2" pref="102" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="btnBatalUpdate" min="-2" pref="102" max="-2" attributes="0"/>
+                          </Group>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
@@ -91,7 +97,7 @@
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
-                                  <Component id="txtTotalBuku" min="-2" pref="204" max="-2" attributes="0"/>
+                                  <Component id="txtJumlahBuku" min="-2" pref="204" max="-2" attributes="0"/>
                                   <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
                                   <Component id="lblTotalPinjam" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -172,7 +178,7 @@
                       <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                       <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="txtTotalBuku" min="-2" pref="38" max="-2" attributes="0"/>
+                      <Component id="txtJumlahBuku" min="-2" pref="38" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                       <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -181,7 +187,11 @@
                   <Component id="lblGambar" min="-2" pref="220" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
-              <Component id="btnTambah" min="-2" pref="36" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnTambah" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                  <Component id="btnUpdate" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                  <Component id="btnBatalUpdate" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="527" max="-2" attributes="0"/>
           </Group>
@@ -406,7 +416,7 @@
         <Property name="text" type="java.lang.String" value="Jumlah"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtTotalBuku">
+    <Component class="javax.swing.JTextField" name="txtJumlahBuku">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel14">
       <Properties>
@@ -449,5 +459,21 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="btnUpdate">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="UBAH"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUpdateActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnBatalUpdate">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="BATAL"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBatalUpdateActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>
