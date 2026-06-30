@@ -614,7 +614,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     
     
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        // 1. VALIDASI FORM
+    // 1. VALIDASI FORM
     int jumlahBaris = dataTabelPinjam.getRowCount();
     
     if (jumlahBaris == 0) {
@@ -634,7 +634,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         return;
     }
 
-    // 2. PROSES INSERT KE DATABASE
+    // 2. PROSES INSERT KE DATABASE + UPDATE STOK
     Connection conn = null;
     try {
         conn = Koneksi.koneksi.getKoneksi();
@@ -645,35 +645,50 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         String tglPinjam = sdf.format(txtTglPinjam.getDate());
         String tglKembali = sdf.format(txtTglKembali.getDate());
 
-        // A. Insert ke tabel master 'peminjaman' (Tanpa Status_Pinjam)
+        // A. Insert ke tabel master 'peminjaman'
         String sqlMaster = "INSERT INTO peminjaman (Id_Pinjam, Nis, Tanggal_Pinjam, Tanggal_Kembali) VALUES (?, ?, ?, ?)";
-        PreparedStatement psMaster = conn.prepareStatement(sqlMaster);
-        psMaster.setString(1, txtIDPinjam.getText().trim());
-        psMaster.setString(2, txtNIS.getText().trim());
-        psMaster.setString(3, tglPinjam);
-        psMaster.setString(4, tglKembali);
-        psMaster.executeUpdate();
-
-        // B. Insert ke tabel detail_peminjaman + Menyisipkan Status_Pinjam "Dipinjam"
-        // Sesuaikan nama kolom detail Anda, di sini saya asumsikan namanya 'Status_Pinjam'
-        String sqlDetail = "INSERT INTO detail_pinjam (Id_Pinjam, Id_Buku, Jumlah_Pinjam, Status_Pinjam) VALUES (?, ?, ?, ?)";
-        PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
-
-        for (int i = 0; i < jumlahBaris; i++) {
-            String idBuku = dataTabelPinjam.getValueAt(i, 0).toString();
-            int qty = Integer.parseInt(dataTabelPinjam.getValueAt(i, 4).toString());
-
-            psDetail.setString(1, txtIDPinjam.getText().trim());
-            psDetail.setString(2, idBuku);
-            psDetail.setInt(3, qty);
-            psDetail.setString(4, "Dipinjam"); // <-- Status disisipkan langsung ke tiap baris buku yang dipinjam
-            psDetail.addBatch();
+        try (PreparedStatement psMaster = conn.prepareStatement(sqlMaster)) {
+            psMaster.setString(1, txtIDPinjam.getText().trim());
+            psMaster.setString(2, txtNIS.getText().trim());
+            psMaster.setString(3, tglPinjam);
+            psMaster.setString(4, tglKembali);
+            psMaster.executeUpdate();
         }
-        psDetail.executeBatch(); // Eksekusi semua baris sekaligus
 
-        // Commit semua transaksi jika tidak ada error
+        // B.1. Siapkan Query Insert ke tabel detail_peminjaman
+        String sqlDetail = "INSERT INTO detail_pinjam (Id_Pinjam, Id_Buku, Jumlah_Pinjam, Status_Pinjam) VALUES (?, ?, ?, ?)";
+        
+        // B.2. Siapkan Query Update Stok Buku (Sesuaikan 'buku', 'Stok', dan 'Id_Buku' dengan nama kolom/tabel di DB-mu)
+        String sqlUpdateStok = "UPDATE buku SET Stok = Stok - ? WHERE Id_Buku = ?";
+        
+        try (PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
+             PreparedStatement psUpdateStok = conn.prepareStatement(sqlUpdateStok)) {
+
+            for (int i = 0; i < jumlahBaris; i++) {
+                String idBuku = dataTabelPinjam.getValueAt(i, 0).toString();
+                int qty = Integer.parseInt(dataTabelPinjam.getValueAt(i, 4).toString());
+
+                // Set parameter untuk insert detail
+                psDetail.setString(1, txtIDPinjam.getText().trim());
+                psDetail.setString(2, idBuku);
+                psDetail.setInt(3, qty);
+                psDetail.setString(4, "Dipinjam"); 
+                psDetail.addBatch();
+
+                // Set parameter untuk potong stok buku
+                psUpdateStok.setInt(1, qty); // Mengurangi stok sejumlah buku yang dipinjam
+                psUpdateStok.setString(2, idBuku);
+                psUpdateStok.addBatch();
+            }
+            
+            // Eksekusi peminjaman buku dan pemotongan stok sekaligus
+            psDetail.executeBatch(); 
+            psUpdateStok.executeBatch(); 
+        }
+
+        // Commit semua transaksi jika tidak ada error (Jika sukses, database akan terupdate bersamaan)
         conn.commit();
-        javax.swing.JOptionPane.showMessageDialog(this, "Data peminjaman berhasil disimpan! Status tiap buku: 'Dipinjam'.");
+        javax.swing.JOptionPane.showMessageDialog(this, "Data peminjaman berhasil disimpan & Stok buku berhasil diperbarui!");
         
         // C. RESET FORM SEPERTI SEMULA
         clearFormBuku();
@@ -693,7 +708,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         txtIDPinjam.setText(generateIdPinjam());
 
     } catch (Exception e) {
-        // Jika ada satu saja yang gagal, batalkan semua (Master & Detail tidak akan tersimpan)
+        // Jika ada satu saja yang gagal (misal koneksi putus tengah jalan), batalkan semuanya
         if (conn != null) {
             try { conn.rollback(); } catch (Exception ex) { System.out.println(ex.getMessage()); }
         }
@@ -703,7 +718,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         if (conn != null) {
             try { conn.setAutoCommit(true); } catch (Exception ex) {}
         }
-    }
+    }    
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void tfNamaKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfNamaKategoriActionPerformed
