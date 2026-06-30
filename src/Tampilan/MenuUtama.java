@@ -9,7 +9,7 @@ import Menu.menuAnggota;
 import Menu.menuKategori;
 import Menu.menuPetugas;
 import Menu.menuPenerbit;
-import Menu.MenuPengembalian;
+import View.menuCRUDPengembalian;
 import Menu.menuBuku;
 import Menu.menuPeminjaman;
 
@@ -748,8 +748,8 @@ public class MenuUtama extends javax.swing.JFrame {
     }//GEN-LAST:event_BpnlLprBukuMouseClicked
 
     private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
-   // Panggil method showPanel yang sudah kamu buat, lalu masukkan class menuCRUDPengembalian
-    showPanel(new View.menuCRUDPengembalian());
+   // Panggil method showPanel yang sudah kamu buat, lalu masukkan class menuPengembalian
+    showPanel(new Menu.menuPengembalian());
     }//GEN-LAST:event_jLabel12MouseClicked
 
     private void IconDashboard4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IconDashboard4MouseClicked
@@ -757,8 +757,8 @@ public class MenuUtama extends javax.swing.JFrame {
     }//GEN-LAST:event_IconDashboard4MouseClicked
 
     private void IconDashboard7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IconDashboard7MouseClicked
-      // Panggil method showPanel yang sudah kamu buat, lalu masukkan class menuCRUDPengembalian
-    showPanel(new View.menuCRUDPengembalian());
+      // Panggil method showPanel yang sudah kamu buat, lalu masukkan class menuPengembalian
+    showPanel(new Menu.menuPengembalian());
     }//GEN-LAST:event_IconDashboard7MouseClicked
 
     /**
