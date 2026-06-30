@@ -202,7 +202,7 @@ public void setDetailBukuDariPopup(
     loadGambarDariAlamatPath(alamatCover);
 
     txtTanggal.setEnabled(true); // Buka kunci txtTanggal karena data peminjaman sudah terisi
-    hitungDendaOtomatis(); // Hitung denda jika txtTanggal kebetulan sudah terisi data
+   
 }
 
 private void loadGambarDariAlamatPath(String alamatFile) {
@@ -540,7 +540,9 @@ private void loadGambarDariAlamatPath(String alamatFile) {
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void txtTanggalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTanggalKeyPressed
-        // TODO add your handling code here:
+            if (validasiTanggalPengembalian()) {
+                hitungDendaOtomatis();
+            }        // TODO add your handling code here:
     }//GEN-LAST:event_txtTanggalKeyPressed
 
 
