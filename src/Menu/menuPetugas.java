@@ -288,7 +288,44 @@ public class menuPetugas extends javax.swing.JPanel {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-        
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+
+        String cari = tfCari.getText().trim();
+
+        try {
+            Connection conn = Koneksi.koneksi.getKoneksi();
+
+            String sql = "SELECT * FROM data_admin "
+                       + "WHERE ID_Admin LIKE ? "
+                       + "OR Nama LIKE ? "
+                       + "OR Username LIKE ? "
+                       + "OR Email LIKE ? "
+                       + "OR Level LIKE ?";
+
+            PreparedStatement st = conn.prepareStatement(sql);
+
+            for (int i = 1; i <= 5; i++) {
+                st.setString(i, "%" + cari + "%");
+            }
+
+            ResultSet rs = st.executeQuery();
+
+            int no = 1;
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    no++,
+                    rs.getString("ID_Admin"),
+                    rs.getString("Nama"),
+                    rs.getString("Username"),
+                    rs.getString("Email"),
+                    rs.getString("Level")
+                });
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error cariData: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked

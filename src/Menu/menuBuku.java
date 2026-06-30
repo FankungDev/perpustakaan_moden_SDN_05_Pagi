@@ -160,7 +160,7 @@ public class menuBuku extends javax.swing.JPanel {
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Data Kategori Buku Perpustakaan");
+        jLabel2.setText("Data Buku Perpustakaan");
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(153, 153, 153));
@@ -229,8 +229,7 @@ public class menuBuku extends javax.swing.JPanel {
                                 .addGap(20, 20, 20)
                                 .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(20, 20, 20)
-                                .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -272,7 +271,56 @@ public class menuBuku extends javax.swing.JPanel {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-                                        
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+
+        String cari = tfCari.getText().trim();
+
+        try {
+            Connection conn = Koneksi.koneksi.getKoneksi();
+
+            String sql = "SELECT b.id_buku, b.judul_buku, b.pengarang, b.tahun_terbit, "
+                    + "b.id_kategori, k.nama_kategori, b.id_penerbit, p.nama_penerbit, "
+                    + "b.stok, b.cover, b.jumlah_halaman "
+                    + "FROM buku b "
+                    + "JOIN kategori_buku k ON b.id_kategori = k.id_kategori "
+                    + "JOIN penerbit p ON b.id_penerbit = p.id_penerbit "
+                    + "WHERE b.id_buku LIKE ? "
+                    + "OR b.judul_buku LIKE ? "
+                    + "OR b.pengarang LIKE ? "
+                    + "OR k.nama_kategori LIKE ? "
+                    + "OR p.nama_penerbit LIKE ? "
+                    + "ORDER BY b.id_buku ASC";
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            for (int i = 1; i <= 5; i++) {
+                ps.setString(i, "%" + cari + "%");
+            }
+
+            ResultSet rs = ps.executeQuery();
+
+            int no = 1;
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    no++,
+                    rs.getString("id_buku"),
+                    rs.getString("judul_buku"),
+                    rs.getString("pengarang"),
+                    rs.getString("tahun_terbit"),
+                    rs.getString("id_kategori"),
+                    rs.getString("nama_kategori"),
+                    rs.getString("id_penerbit"),
+                    rs.getString("nama_penerbit"),
+                    rs.getString("stok"),
+                    rs.getString("cover"),
+                    rs.getString("jumlah_halaman")
+                });
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal mencari data : " + e.getMessage());
+        }
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
