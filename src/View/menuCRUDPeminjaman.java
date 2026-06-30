@@ -614,118 +614,95 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     
     
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        // 1. VALIDASI UTAMA: Cek isi keranjang dan komponen input wajib
+        // 1. VALIDASI FORM
     int jumlahBaris = dataTabelPinjam.getRowCount();
     
-    // Validasi tabel keranjang
     if (jumlahBaris == 0) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Tabel pinjaman masih kosong! Tambahkan buku terlebih dahulu.", 
-            "Peringatan", 
-            javax.swing.JOptionPane.WARNING_MESSAGE);
+        javax.swing.JOptionPane.showMessageDialog(this, "Tabel pinjaman kosong! Tambahkan buku terlebih dahulu.");
         return; 
     }
-    
-    // Validasi ID Pinjam (Input Text)
     if (txtIDPinjam.getText().trim().isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "ID Pinjam wajib diisi!", 
-            "Peringatan", 
-            javax.swing.JOptionPane.WARNING_MESSAGE);
-        txtIDPinjam.requestFocus(); // Garis kursor langsung fokus ke ID Pinjam
+        javax.swing.JOptionPane.showMessageDialog(this, "ID Pinjam wajib diisi!");
         return;
     }
-    
-    // Validasi Tanggal Pinjam (JDateChooser)
-    if (txtTglPinjam.getDate() == null) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Tanggal Pinjam wajib dipilih!", 
-            "Peringatan", 
-            javax.swing.JOptionPane.WARNING_MESSAGE);
+    if (txtNIS.getText().trim().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Anggota belum dipilih!");
         return;
     }
-    
-    // Validasi Tanggal Kembali (JDateChooser)
-    if (txtTglKembali.getDate() == null) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Tanggal Kembali wajib dipilih!", 
-            "Peringatan", 
-            javax.swing.JOptionPane.WARNING_MESSAGE);
+    if (txtTglPinjam.getDate() == null || txtTglKembali.getDate() == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Tanggal Pinjam & Kembali harus diisi!");
         return;
     }
 
-    // 2. PROSES SIMPAN KE DUA TABEL (HEADER & DETAIL)
+    // 2. PROSES INSERT KE DATABASE
+    Connection conn = null;
     try {
-        Connection conn = Koneksi.koneksi.getKoneksi();
-        
-        // Mengambil data dari komponen input form yang sudah diisi
-        String idPinjamUtama = txtIDPinjam.getText().trim(); 
-        String nisPeminjam = txtNIS.getText();                             
-        
-        // Konversi tanggal dari JDateChooser ke Format java.sql.Date untuk Database
-        java.sql.Date tglPinjamSql = new java.sql.Date(txtTglPinjam.getDate().getTime());
-        java.sql.Date tglKembaliSql = new java.sql.Date(txtTglKembali.getDate().getTime());
+        conn = Koneksi.koneksi.getKoneksi();
+        conn.setAutoCommit(false); // Mengaktifkan transaksi agar data konsisten
 
-        // =======================================================
-        // PROSES A: INSERT KE TABEL PEMINJAMAN (HEADER) - Cukup 1x Insert
-        // =======================================================
-        String sqlHeader = "INSERT INTO peminjaman (Id_Pinjam, Nis, Tanggal_Pinjam, Tanggal_Kembali, Point, status) "
-                         + "VALUES (?, ?, ?, ?, 0, 'Sedang dipinjam')";
-        PreparedStatement psHeader = conn.prepareStatement(sqlHeader);
-        psHeader.setString(1, idPinjamUtama);
-        psHeader.setString(2, nisPeminjam);
-        psHeader.setDate(3, tglPinjamSql);   // Menggunakan tgl pilihan dari form
-        psHeader.setDate(4, tglKembaliSql);  // Menggunakan tgl pilihan dari form
-        psHeader.executeUpdate(); 
-        
-        // =======================================================
-        // PROSES B: INSERT KE TABEL DETAIL_PINJAM (DETAIL) - Looping Batch
-        // =======================================================
-        String sqlDetail = "INSERT INTO detail_pinjam (Id_Pinjam, Id_Buku, Jumlah_Pinjam) VALUES (?, ?, ?)";
+        // Format tanggal standar MySQL (yyyy-MM-dd)
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        String tglPinjam = sdf.format(txtTglPinjam.getDate());
+        String tglKembali = sdf.format(txtTglKembali.getDate());
+
+        // A. Insert ke tabel master 'peminjaman' (Tanpa Status_Pinjam)
+        String sqlMaster = "INSERT INTO peminjaman (Id_Pinjam, Nis, Tanggal_Pinjam, Tanggal_Kembali) VALUES (?, ?, ?, ?)";
+        PreparedStatement psMaster = conn.prepareStatement(sqlMaster);
+        psMaster.setString(1, txtIDPinjam.getText().trim());
+        psMaster.setString(2, txtNIS.getText().trim());
+        psMaster.setString(3, tglPinjam);
+        psMaster.setString(4, tglKembali);
+        psMaster.executeUpdate();
+
+        // B. Insert ke tabel detail_peminjaman + Menyisipkan Status_Pinjam "Dipinjam"
+        // Sesuaikan nama kolom detail Anda, di sini saya asumsikan namanya 'Status_Pinjam'
+        String sqlDetail = "INSERT INTO detail_pinjam (Id_Pinjam, Id_Buku, Jumlah_Pinjam, Status_Pinjam) VALUES (?, ?, ?, ?)";
         PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
-        
+
         for (int i = 0; i < jumlahBaris; i++) {
-            String idBuku = dataTabelPinjam.getValueAt(i, 0).toString();             
-            int qty = Integer.parseInt(dataTabelPinjam.getValueAt(i, 4).toString()); 
-            
-            psDetail.setString(1, idPinjamUtama);
+            String idBuku = dataTabelPinjam.getValueAt(i, 0).toString();
+            int qty = Integer.parseInt(dataTabelPinjam.getValueAt(i, 4).toString());
+
+            psDetail.setString(1, txtIDPinjam.getText().trim());
             psDetail.setString(2, idBuku);
             psDetail.setInt(3, qty);
-            
-            psDetail.addBatch(); 
+            psDetail.setString(4, "Dipinjam"); // <-- Status disisipkan langsung ke tiap baris buku yang dipinjam
+            psDetail.addBatch();
         }
+        psDetail.executeBatch(); // Eksekusi semua baris sekaligus
+
+        // Commit semua transaksi jika tidak ada error
+        conn.commit();
+        javax.swing.JOptionPane.showMessageDialog(this, "Data peminjaman berhasil disimpan! Status tiap buku: 'Dipinjam'.");
         
-        psDetail.executeBatch(); 
+        // C. RESET FORM SEPERTI SEMULA
+        clearFormBuku();
+        txtNIS.setText("");
+        tfNamaKategori.setText("");
+        tfDeskripsi.setText("");
+        txtTelpon.setText("");
+        txtTglPinjam.setDate(null);
+        txtTglKembali.setDate(null);
         
-        // Tampilkan pesan sukses
-        javax.swing.JOptionPane.showMessageDialog(this, "Berhasil menyimpan transaksi " + idPinjamUtama + " dengan " + jumlahBaris + " buku!");
-        
-        // =======================================================
-        // RESET & BUKA KEMBALI KUNCI UNTUK TRANSAKSI BERIKUTNYA
-        // =======================================================
-        
-        // Bersihkan isi tabel keranjang di aplikasi
+        // Kosongkan JTable keranjang
         DefaultTableModel model = (DefaultTableModel) dataTabelPinjam.getModel();
         model.setRowCount(0);
         lblTotalPinjam.setText("0");
         
-        // Buka kembali akses cari data anggota baru
-        txtNIS.setEditable(true);
-        btnCariDataAnggota.setEnabled(true);
-        
-        // Kosongkan form identitas, kode pinjam, serta tanggalan agar bersih kembali
-        txtIDPinjam.setText("");
-        txtTglPinjam.setDate(null);
-        txtTglKembali.setDate(null);
-        txtNIS.setText("");
-        tfNamaKategori.setText(""); 
-        tfDeskripsi.setText("");    
-        txtTelpon.setText("");
-        clearFormBuku(); // Bersihkan juga sisa form buku jika ada
-        
+        // Perbarui ID Pinjam otomatis ke nomor berikutnya
+        txtIDPinjam.setText(generateIdPinjam());
+
     } catch (Exception e) {
-        System.out.println("Error saat simpan database: " + e.getMessage());
-        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan data transaksi: " + e.getMessage());
+        // Jika ada satu saja yang gagal, batalkan semua (Master & Detail tidak akan tersimpan)
+        if (conn != null) {
+            try { conn.rollback(); } catch (Exception ex) { System.out.println(ex.getMessage()); }
+        }
+        System.out.println("Error simpan data detail: " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan data: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+    } finally {
+        if (conn != null) {
+            try { conn.setAutoCommit(true); } catch (Exception ex) {}
+        }
     }
     }//GEN-LAST:event_btnSimpanActionPerformed
 

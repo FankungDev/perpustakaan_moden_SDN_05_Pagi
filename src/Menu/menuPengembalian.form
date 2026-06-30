@@ -146,7 +146,7 @@
                 <Column editable="true" title="ID Pengembalian" type="java.lang.Object"/>
                 <Column editable="true" title="Tanggal Pengembalian" type="java.lang.Object"/>
                 <Column editable="true" title="ID Peminjaman " type="java.lang.Object"/>
-                <Column editable="true" title="Petugas" type="java.lang.Object"/>
+                <Column editable="true" title="Denda" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="rowHeight" type="int" value="50"/>

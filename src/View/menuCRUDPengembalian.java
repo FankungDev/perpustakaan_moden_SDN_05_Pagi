@@ -372,6 +372,12 @@ private void loadGambarDariAlamatPath(String alamatFile) {
         jLabel4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel4.setText("Tanggal");
 
+        txtTanggal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtTanggalKeyPressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout custom_JPanelRounded1Layout = new javax.swing.GroupLayout(custom_JPanelRounded1);
         custom_JPanelRounded1.setLayout(custom_JPanelRounded1Layout);
         custom_JPanelRounded1Layout.setHorizontalGroup(
@@ -423,10 +429,13 @@ private void loadGambarDariAlamatPath(String alamatFile) {
     }//GEN-LAST:event_txtPenerbitActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        String idPengembalian = (txtId.getText() != null) ? txtId.getText().trim() : "";
+    String idPengembalian = (txtId.getText() != null) ? txtId.getText().trim() : "";
     String idPeminjaman   = txtPeminjaman.getText().trim();
     java.util.Date tglHariIni = txtTanggal.getDate(); 
-    
+
+    // Ambil juga ID Buku yang akan dikembalikan dari form
+    String idBuku         = txtBuku.getText().trim(); 
+
     // 1. Ambil nilai denda keterlambatan dari txtPoint ke variabel pointFinal
     int pointFinal = 0;
     try {
@@ -434,87 +443,89 @@ private void loadGambarDariAlamatPath(String alamatFile) {
     } catch (Exception e) {
         pointFinal = 0;
     }
-    
+
     // GENERATE ID JIKA KOSONG
     if (idPengembalian.equals("") || idPengembalian.equalsIgnoreCase("null")) {
         idPengembalian = "KMB" + System.currentTimeMillis(); 
     }
-    
+
     // VALIDASI INPUT UTAMA
-    if (idPeminjaman.isEmpty() || tglHariIni == null) {
+    if (idPeminjaman.isEmpty() || idBuku.isEmpty() || tglHariIni == null) {
         javax.swing.JOptionPane.showMessageDialog(this, 
-            "Data Peminjaman atau Tanggal Pengembalian belum dipilih!", 
+            "Data Peminjaman, Buku, atau Tanggal Pengembalian belum dipilih!", 
             "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
         return;
     }
 
-    java.sql.Connection conn = null;
+    java.sql.Connection con = null;
     java.sql.PreparedStatement psInsert = null;
     java.sql.PreparedStatement psUpdateStatus = null;
 
     try {
         // Ambil Koneksi Database
-        java.sql.Connection con = Koneksi.koneksi.getKoneksi();
-        
+        con = Koneksi.koneksi.getKoneksi();
+
         // Matikan AutoCommit untuk menjalankan Transaction (menjaga integritas data)
         con.setAutoCommit(false);
-        
+
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
         String tglPengembalianFormat = sdf.format(tglHariIni);
 
-        // 2. QUERY INSERT ke tabel pengembalian (Sesuaikan nama kolom dengan struktur gambar Anda)
+        // 2. QUERY INSERT ke tabel pengembalian (Disesuaikan dengan kolom huruf kecil sesuai phpMyAdmin)
         String sqlInsert = "INSERT INTO pengembalian (id_pengembalian, tgl_pengembalian, id_peminjaman, point) VALUES (?, ?, ?, ?)";
         psInsert = con.prepareStatement(sqlInsert);
-        
+
         psInsert.setString(1, idPengembalian);
         psInsert.setString(2, tglPengembalianFormat);
         psInsert.setString(3, idPeminjaman);
-        psInsert.setInt(4, pointFinal); // Memasukkan kalkulasi denda hari ke kolom point
-        
+        psInsert.setInt(4, pointFinal); 
+
         int hasilInsert = psInsert.executeUpdate();
-        
-        // 3. QUERY UPDATE status pada tabel peminjaman
-        String sqlUpdateStatus = "UPDATE peminjaman SET status = 'Sudah dikembalikan' WHERE id_pinjam = ?";
+
+        // 3. QUERY UPDATE status pada tabel detail_pinjam
+        // DISESUAIKAN: Nama tabel menjadi 'detail_pinjam', nama kolom menjadi 'status_pinjam' (huruf kecil)
+        String sqlUpdateStatus = "UPDATE detail_pinjam SET status_pinjam = 'Sudah dikembalikan' WHERE Id_Pinjam = ? AND Id_Buku = ?";
         psUpdateStatus = con.prepareStatement(sqlUpdateStatus);
         psUpdateStatus.setString(1, idPeminjaman);
-        
+        psUpdateStatus.setString(2, idBuku);
+
         int hasilUpdate = psUpdateStatus.executeUpdate();
-        
+
         // JIKA KEDUANYA BERHASIL
         if (hasilInsert > 0 && hasilUpdate > 0) {
             con.commit(); // Simpan permanen perubahan ke database
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "Data Pengembalian Sukses Disimpan!\nStatus peminjaman telah diperbarui.", 
+                "Data Pengembalian Sukses Disimpan!\nStatus buku pada detail peminjaman telah diperbarui.", 
                 "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            
+
             txtId.setText(idPengembalian);
-            
-            // Opsional: Jika ingin otomatis berpindah halaman kembali ke menu utama pengembalian setelah sukses
-            // btnBackActionPerformed(null);
+
+            // Opsional: bersihkan form atau muat ulang tabel jika diperlukan
         } else {
             con.rollback(); // Batalkan jika salah satu query gagal
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal memproses data secara lengkap.");
         }
-        
-        // Kembalikan ke mode normal
-        con.setAutoCommit(true);
-        
+
     } catch (Exception e) {
         try {
-            if (Koneksi.koneksi.getKoneksi() != null) {
-                Koneksi.koneksi.getKoneksi().rollback(); // Rollback jika ada error runtime sql
+            if (con != null) {
+                con.rollback(); // Rollback jika ada error runtime sql
             }
         } catch (java.sql.SQLException ex) {
             System.out.println("Gagal Rollback: " + ex.getMessage());
         }
-        
+
         javax.swing.JOptionPane.showMessageDialog(this, "Gagal Simpan Database: " + e.getMessage(), 
             "Database Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
     } finally {
-        // Close resources untuk mencegah memory leak
+        // Pastikan AutoCommit dikembalikan ke true dan resources ditutup
+        try { if (con != null) con.setAutoCommit(true); } catch (Exception e) {}
         try { if (psInsert != null) psInsert.close(); } catch (Exception e) {}
         try { if (psUpdateStatus != null) psUpdateStatus.close(); } catch (Exception e) {}
+        
+        MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (menuUtama != null) menuUtama.showPanel(new menuPengembalian()); 
     }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -527,6 +538,10 @@ private void loadGambarDariAlamatPath(String alamatFile) {
             MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
         if (menuUtama != null) menuUtama.showPanel(new menuPengembalian());        // TODO add your handling code here:
     }//GEN-LAST:event_btnBackActionPerformed
+
+    private void txtTanggalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTanggalKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTanggalKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

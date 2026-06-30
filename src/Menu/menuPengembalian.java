@@ -23,6 +23,7 @@ public class menuPengembalian extends javax.swing.JPanel {
        insertData();
        tampilData("");
     }
+    
     private void insertData() {
     javax.swing.table.DefaultTableModel model = 
         (javax.swing.table.DefaultTableModel) jTable1.getModel();
@@ -63,7 +64,7 @@ public class menuPengembalian extends javax.swing.JPanel {
         java.sql.Connection conn = kon.getKoneksi();
         
         // Query SQL menggunakan LIKE untuk mencari berdasarkan ID Pengembalian atau ID Peminjaman
-        String sql = "SELECT id_pengembalian, tgl_pengembalian, id_peminjaman, denda " +
+        String sql = "SELECT id_pengembalian, tgl_pengembalian, id_peminjaman, point " +
                      "FROM pengembalian " +
                      "WHERE id_pengembalian LIKE ? OR id_peminjaman LIKE ?";
         
@@ -77,7 +78,7 @@ public class menuPengembalian extends javax.swing.JPanel {
                 rs.getString("id_pengembalian"),
                 rs.getString("tgl_pengembalian"),
                 rs.getString("id_peminjaman"),
-                rs.getString("denda") // Menampilkan nilai denda/petugas sesuai struktur database Anda
+                rs.getString("Point") // Menampilkan nilai denda/petugas sesuai struktur database Anda
             });
         }
         
@@ -143,7 +144,7 @@ public class menuPengembalian extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
-                "ID Pengembalian", "Tanggal Pengembalian", "ID Peminjaman ", "Petugas"
+                "ID Pengembalian", "Tanggal Pengembalian", "ID Peminjaman ", "Denda"
             }
         ));
         jTable1.setRowHeight(50);

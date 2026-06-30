@@ -26,6 +26,7 @@ public class PopupDataAnggota extends javax.swing.JFrame {
         datatable();
         setResizable(false);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
     
     protected void datatable() {

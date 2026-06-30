@@ -36,6 +36,7 @@ public class PopupDataBuku extends javax.swing.JFrame {
     public PopupDataBuku() {
         initComponents();
         this.setLocationRelativeTo(null);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
         // Mengatur tinggi baris tabel agar muat menampilkan gambar cover mini
         tableDataBuku.setRowHeight(60); 

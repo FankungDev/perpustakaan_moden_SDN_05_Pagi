@@ -22,9 +22,12 @@ public class PopupPilihBuku extends javax.swing.JFrame {
      */
     public PopupPilihBuku(View.menuCRUDPengembalian formPengembalian) {
         initComponents();
+        setTabelDetailModel();
         this.formPengembalian = formPengembalian; // Inisialisasi properti
         setTabelModel();
+        this.setLocationRelativeTo(null);
         loadData();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
     
     public PopupPilihBuku() {
@@ -62,48 +65,63 @@ public class PopupPilihBuku extends javax.swing.JFrame {
         return imageIcon;
     }
     
-    private void loadDetailPeminjaman(String idPinjam) {
+     private void setTabelDetailModel() {
         DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("No");
+       model.addColumn("No");
         model.addColumn("ID Pinjam");
         model.addColumn("ID Buku");
         model.addColumn("Judul Buku");
         model.addColumn("Jumlah Buku");
         model.addColumn("Status Peminjaman");
 
-        try {
-            Connection conn = Koneksi.koneksi.getKoneksi();
-            if (conn == null) return;
-            
-            // Query menggunakan WHERE untuk memfilter ID Pinjam yang diklik
-            String sql = "SELECT dp.id_pinjam, dp.id_buku, b.judul_buku, dp.jumlah_pinjam, p.status " +
-                         "FROM detail_pinjam dp " +
-                         "JOIN buku b ON dp.id_buku = b.id_buku " +
-                         "JOIN peminjaman p ON dp.id_pinjam = p.id_pinjam " +
-                         "WHERE dp.id_pinjam = ?"; // Filter di sini
-            
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, idPinjam); // Masukkan parameter ID Pinjam
-            ResultSet rs = ps.executeQuery();
-            
-            int no = 1; 
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    no++, 
-                    rs.getString("id_pinjam"),
-                    rs.getString("id_buku"),
-                    rs.getString("judul_buku"),
-                    rs.getInt("jumlah_pinjam"),
-                    rs.getString("status")
-                });
-            }
-            
-            tblDetailPeminjaman.setModel(model);
-            
-        } catch (Exception e) {
-            System.out.println("Error pada loadDetailPeminjaman: " + e.getMessage());
-        }
+        tblDetailPeminjaman.setModel(model);
     }
+    
+   private void loadDetailPeminjaman(String idPinjam) {
+
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("No");
+    model.addColumn("ID Pinjam");
+    model.addColumn("ID Buku");
+    model.addColumn("Judul Buku");
+    model.addColumn("Jumlah Buku");
+    model.addColumn("Status Peminjaman");
+
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        if (conn == null) return;
+
+        String sql = "SELECT dp.id_pinjam, dp.id_buku, b.judul_buku, dp.jumlah_pinjam, dp.status_pinjam " +
+                     "FROM detail_pinjam dp " +
+                     "JOIN buku b ON dp.id_buku = b.id_buku " +
+                     "WHERE dp.id_pinjam = ? AND dp.status_pinjam = 'Dipinjam'";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, idPinjam);
+
+        ResultSet rs = ps.executeQuery();
+
+        int no = 1;
+
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no++,
+                rs.getString("id_pinjam"),
+                rs.getString("id_buku"),
+                rs.getString("judul_buku"),
+                rs.getInt("jumlah_pinjam"),
+                rs.getString("status_pinjam")
+            });
+        }
+
+        tblDetailPeminjaman.setModel(model);
+
+        // Otomatis menyesuaikan lebar kolom
+
+    } catch (Exception e) {
+        System.out.println("Error pada loadDetailPeminjaman: " + e.getMessage());
+    }
+}
     
     private void setTabelModel() {
         DefaultTableModel model = new DefaultTableModel();
@@ -118,48 +136,95 @@ public class PopupPilihBuku extends javax.swing.JFrame {
     }
      
     private void loadData() {
-        DefaultTableModel model = (DefaultTableModel) tblPeminjamanBuku.getModel();
-        model.setRowCount(0); 
+    DefaultTableModel model = (DefaultTableModel) tblPeminjamanBuku.getModel();
+    model.setRowCount(0);
 
-        try {
-            // 1. Ambil koneksi
-            Connection conn = Koneksi.koneksi.getKoneksi();
-            
-            // 2. Cek apakah koneksi berhasil atau tidak
-            if (conn == null) {
-                System.out.println("Gagal terhubung ke database. Cek konfigurasi koneksi Anda.");
-                return;
-            }
-            
-            // 3. Eksekusi query dengan JOIN ke data_anggota (kolom Nama) dan detail_pinjam
-            String sql = "SELECT p.id_pinjam, p.nis, a.Nama, p.tanggal_pinjam, p.tanggal_kembali, " +
-                         "SUM(dp.jumlah_pinjam) AS total_pinjam " +
-                         "FROM peminjaman p " +
-                         "JOIN data_anggota a ON p.nis = a.Nis " +
-                         "JOIN detail_pinjam dp ON p.id_pinjam = dp.id_pinjam " +
-                         "GROUP BY p.id_pinjam, p.nis, a.Nama, p.tanggal_pinjam, p.tanggal_kembali"; 
-            
-            PreparedStatement st = conn.prepareStatement(sql);
-            ResultSet rs = st.executeQuery();
-            
-            int no = 1;
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    no++,
-                    rs.getString("id_pinjam"),
-                    rs.getString("nis"),
-                    rs.getString("Nama"), // Disesuaikan dengan nama kolom di database (Nama)
-                    rs.getDate("tanggal_pinjam"),
-                    rs.getDate("tanggal_kembali"),
-                    rs.getInt("total_pinjam")
-                });
-            }
-        } catch (Exception e) {
-            System.out.println("Error pada loadData: " + e.toString());
-            e.printStackTrace(); 
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        if (conn == null) {
+            System.out.println("Gagal terhubung ke database.");
+            return;
         }
-    }
 
+        String sql = "SELECT p.Id_Pinjam, p.Nis, a.Nama, p.Tanggal_Pinjam, p.Tanggal_Kembali, " +
+                     "SUM(dp.Jumlah_Pinjam) AS total_pinjam " +
+                     "FROM peminjaman p " +
+                     "JOIN data_anggota a ON p.Nis = a.Nis " +
+                     "JOIN detail_pinjam dp ON p.Id_Pinjam = dp.Id_Pinjam " +
+                     "GROUP BY p.Id_Pinjam, p.Nis, a.Nama, p.Tanggal_Pinjam, p.Tanggal_Kembali";
+
+        PreparedStatement st = conn.prepareStatement(sql);
+        ResultSet rs = st.executeQuery();
+
+        int no = 1;
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no++,
+                rs.getString("Id_Pinjam"),
+                rs.getString("Nis"),
+                rs.getString("Nama"),
+                rs.getDate("Tanggal_Pinjam"),
+                rs.getDate("Tanggal_Kembali"),
+                rs.getInt("total_pinjam")
+            });
+        }
+
+        // Otomatis menyesuaikan lebar kolom
+
+    } catch (Exception e) {
+        System.out.println("Error pada loadData: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+    
+    private void cariData() {
+    DefaultTableModel model = (DefaultTableModel) tblPeminjamanBuku.getModel();
+    model.setRowCount(0);
+
+    String keyword = tfCari.getText().trim();
+
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+
+        String sql =
+                "SELECT p.Id_Pinjam, p.Nis, a.Nama, p.Tanggal_Pinjam, p.Tanggal_Kembali, " +
+                "SUM(dp.Jumlah_Pinjam) AS total_pinjam " +
+                "FROM peminjaman p " +
+                "JOIN data_anggota a ON p.Nis = a.Nis " +
+                "JOIN detail_pinjam dp ON p.Id_Pinjam = dp.Id_Pinjam " +
+                "WHERE p.Id_Pinjam LIKE ? " +
+                "OR p.Nis LIKE ? " +
+                "OR a.Nama LIKE ? " +
+                "GROUP BY p.Id_Pinjam, p.Nis, a.Nama, p.Tanggal_Pinjam, p.Tanggal_Kembali";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        String cari = "%" + keyword + "%";
+
+        ps.setString(1, cari);
+        ps.setString(2, cari);
+        ps.setString(3, cari);
+
+        ResultSet rs = ps.executeQuery();
+
+        int no = 1;
+
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no++,
+                rs.getString("Id_Pinjam"),
+                rs.getString("Nis"),
+                rs.getString("Nama"),
+                rs.getDate("Tanggal_Pinjam"),
+                rs.getDate("Tanggal_Kembali"),
+                rs.getInt("total_pinjam")
+            });
+        }
+
+    } catch (Exception e) {
+        System.out.println("Error pencarian: " + e.getMessage());
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -198,6 +263,12 @@ public class PopupPilihBuku extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblPeminjamanBuku);
 
+        tfCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tfCariKeyPressed(evt);
+            }
+        });
+
         tblDetailPeminjaman.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -227,19 +298,20 @@ public class PopupPilihBuku extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 953, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 941, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 941, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2)
+                        .addGap(231, 468, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(tfCari, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -250,11 +322,11 @@ public class PopupPilihBuku extends javax.swing.JFrame {
                     .addComponent(jLabel2))
                 .addGap(4, 4, 4)
                 .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30))
+                .addGap(47, 47, 47))
         );
 
         pack();
@@ -329,7 +401,12 @@ public class PopupPilihBuku extends javax.swing.JFrame {
         // Tutup JDialog / JFrame Popup
         this.dispose();
     }
+    
     }//GEN-LAST:event_tblDetailPeminjamanMouseClicked
+
+    private void tfCariKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfCariKeyPressed
+        cariData();
+    }//GEN-LAST:event_tfCariKeyPressed
 
     /**
      * @param args the command line arguments
