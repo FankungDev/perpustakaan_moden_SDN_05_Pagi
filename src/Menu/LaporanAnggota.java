@@ -58,41 +58,67 @@ public class LaporanAnggota extends javax.swing.JPanel {
     }
     
     private void loadData() {
+
     DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    model.setRowCount(0); 
+    model.setRowCount(0);
 
     try {
-        // 1. Ambil koneksi
-        Connection conn = Koneksi.koneksi.getKoneksi();
-        
-        // 2. Cek apakah koneksi berhasil atau tidak
-        if (conn == null) {
-            System.out.println("Gagal terhubung ke database. Cek konfigurasi koneksi Anda.");
-            return;
+
+        Connection conn = koneksi.getKoneksi();
+
+        String sql = "SELECT * FROM data_anggota WHERE 1=1";
+
+        ArrayList<Object> param = new ArrayList<>();
+
+        // Filter tanggal
+        if (dcMulai.getDate() != null) {
+            sql += " AND Tanggal_Bergabung >= ?";
+            param.add(new java.sql.Date(dcMulai.getDate().getTime()));
         }
-        
-        // 3. Eksekusi query
-        String sql = "SELECT * FROM data_anggota"; 
-        PreparedStatement st = conn.prepareStatement(sql);
-        ResultSet rs = st.executeQuery();
-        
+
+        if (dcAkhir.getDate() != null) {
+            sql += " AND Tanggal_Bergabung <= ?";
+            param.add(new java.sql.Date(dcAkhir.getDate().getTime()));
+        }
+
+        // Filter pencarian
+        if (!tfCari.getText().trim().isEmpty()) {
+            sql += " AND (nis LIKE ? OR Nama LIKE ? OR Email LIKE ?)";
+            String cari = "%" + tfCari.getText().trim() + "%";
+            param.add(cari);
+            param.add(cari);
+            param.add(cari);
+        }
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        for (int i = 0; i < param.size(); i++) {
+            ps.setObject(i + 1, param.get(i));
+        }
+
+        ResultSet rs = ps.executeQuery();
+
         int no = 1;
+
         while (rs.next()) {
+
             model.addRow(new Object[]{
-                no ++,
+                no++,
                 rs.getString("nis"),
                 rs.getString("Nama"),
                 rs.getString("Email"),
                 rs.getString("Jenis_Kelamin"),
                 rs.getString("Tanggal_Bergabung")
             });
+
         }
+
     } catch (Exception e) {
-        // Ini akan memberitahu Anda persis error-nya di Output NetBeans
-        System.out.println("Error pada loadData: " + e.toString());
-        e.printStackTrace(); 
+        JOptionPane.showMessageDialog(this, e.getMessage());
+        e.printStackTrace();
     }
-    }
+
+}
 
     /**
      * This method is called from within the constructor to initialize the form.

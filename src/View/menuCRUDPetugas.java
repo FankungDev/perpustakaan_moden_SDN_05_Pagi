@@ -295,44 +295,59 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-        String id = tfIdPetugas.getText().trim();
-        String nama = tfNamaPetugas.getText().trim();
-        String username = tfUsernamePetugas.getText().trim();
-        String email = tfEmailPetugas.getText().trim();
-        String password = new String(pfPasswordPetugas.getPassword()).trim(); // Tambah trim untuk password
-
-        // ================== VALIDASI TIDAK BOLEH KOSONG ==================
-        if (id.isEmpty() || nama.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua kolom data wajib diisi, tidak boleh kosong!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return; // Menghentikan proses ke bawah agar tidak masuk ke database
-        }
         
-        // Validasi tambahan jika JComboBox level masih di pilihan default (misal indeks ke-0 adalah "-- Pilih Level --")
-        // =================================================================
 
-        // 2. Query SQL
-        String sql = "INSERT INTO data_admin (ID_Admin, Nama, Username, Email, Password) VALUES (?, ?, ?, ?, ?)";
+    String id = tfIdPetugas.getText().trim();
+    String nama = tfNamaPetugas.getText().trim();
+    String username = tfUsernamePetugas.getText().trim();
+    String email = tfEmailPetugas.getText().trim();
+    String password = new String(pfPasswordPetugas.getPassword()).trim();
 
-        try {
-            // 3. Persiapkan koneksi
-            java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
-            java.sql.PreparedStatement st = conn.prepareStatement(sql);
+    // ================== VALIDASI ==================
+    if (id.isEmpty() || nama.isEmpty() || username.isEmpty()
+            || email.isEmpty() || password.isEmpty()) {
 
-            // 4. Masukkan data ke dalam placeholder (?)
-            st.setString(1, id);
-            st.setString(2, nama);
-            st.setString(3, username);
-            st.setString(4, email);
-            st.setString(5, password);
+        javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Semua kolom data wajib diisi, tidak boleh kosong!",
+                "Validasi Gagal",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
 
-            // 5. Eksekusi
-            st.executeUpdate();
+    // Query SQL
+    String sql = "INSERT INTO data_admin (ID_Admin, Nama, Username, Email, Password) VALUES (?, ?, ?, ?, ?)";
 
-            javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil disimpan!");
+    try {
+        // Koneksi database
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        java.sql.PreparedStatement st = conn.prepareStatement(sql);
 
-        } catch (java.sql.SQLException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Gagal simpan: " + e.getMessage());
+        // Isi parameter
+        st.setString(1, id);
+        st.setString(2, nama);
+        st.setString(3, username);
+        st.setString(4, email);
+        st.setString(5, password);
+
+        // Eksekusi
+        st.executeUpdate();
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil disimpan!");
+
+        // Kembali ke menu Petugas
+        MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (menuUtama != null) {
+            menuUtama.showPanel(new menuPetugas());
         }
+
+    } catch (java.sql.SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Gagal menyimpan data!\n" + e.getMessage(),
+                "Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnTambahActionPerformed
 
 
