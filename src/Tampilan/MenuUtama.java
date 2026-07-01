@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Tampilan;
+import Menu.LaporanPeminjaman;
 import Menu.menuDashboard;
 import Menu.menuAnggota;
 import Menu.menuKategori;
@@ -60,10 +61,16 @@ public class MenuUtama extends javax.swing.JFrame {
         BpnlKategori.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BpnlBuku.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BpnlPeminjaman.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BpnlLprPinjam.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         
         BpnlPeminjaman.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             showPanel(new menuPeminjaman());
+            }
+            });
+        BpnlLprPinjam.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            showPanel(new LaporanPeminjaman());
             }
             });
         
