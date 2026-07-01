@@ -10,8 +10,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
+
 
 /**
  *
@@ -310,8 +317,36 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTampilkanActionPerformed
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-        // Akan difungsikan nanti oleh user
-    }//GEN-LAST:event_btnPrintActionPerformed
+try {
+
+        Connection conn = Koneksi.koneksi.getKoneksi();
+
+        String report = getClass().getResource("/Reports/LaporanPeminjaman.jasper").getPath();
+
+        Map<String, Object> parameter = new HashMap<>();
+
+        if (dcMulai.getDate() != null) {
+            parameter.put("tanggalMulai",
+                    new java.sql.Date(dcMulai.getDate().getTime()));
+        }
+
+        if (dcAkhir.getDate() != null) {
+            parameter.put("tanggalAkhir",
+                    new java.sql.Date(dcAkhir.getDate().getTime()));
+        }
+
+        JasperPrint jp = JasperFillManager.fillReport(
+                report,
+                parameter,
+                conn);
+
+        JasperViewer.viewReport(jp, false);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null,
+                "Gagal mencetak laporan\n" + e.getMessage());
+        e.printStackTrace();
+    }    }//GEN-LAST:event_btnPrintActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
