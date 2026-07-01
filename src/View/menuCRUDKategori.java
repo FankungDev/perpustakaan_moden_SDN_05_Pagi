@@ -222,7 +222,7 @@ public class menuCRUDKategori extends javax.swing.JPanel {
     String nama = tfNamaKategori.getText().trim();
     String deskripsi = tfDeskripsi.getText().trim();
 
-    // 1. Validasi Input Kosong
+    // Validasi Input Kosong
     if (id.isEmpty() || nama.isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this, "ID dan Nama Kategori wajib diisi!");
         return;
@@ -231,7 +231,7 @@ public class menuCRUDKategori extends javax.swing.JPanel {
     try {
         java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
         
-        // 2. Cek apakah ID sudah ada di database (Validasi Duplikasi)
+        // Cek ID sudah ada di database
         String sqlCek = "SELECT COUNT(*) FROM kategori_buku WHERE ID_Kategori = ?";
         java.sql.PreparedStatement stCek = conn.prepareStatement(sqlCek);
         stCek.setString(1, id);
@@ -243,7 +243,7 @@ public class menuCRUDKategori extends javax.swing.JPanel {
             return;
         }
 
-        // 3. Jika ID belum ada, lakukan INSERT data baru
+        // Jika ID belum ada, lakukan INSERT data baru
         String sqlInsert = "INSERT INTO kategori_buku (ID_Kategori, Nama_Kategori, Deskripsi) VALUES (?, ?, ?)";
         java.sql.PreparedStatement stInsert = conn.prepareStatement(sqlInsert);
         stInsert.setString(1, id);
@@ -253,7 +253,7 @@ public class menuCRUDKategori extends javax.swing.JPanel {
         
         javax.swing.JOptionPane.showMessageDialog(this, "Data kategori berhasil ditambahkan!");
         
-        // 4. Bersihkan form setelah sukses
+        // Clean kolom input ketika sukses
         tfIdKategori.setText("");
         tfNamaKategori.setText("");
         tfDeskripsi.setText("");
@@ -269,7 +269,7 @@ public class menuCRUDKategori extends javax.swing.JPanel {
     String nama = tfNamaKategori.getText().trim();
     String deskripsi = tfDeskripsi.getText().trim();
 
-    // 1. Validasi Input Kosong
+    // Validasi Input Kosong
     if (id.isEmpty() || nama.isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this, "ID dan Nama Kategori wajib diisi!");
         return;
@@ -278,17 +278,14 @@ public class menuCRUDKategori extends javax.swing.JPanel {
     try {
         java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
         
-        // 2. Cek apakah ID sudah ada
+        // Cek apakah ID sudah ada
         String sqlCek = "SELECT COUNT(*) FROM kategori_buku WHERE ID_Kategori = ?";
         java.sql.PreparedStatement stCek = conn.prepareStatement(sqlCek);
         stCek.setString(1, id);
         java.sql.ResultSet rs = stCek.executeQuery();
         
         if (rs.next() && rs.getInt(1) > 0) {
-            // Jika ID ditemukan, cek apakah ini mode update atau bukan
-            // Jika Anda ingin mencegah duplikasi saat TAMBAH data saja:
-            if (!tfIdKategori.isEditable()) { 
-                // Mode Edit: Lanjutkan ke proses Update
+            if (!tfIdKategori.isEditable()) {
                 String sqlUpdate = "UPDATE kategori_buku SET Nama_Kategori = ?, Deskripsi = ? WHERE ID_Kategori = ?";
                 java.sql.PreparedStatement stUpdate = conn.prepareStatement(sqlUpdate);
                 stUpdate.setString(1, nama);
@@ -297,12 +294,10 @@ public class menuCRUDKategori extends javax.swing.JPanel {
                 stUpdate.executeUpdate();
                 javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!");
             } else {
-                // Mode Tambah: Jika ID sudah ada, munculkan peringatan
                 javax.swing.JOptionPane.showMessageDialog(this, "Gagal: ID Kategori '" + id + "' sudah terdaftar!");
-                return; // Berhenti di sini
+                return; 
             }
         } else {
-            // Mode Tambah: ID belum ada, lakukan INSERT
             String sqlInsert = "INSERT INTO kategori_buku (ID_Kategori, Nama_Kategori, Deskripsi) VALUES (?, ?, ?)";
             java.sql.PreparedStatement stInsert = conn.prepareStatement(sqlInsert);
             stInsert.setString(1, id);

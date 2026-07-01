@@ -197,6 +197,12 @@ public class menuPeminjaman extends javax.swing.JPanel {
             }
         });
 
+        tfCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfCariActionPerformed(evt);
+            }
+        });
+
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(102, 102, 102));
         jLabel3.setText("Data Detail Peminjaman Buku");
@@ -358,6 +364,10 @@ public class menuPeminjaman extends javax.swing.JPanel {
     private void tblDetailPeminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDetailPeminjamanMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_tblDetailPeminjamanMouseClicked
+
+    private void tfCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfCariActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

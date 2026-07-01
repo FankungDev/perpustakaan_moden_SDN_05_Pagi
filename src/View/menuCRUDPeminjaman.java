@@ -59,7 +59,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     }
     
     private String generateIdPinjam() {
-    String kodeOtomatis = "PJM001"; // Default jika tabel masih kosong
+    String kodeOtomatis = "PJM001";
     Connection conn = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -72,19 +72,16 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                String idTerakhir = rs.getString("Id_Pinjam"); // Misal: PJM005
+                String idTerakhir = rs.getString("Id_Pinjam"); 
 
-                // Mengambil angka di belakang teks "PJM" (indeks ke-3 sampai selesai)
                 int angka = Integer.parseInt(idTerakhir.substring(3)); 
-                angka++; // Naikkan 1 angka menjadi 6
+                angka++;
 
-                // Format ulang angka menjadi 3 digit (006) dan gabungkan kembali dengan "PJM"
                 kodeOtomatis = String.format("PJM%03d", angka); 
             }
         } catch (Exception e) {
             System.out.println("Error saat membuat ID otomatis: " + e.getMessage());
         } finally {
-            // Membersihkan resource database
             try { if (rs != null) rs.close(); } catch (Exception e) {}
             try { if (ps != null) ps.close(); } catch (Exception e) {}
         }
@@ -105,17 +102,13 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         int jumlahBaris = dataTabelPinjam.getRowCount();
 
         for (int i = 0; i < jumlahBaris; i++) {
-            // Mengambil nilai kolom ke-4 (Jumlah Pinjam)
             int qty = Integer.parseInt(dataTabelPinjam.getValueAt(i, 4).toString());
             total += qty;
         }
-
-        // Tampilkan totalnya ke label lblTotalPinjam
         lblTotalPinjam.setText(String.valueOf(total));
     }
     
     public void loadDataTabelPinjam() {
-    // Membuat objek model tabel dengan kolom sesuai request (tanpa Id_Pinjam)
     DefaultTableModel model = new DefaultTableModel();
     model.addColumn("ID Buku");
     model.addColumn("Judul Buku");
@@ -124,7 +117,6 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     model.addColumn("Jumlah Pinjam");
     
     try {
-        // Mengambil koneksi dari class koneksi Anda
         Connection conn = koneksi.getKoneksi(); 
         
         // Query disesuaikan dengan screenshot: mengambil dari view_peminjaman_detail
@@ -133,7 +125,7 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
                    + "FROM view_peminjaman_detail WHERE nis = ?"; 
         
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, txtNIS.getText()); // Memfilter berdasarkan NIS anggota yang terpilih
+        ps.setString(1, txtNIS.getText());
         ResultSet rs = ps.executeQuery();
         
         int totalPinjam = 0;
@@ -147,14 +139,10 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
                 rs.getInt("Jumlah_Pinjam")
             });
             
-            // Sekalian menghitung total buku yang sedang dipinjam
             totalPinjam += rs.getInt("Jumlah_Pinjam");
         }
-        
-        // Set model ke JTable dataTabelPinjam
         dataTabelPinjam.setModel(model);
         
-        // Update label total pinjam di GUI jika diperlukan
         lblTotalPinjam.setText(String.valueOf(totalPinjam));
         
         } catch (Exception e) {
@@ -165,11 +153,10 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     
     public menuCRUDPeminjaman(String id, String nama, String deskripsi) {
         initComponents();
-        txtNIS.setText(id);      // Sesuaikan dengan nama variabel TextField Anda
+        txtNIS.setText(id);
         tfNamaKategori.setText(nama);
         tfDeskripsi.setText(deskripsi);
         
-        // Opsional: set ID agar tidak bisa diedit saat mode edit
         txtNIS.setEditable(false);
     }
     
@@ -191,27 +178,23 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         txtPengarang.setText(pengarang_buku);
         txtPenerbit.setText(penerbit_buku);
         
-        // Membuat Text Field Buku tidak bisa diedit/diketik manual
         txtIdBuku.setEditable(false);
         txtJudul.setEditable(false);
         txtPengarang.setEditable(false);
         txtPenerbit.setEditable(false);
-
-        // nama_gambar di sini berisi data dari kolom 'cover' (misal: "uploads/nama_file.jpg")
+        
         if (nama_gambar != null && !nama_gambar.isEmpty()) {
             try {
-                // Menggabungkan direktori utama aplikasi dengan path dari database
+                
                 java.nio.file.Path pathLengkap = java.nio.file.Paths.get(System.getProperty("user.dir"), nama_gambar);
                 java.io.File fileGambar = pathLengkap.toFile();
 
                 if (fileGambar.exists()) {
-                    // Load gambar menggunakan path absolute yang valid
+                    
                     javax.swing.ImageIcon imageIcon = new javax.swing.ImageIcon(fileGambar.getAbsolutePath());
-
-                    // Resize gambar secara halus sesuai ukuran label (170 x 220)
+                    
                     java.awt.Image image = imageIcon.getImage().getScaledInstance(170, 220, java.awt.Image.SCALE_SMOOTH);
-
-                    // Pasang ke label gambar
+                    
                     lblGambar.setIcon(new javax.swing.ImageIcon(image));
                     lblGambar.setText(""); // Hapus teks jLabel
                 } else {
@@ -597,23 +580,19 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         javax.swing.JOptionPane.showMessageDialog(this, "Pilih buku dan isi jumlah pinjam terlebih dahulu!");
         return;
     }
-    
-    // 2. Ambil model tabel yang sudah ada
+        
         DefaultTableModel model = (DefaultTableModel) dataTabelPinjam.getModel();
-
-        // 3. Masukkan data dari text field ke dalam baris tabel
+        
         model.addRow(new Object[]{
             txtIdBuku.getText(),
             txtJudul.getText(),
             txtPengarang.getText(),
             txtPenerbit.getText(),
-            txtJumlahBuku.getText() // Mengambil jumlah yang diinput di txtTotalBuku
+            txtJumlahBuku.getText() 
         });
-
-        // 4. Hitung ulang total pinjam dari semua baris di tabel
+        
         hitungTotalPinjam();
-
-        // 5. Bersihkan text field data buku agar bisa memilih buku yang lain
+        
         txtIdBuku.setText("");
         txtJudul.setText("");
         txtPengarang.setText("");
@@ -645,19 +624,16 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         javax.swing.JOptionPane.showMessageDialog(this, "Tanggal Pinjam & Kembali harus diisi!");
         return;
     }
-
-    // 2. PROSES INSERT KE DATABASE + UPDATE STOK
+    
     Connection conn = null;
     try {
         conn = Koneksi.koneksi.getKoneksi();
-        conn.setAutoCommit(false); // Mengaktifkan transaksi agar data konsisten
-
-        // Format tanggal standar MySQL (yyyy-MM-dd)
+        conn.setAutoCommit(false);
+        
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
         String tglPinjam = sdf.format(txtTglPinjam.getDate());
         String tglKembali = sdf.format(txtTglKembali.getDate());
-
-        // A. Insert ke tabel master 'peminjaman'
+        
         String sqlMaster = "INSERT INTO peminjaman (Id_Pinjam, Nis, Tanggal_Pinjam, Tanggal_Kembali) VALUES (?, ?, ?, ?)";
         try (PreparedStatement psMaster = conn.prepareStatement(sqlMaster)) {
             psMaster.setString(1, txtIDPinjam.getText().trim());
@@ -666,15 +642,12 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
             psMaster.setString(4, tglKembali);
             psMaster.executeUpdate();
         }
-
-        // B.1. Siapkan Query Insert ke tabel detail_peminjaman
+        
         String sqlDetail = "INSERT INTO detail_pinjam (Id_Pinjam, Id_Buku, Jumlah_Pinjam, Status_Pinjam) VALUES (?, ?, ?, ?)";
         
-        // B.2. Siapkan Query Update Stok Buku
         String sqlUpdateStok = "UPDATE buku SET Stok = Stok - ? WHERE Id_Buku = ?";
         
-        // B.3. Siapkan Query Cek Stok Buku yang ada di Database saat ini
-        String sqlCekStok = "SELECT Stok, Judul_buku FROM buku WHERE Id_Buku = ?"; // Sesuaikan 'Judul' jika kolomnya berbeda
+        String sqlCekStok = "SELECT Stok, Judul_buku FROM buku WHERE Id_Buku = ?";
         
         try (PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
              PreparedStatement psUpdateStok = conn.prepareStatement(sqlUpdateStok);
@@ -682,25 +655,22 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
 
             for (int i = 0; i < jumlahBaris; i++) {
                 String idBuku = dataTabelPinjam.getValueAt(i, 0).toString();
-                // Mengambil nilai nama/judul buku untuk keperluan pesan error (misal ada di kolom indeks 1)
                 String namaBuku = dataTabelPinjam.getValueAt(i, 1).toString(); 
                 int qty = Integer.parseInt(dataTabelPinjam.getValueAt(i, 4).toString());
-
-                // === PROSES VALIDASI STOK ===
+                
                 psCekStok.setString(1, idBuku);
                 try (ResultSet rsStok = psCekStok.executeQuery()) {
                     if (rsStok.next()) {
                         int stokSekarang = rsStok.getInt("Stok");
                         
-                        // Jika stok di database lebih kecil daripada jumlah yang diinputkan
                         if (stokSekarang < qty) {
                             javax.swing.JOptionPane.showMessageDialog(this, 
                                 "Gagal! Stok buku '" + namaBuku + "' tidak mencukupi.\n" +
                                 "Stok tersedia: " + stokSekarang + ", Jumlah diminta: " + qty, 
                                 "Stok Kurang", javax.swing.JOptionPane.WARNING_MESSAGE);
                             
-                            conn.rollback(); // Batalkan transaksi master yang sudah ter-insert di atas
-                            return; // Keluar dari method simpan data
+                            conn.rollback();
+                            return; 
                         }
                     } else {
                         javax.swing.JOptionPane.showMessageDialog(this, "Buku dengan ID " + idBuku + " tidak ditemukan!");
@@ -708,31 +678,25 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
                         return;
                     }
                 }
-                // === END VALIDASI STOK ===
-
-                // Set parameter untuk insert detail
+                
                 psDetail.setString(1, txtIDPinjam.getText().trim());
                 psDetail.setString(2, idBuku);
                 psDetail.setInt(3, qty);
                 psDetail.setString(4, "Dipinjam"); 
                 psDetail.addBatch();
-
-                // Set parameter untuk potong stok buku
+                
                 psUpdateStok.setInt(1, qty); 
                 psUpdateStok.setString(2, idBuku);
                 psUpdateStok.addBatch();
             }
             
-            // Eksekusi peminjaman buku dan pemotongan stok sekaligus jika semua lolos validasi
             psDetail.executeBatch(); 
             psUpdateStok.executeBatch(); 
         }
-
-        // Commit semua transaksi jika tidak ada error (Jika sukses, database akan terupdate bersamaan)
+        
         conn.commit();
         javax.swing.JOptionPane.showMessageDialog(this, "Data peminjaman berhasil disimpan & Stok buku berhasil diperbarui!");
         
-        // C. RESET FORM SEPERTI SEMULA
         clearFormBuku();
         txtNIS.setText("");
         tfNamaKategori.setText("");
@@ -741,16 +705,14 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         txtTglPinjam.setDate(null);
         txtTglKembali.setDate(null);
         
-        // Kosongkan JTable keranjang
         DefaultTableModel model = (DefaultTableModel) dataTabelPinjam.getModel();
         model.setRowCount(0);
         lblTotalPinjam.setText("0");
         
-        // Perbarui ID Pinjam otomatis ke nomor berikutnya
         txtIDPinjam.setText(generateIdPinjam());
 
     } catch (Exception e) {
-        // Jika ada satu saja yang gagal (misal koneksi putus tengah jalan), batalkan semuanya
+        
         if (conn != null) {
             try { conn.rollback(); } catch (Exception ex) { System.out.println(ex.getMessage()); }
         }
@@ -781,21 +743,19 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     int barisTerpilih = dataTabelPinjam.getSelectedRow();
     
     if (barisTerpilih != -1) {
-        // Ambil data buku dari baris tabel yang diklik
-        String idBuku = dataTabelPinjam.getValueAt(barisTerpilih, 0).toString();      // Kolom 0 = ID Buku
-        String judulBuku = dataTabelPinjam.getValueAt(barisTerpilih, 1).toString();   // Kolom 1 = Judul Buku
-        String pengarang = dataTabelPinjam.getValueAt(barisTerpilih, 2).toString();   // Kolom 2 = Pengarang
-        String penerbit = dataTabelPinjam.getValueAt(barisTerpilih, 3).toString();    // Kolom 3 = Penerbit
-        String jumlahPinjam = dataTabelPinjam.getValueAt(barisTerpilih, 4).toString(); // Kolom 4 = Jumlah Pinjam
         
-        // Set data ke komponen form input agar siap diedit/diubah bukunya
+        String idBuku = dataTabelPinjam.getValueAt(barisTerpilih, 0).toString();      
+        String judulBuku = dataTabelPinjam.getValueAt(barisTerpilih, 1).toString();  
+        String pengarang = dataTabelPinjam.getValueAt(barisTerpilih, 2).toString();   
+        String penerbit = dataTabelPinjam.getValueAt(barisTerpilih, 3).toString();    
+        String jumlahPinjam = dataTabelPinjam.getValueAt(barisTerpilih, 4).toString(); 
+
         txtIdBuku.setText(idBuku);
         txtJudul.setText(judulBuku);
         txtPengarang.setText(pengarang);
         txtPenerbit.setText(penerbit);
         txtJumlahBuku.setText(jumlahPinjam);
         
-        // Memunculkan tombol update dan batal update
         this.btnBatalUpdate.setVisible(true);
         this.btnUpdate.setVisible(true);
     }
@@ -803,12 +763,11 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
 
     private void btnCariDataAnggotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariDataAnggotaActionPerformed
         Tampilan.PopupDataAnggota popup = new Tampilan.PopupDataAnggota();
-        popup.agt = this; // Melemparkan instansi form ini ke dalam popup
-        popup.setVisible(true);    // TODO add your handling code here:
+        popup.agt = this; 
+        popup.setVisible(true);   
     }//GEN-LAST:event_btnCariDataAnggotaActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-// 1. Ambil baris indeks ke berapa yang sedang dipilih di tabel
     int barisTerpilih = dataTabelPinjam.getSelectedRow();
     
     // Validasi: Pastikan ada baris yang terpilih
@@ -820,7 +779,6 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         return;
     }
     
-    // Validasi: Pastikan data buku input tidak kosong
     if (txtIdBuku.getText().trim().isEmpty() || txtJumlahBuku.getText().trim().isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this, 
                 "Data buku dan Jumlah buku tidak boleh kosong!", 
@@ -832,7 +790,6 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
     try {
         int jumlahBaru = Integer.parseInt(txtJumlahBuku.getText().trim());
         
-        // Validasi: Jumlah tidak boleh 0 atau negatif
         if (jumlahBaru <= 0) {
             javax.swing.JOptionPane.showMessageDialog(this, 
                     "Jumlah pinjam harus lebih dari 0!", 
@@ -841,20 +798,16 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
             return;
         }
         
-        // 2. UPDATE data tabel secara keseluruhan berdasarkan inputan form terbaru
-        dataTabelPinjam.setValueAt(txtIdBuku.getText(), barisTerpilih, 0);       // Kolom 0 = ID Buku
-        dataTabelPinjam.setValueAt(txtJudul.getText(), barisTerpilih, 1);        // Kolom 1 = Judul Buku
-        dataTabelPinjam.setValueAt(txtPengarang.getText(), barisTerpilih, 2);    // Kolom 2 = Pengarang
-        dataTabelPinjam.setValueAt(txtPenerbit.getText(), barisTerpilih, 3);     // Kolom 3 = Penerbit
-        dataTabelPinjam.setValueAt(jumlahBaru, barisTerpilih, 4);                // Kolom 4 = Jumlah Pinjam
+        dataTabelPinjam.setValueAt(txtIdBuku.getText(), barisTerpilih, 0);   
+        dataTabelPinjam.setValueAt(txtJudul.getText(), barisTerpilih, 1);       
+        dataTabelPinjam.setValueAt(txtPengarang.getText(), barisTerpilih, 2);   
+        dataTabelPinjam.setValueAt(txtPenerbit.getText(), barisTerpilih, 3);  
+        dataTabelPinjam.setValueAt(jumlahBaru, barisTerpilih, 4);
         
-        // 3. Hitung ulang total keseluruhan pinjam di label GUI
         hitungTotalPinjam();
         
-        // 4. Bersihkan form inputan buku kembali
         clearFormBuku();
         
-        // 5. Sembunyikan kembali tombol update
         this.btnBatalUpdate.setVisible(false);
         this.btnUpdate.setVisible(false);
         

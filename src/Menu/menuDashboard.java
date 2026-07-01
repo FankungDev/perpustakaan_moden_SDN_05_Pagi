@@ -37,36 +37,29 @@ public class menuDashboard extends javax.swing.JPanel {
         String sqlKembali = "SELECT COUNT(DISTINCT dp.Id_Pinjam) FROM detail_pinjam dp " +
                             "INNER JOIN peminjaman p ON dp.Id_Pinjam = p.Id_Pinjam " +
                             "WHERE dp.status_pinjam != 'Dipinjam'";
-
-        // PERBAIKAN: Ambil referensi koneksi tanpa memasukkannya ke try-with-resources agar tidak auto-close
+        
         try {
             Connection conn = Koneksi.koneksi.getKoneksi();
-            
-            // Cukup Statement yang masuk try-with-resources agar auto-close tiap ganti query
             try (Statement st = conn.createStatement()) {
                 
-                // 1. Hitung Anggota
                 try (ResultSet rsAnggota = st.executeQuery(sqlAnggota)) {
                     if (rsAnggota.next()) {
                         txtAnggota.setText(rsAnggota.getString(1));
                     }
                 }
-
-                // 2. Hitung Stok Buku
+                
                 try (ResultSet rsBuku = st.executeQuery(sqlBuku)) {
                     if (rsBuku.next()) {
                         txtBuku.setText(rsBuku.getString(1) != null ? rsBuku.getString(1) : "0");
                     }
                 }
-
-                // 3. Hitung Peminjaman
+                
                 try (ResultSet rsPinjam = st.executeQuery(sqlPinjam)) {
                     if (rsPinjam.next()) {
                         txtPeminjaman.setText(rsPinjam.getString(1));
                     }
                 }
-
-                // 4. Hitung Pengembalian
+                
                 try (ResultSet rsKembali = st.executeQuery(sqlKembali)) {
                     if (rsKembali.next()) {
                         txtPengembalian.setText(rsKembali.getString(1));
@@ -96,8 +89,7 @@ public class menuDashboard extends javax.swing.JPanel {
         model.addColumn("Status");
 
         String sql = "SELECT * FROM view_dashboard";
-
-        // PERBAIKAN: Koneksi dikeluarkan dari try-with-resources agar tidak menutup koneksi utama aplikasi
+        
         try {
             Connection conn = Koneksi.koneksi.getKoneksi();
             

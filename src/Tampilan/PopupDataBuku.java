@@ -65,7 +65,6 @@ public class PopupDataBuku extends javax.swing.JFrame {
     protected void datatable() {
         Object[] Baris = {"ID BUKU", "JUDUL", "PENGARANG", "PENERBIT", "COVER"};
         
-        // Override DefaultTableModel agar kolom ke-5 (indeks 4) dikenali sebagai Image/Icon
         tabmode = new DefaultTableModel(null, Baris) {
             @Override
             public Class<?> getColumnClass(int column) {
@@ -81,7 +80,6 @@ public class PopupDataBuku extends javax.swing.JFrame {
         };
         tableDataBuku.setModel(tabmode);
         
-        // Atur agar renderer JTable bisa menggambar object ImageIcon ke tengah cell
         tableDataBuku.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
