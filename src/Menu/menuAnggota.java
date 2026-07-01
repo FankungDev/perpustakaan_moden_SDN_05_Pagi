@@ -13,15 +13,8 @@ import javax.swing.table.DefaultTableModel;
 import Tampilan.MenuUtama;
 import View.menuCRUDAnggota;
 
-/**
- *
- * @author rafli
- */
 public class menuAnggota extends javax.swing.JPanel {
-
-    /**
-     * Creates new form menuAnggota
-     */
+    
     public menuAnggota() {
         initComponents();
         setTabelModel();
