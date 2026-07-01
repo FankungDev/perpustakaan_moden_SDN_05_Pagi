@@ -42,7 +42,6 @@ public class menuPetugas extends javax.swing.JPanel {
     model.addColumn("Nama Petugas");
     model.addColumn("Username");
     model.addColumn("Email");
-    model.addColumn("Level");
     jTable1.setModel(model);
     
     
@@ -75,7 +74,6 @@ public class menuPetugas extends javax.swing.JPanel {
                 rs.getString("Nama"),
                 rs.getString("Username"),
                 rs.getString("Email"),
-                rs.getString("Level"),
             });
         }
     } catch (Exception e) {
@@ -249,7 +247,6 @@ public class menuPetugas extends javax.swing.JPanel {
     String nama      = (jTable1.getValueAt(baris, 2) != null) ? jTable1.getValueAt(baris, 2).toString() : "";
     String username  = (jTable1.getValueAt(baris, 3) != null) ? jTable1.getValueAt(baris, 3).toString() : "";
     String email     = (jTable1.getValueAt(baris, 4) != null) ? jTable1.getValueAt(baris, 4).toString() : "";
-    String level     = (jTable1.getValueAt(baris, 5) != null) ? jTable1.getValueAt(baris, 5).toString() : "";
     
     // Ambil password langsung dari database berdasarkan ID
     String password = "";
@@ -269,7 +266,7 @@ public class menuPetugas extends javax.swing.JPanel {
     // Buka form CRUD
     MenuUtama menuUtama = (MenuUtama) javax.swing.SwingUtilities.getWindowAncestor(this);
     if (menuUtama != null) {
-        menuUtama.showPanel(new menuCRUDPetugas(idPetugas, nama, username, email, level, password));
+        menuUtama.showPanel(new menuCRUDPetugas(idPetugas, nama, username, email, password));
     }
     } else {
     javax.swing.JOptionPane.showMessageDialog(this, "Pilih data di tabel terlebih dahulu!");
@@ -277,7 +274,57 @@ public class menuPetugas extends javax.swing.JPanel {
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-        // TODO add your handling code here:
+    int baris = jTable1.getSelectedRow();
+    
+    // 1. Cek apakah ada baris tabel yang dipilih
+    if (baris != -1) {
+        // Mengambil ID_Admin dari kolom indeks ke-1 (ID Petugas)
+        String idPetugas = jTable1.getValueAt(baris, 1).toString();
+        String namaPetugas = jTable1.getValueAt(baris, 2).toString();
+        
+        // 2. Tampilkan dialog konfirmasi biar aman tidak asal kehapus
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
+            this, 
+            "Apakah Anda yakin ingin menghapus petugas '" + namaPetugas + "'?", 
+            "Konfirmasi Hapus", 
+            javax.swing.JOptionPane.YES_NO_OPTION
+        );
+        
+        // 3. Jika user menekan tombol YES
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                // Ambil koneksi ke database
+                Connection conn = Koneksi.koneksi.getKoneksi();
+                
+                // Query delete berdasarkan ID_Admin
+                String sql = "DELETE FROM data_admin WHERE ID_Admin = ?";
+                PreparedStatement st = conn.prepareStatement(sql);
+                st.setString(1, idPetugas);
+                
+                int hasil = st.executeUpdate();
+                
+                if (hasil > 0) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
+                    
+                    // Refresh data tabel setelah dihapus
+                    loadData(); 
+                    
+                    // Kembalikan kondisi tombol seperti semula
+                    btnBatalActionPerformed(null); 
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus data dari database.");
+                }
+                
+                st.close();
+            } catch (Exception e) {
+                System.out.println("Error pada hapusData: " + e.getMessage());
+                javax.swing.JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
+            }
+        }
+    } else {
+        // Jika belum ada baris yang dipilih tapi tombol hapus kepencet
+        javax.swing.JOptionPane.showMessageDialog(this, "Pilih data di tabel terlebih dahulu!");
+    }
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed

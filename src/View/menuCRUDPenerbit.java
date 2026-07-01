@@ -26,8 +26,39 @@ public class menuCRUDPenerbit extends javax.swing.JPanel {
         initComponents();
         btnSimpan.setVisible(false); // Sembunyikan Simpan, tampilkan Tambah
         btnTambah.setVisible(true);
+        generateID();
        
     }
+    
+    private void generateID() {
+    try {
+        java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+        // Mengambil ID penerbit terbesar/terakhir
+        String sql = "SELECT id_penerbit FROM penerbit ORDER BY id_penerbit DESC LIMIT 1";
+        java.sql.PreparedStatement st = conn.prepareStatement(sql);
+        java.sql.ResultSet rs = st.executeQuery();
+
+        if (rs.next()) {
+            String lastId = rs.getString("id_penerbit"); // Contoh: "PNB005"
+            // Mengambil angka setelah text "PNB" (indeks ke-3 sampai selesai)
+            int idNum = Integer.parseInt(lastId.substring(3)); 
+            idNum++; // Naikkan 1 angka -> 6
+            
+            // Format kembali menjadi PNB + 3 digit angka (006)
+            String newId = String.format("PNB%03d", idNum);
+            tfIdPenerbit.setText(newId);
+        } else {
+            // Jika database masih kosong, mulai dari PNB001
+            tfIdPenerbit.setText("PNB001");
+        }
+        
+        // Opsional: Kunci textfield agar tidak bisa diubah manual
+        tfIdPenerbit.setEditable(false); 
+        
+    } catch (java.sql.SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal generate ID: " + e.getMessage());
+    }
+}
     
     public menuCRUDPenerbit(String id, String nama, String situs) {
     initComponents();

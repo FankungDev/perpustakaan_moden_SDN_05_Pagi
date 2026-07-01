@@ -27,6 +27,8 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         initComponents();
         this.btnBatalUpdate.setVisible(false);
         this.btnUpdate.setVisible(false);
+        txtIDPinjam.setText(generateIdPinjam());
+        txtTglPinjam.setDate(new java.util.Date());
         java.awt.Dimension ukuranTetap = new java.awt.Dimension(289, 38);
     
         txtIdBuku.setPreferredSize(ukuranTetap);
@@ -55,6 +57,40 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         dataTabelPinjam.setModel(model);
         generateIdPinjam();
     }
+    
+    private String generateIdPinjam() {
+    String kodeOtomatis = "PJM001"; // Default jika tabel masih kosong
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    
+        try {
+            conn = Koneksi.koneksi.getKoneksi();
+            // Mengambil Id_Pinjam yang paling besar / terakhir dimasukkan
+            String sql = "SELECT Id_Pinjam FROM peminjaman ORDER BY Id_Pinjam DESC LIMIT 1";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String idTerakhir = rs.getString("Id_Pinjam"); // Misal: PJM005
+
+                // Mengambil angka di belakang teks "PJM" (indeks ke-3 sampai selesai)
+                int angka = Integer.parseInt(idTerakhir.substring(3)); 
+                angka++; // Naikkan 1 angka menjadi 6
+
+                // Format ulang angka menjadi 3 digit (006) dan gabungkan kembali dengan "PJM"
+                kodeOtomatis = String.format("PJM%03d", angka); 
+            }
+        } catch (Exception e) {
+            System.out.println("Error saat membuat ID otomatis: " + e.getMessage());
+        } finally {
+            // Membersihkan resource database
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+        }
+
+        return kodeOtomatis;
+    }
 
         private void clearFormBuku() {
         txtIdBuku.setText("");
@@ -62,30 +98,6 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         txtPengarang.setText("");
         txtPenerbit.setText("");
         txtJumlahBuku.setText("");
-    }   
-    
-        private String generateIdPinjam() {
-        String idBaru = "PJM001";
-        try {
-            Connection conn = Koneksi.koneksi.getKoneksi();
-            // Mencari Id_Pinjam yang paling besar/terakhir
-            String sql = "SELECT Id_Pinjam FROM peminjaman ORDER BY Id_Pinjam DESC LIMIT 1";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                String idTerakhir = rs.getString("Id_Pinjam"); // contoh: "PJM002"
-                // Mengambil angka di belakang "PJM" (indeks ke-3 dst)
-                int angka = Integer.parseInt(idTerakhir.substring(3)); 
-                angka++; // Naikkan 1 angka menjadi 3
-
-                // Format kembali menjadi PJM003
-                idBaru = String.format("PJM%03d", angka); 
-            }
-        } catch (Exception e) {
-            System.out.println("Error generate ID Pinjam: " + e.getMessage());
-        }
-        return idBaru;
     }
     
     private void hitungTotalPinjam() {
@@ -658,15 +670,45 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
         // B.1. Siapkan Query Insert ke tabel detail_peminjaman
         String sqlDetail = "INSERT INTO detail_pinjam (Id_Pinjam, Id_Buku, Jumlah_Pinjam, Status_Pinjam) VALUES (?, ?, ?, ?)";
         
-        // B.2. Siapkan Query Update Stok Buku (Sesuaikan 'buku', 'Stok', dan 'Id_Buku' dengan nama kolom/tabel di DB-mu)
+        // B.2. Siapkan Query Update Stok Buku
         String sqlUpdateStok = "UPDATE buku SET Stok = Stok - ? WHERE Id_Buku = ?";
         
+        // B.3. Siapkan Query Cek Stok Buku yang ada di Database saat ini
+        String sqlCekStok = "SELECT Stok, Judul_buku FROM buku WHERE Id_Buku = ?"; // Sesuaikan 'Judul' jika kolomnya berbeda
+        
         try (PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
-             PreparedStatement psUpdateStok = conn.prepareStatement(sqlUpdateStok)) {
+             PreparedStatement psUpdateStok = conn.prepareStatement(sqlUpdateStok);
+             PreparedStatement psCekStok = conn.prepareStatement(sqlCekStok)) {
 
             for (int i = 0; i < jumlahBaris; i++) {
                 String idBuku = dataTabelPinjam.getValueAt(i, 0).toString();
+                // Mengambil nilai nama/judul buku untuk keperluan pesan error (misal ada di kolom indeks 1)
+                String namaBuku = dataTabelPinjam.getValueAt(i, 1).toString(); 
                 int qty = Integer.parseInt(dataTabelPinjam.getValueAt(i, 4).toString());
+
+                // === PROSES VALIDASI STOK ===
+                psCekStok.setString(1, idBuku);
+                try (ResultSet rsStok = psCekStok.executeQuery()) {
+                    if (rsStok.next()) {
+                        int stokSekarang = rsStok.getInt("Stok");
+                        
+                        // Jika stok di database lebih kecil daripada jumlah yang diinputkan
+                        if (stokSekarang < qty) {
+                            javax.swing.JOptionPane.showMessageDialog(this, 
+                                "Gagal! Stok buku '" + namaBuku + "' tidak mencukupi.\n" +
+                                "Stok tersedia: " + stokSekarang + ", Jumlah diminta: " + qty, 
+                                "Stok Kurang", javax.swing.JOptionPane.WARNING_MESSAGE);
+                            
+                            conn.rollback(); // Batalkan transaksi master yang sudah ter-insert di atas
+                            return; // Keluar dari method simpan data
+                        }
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(this, "Buku dengan ID " + idBuku + " tidak ditemukan!");
+                        conn.rollback();
+                        return;
+                    }
+                }
+                // === END VALIDASI STOK ===
 
                 // Set parameter untuk insert detail
                 psDetail.setString(1, txtIDPinjam.getText().trim());
@@ -676,12 +718,12 @@ public class menuCRUDPeminjaman extends javax.swing.JPanel {
                 psDetail.addBatch();
 
                 // Set parameter untuk potong stok buku
-                psUpdateStok.setInt(1, qty); // Mengurangi stok sejumlah buku yang dipinjam
+                psUpdateStok.setInt(1, qty); 
                 psUpdateStok.setString(2, idBuku);
                 psUpdateStok.addBatch();
             }
             
-            // Eksekusi peminjaman buku dan pemotongan stok sekaligus
+            // Eksekusi peminjaman buku dan pemotongan stok sekaligus jika semua lolos validasi
             psDetail.executeBatch(); 
             psUpdateStok.executeBatch(); 
         }

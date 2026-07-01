@@ -26,10 +26,40 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         initComponents();
         btnSimpan.setVisible(false); // Sembunyikan Simpan, tampilkan Tambah
         btnTambah.setVisible(true);
-       
+        autoGenerateID();
     }
     
-    public menuCRUDPetugas(String idPetugas, String nama, String username, String email, String level , String password) {
+    private void autoGenerateID() {
+        try {
+            java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+            // Mengambil ID_Admin terbesar/terakhir
+            String sql = "SELECT ID_Admin FROM data_admin ORDER BY ID_Admin DESC LIMIT 1";
+            java.sql.PreparedStatement st = conn.prepareStatement(sql);
+            java.sql.ResultSet rs = st.executeQuery();
+
+            if (rs.next()) {
+                String lastID = rs.getString("ID_Admin"); // Contoh hasil: "ADM003"
+                // Mengambil angka dari substring setelah "ADM" (indeks ke-3 sampai selesai)
+                int idNum = Integer.parseInt(lastID.substring(3)) + 1; 
+
+                // Format kembali angka menjadi 3 digit (contoh: 4 -> "ADM004")
+                String newID = String.format("ADM%03d", idNum);
+                tfIdPetugas.setText(newID);
+            } else {
+                // Jika database masih kosong, mulai dari ADM001
+                tfIdPetugas.setText("ADM001");
+            }
+
+            // Buat agar textfield ID tidak bisa diedit manual oleh user
+            tfIdPetugas.setEditable(false); 
+
+        } catch (Exception e) {
+            System.out.println("Error saat generate ID: " + e.getMessage());
+        }
+    }
+    
+    
+    public menuCRUDPetugas(String idPetugas, String nama, String username, String email, String password) {
         initComponents(); // Tetap panggil ini untuk inisialisasi komponen GUI
         btnTambah.setVisible(false); // Sembunyikan Tambah, tampilkan Simpan
         btnSimpan.setVisible(true);
@@ -42,7 +72,6 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         pfPasswordPetugas.setText(password);
         
         // Jika level adalah ComboBox:
-        cbLevel.setSelectedItem(level);
         
         // Opsional: Kunci ID jika tidak boleh diubah saat edit
         tfIdPetugas.setEditable(false); 
@@ -73,8 +102,6 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         tfUsernamePetugas = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         tfEmailPetugas = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
-        cbLevel = new javax.swing.JComboBox<>();
         pfPasswordPetugas = new javax.swing.JPasswordField();
         btnSimpan = new javax.swing.JButton();
 
@@ -113,10 +140,6 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         jLabel6.setText("Email");
 
         jLabel7.setText("Password");
-
-        jLabel8.setText("Level");
-
-        cbLevel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Level", "Admin", "User" }));
 
         btnSimpan.setText("SIMPAN");
         btnSimpan.addActionListener(new java.awt.event.ActionListener() {
@@ -158,13 +181,11 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8)
                             .addComponent(jLabel7)
                             .addComponent(jLabel6)
                             .addComponent(jLabel5)
                             .addComponent(jLabel4))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 1368, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -200,11 +221,7 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pfPasswordPetugas, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel8)
-                .addGap(18, 18, 18)
-                .addComponent(cbLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(253, 253, 253))
+                .addGap(342, 342, 342))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -221,10 +238,9 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         String username = tfUsernamePetugas.getText().trim();
         String email = tfEmailPetugas.getText().trim();
         String password = new String(pfPasswordPetugas.getPassword()); // Mengambil password
-        String level = cbLevel.getSelectedItem().toString();
 
         // 1. Validasi Input
-        if (id.isEmpty() || nama.isEmpty() || username.isEmpty() || password.isEmpty() || level.equals("Pilih Level")) {
+        if (id.isEmpty() || nama.isEmpty() || username.isEmpty() || password.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this, "Semua data wajib diisi dengan benar!");
             return;
         }
@@ -236,14 +252,13 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
             if (!tfIdPetugas.isEditable()) {
                 // LOGIKA UPDATE
                 // Jika password dikosongkan, kita bisa memilih untuk tidak mengubah password
-                String sql = "UPDATE data_admin SET Nama = ?, Username = ?, Email = ?, Password = ?, Level = ? WHERE ID_Admin = ?";
+                String sql = "UPDATE data_admin SET Nama = ?, Username = ?, Email = ?, Password = ? WHERE ID_Admin = ?";
                 java.sql.PreparedStatement st = conn.prepareStatement(sql);
                 st.setString(1, nama);
                 st.setString(2, username);
                 st.setString(3, email);
                 st.setString(4, password);
-                st.setString(5, level);
-                st.setString(6, id);
+                st.setString(5, id);
 
                 st.executeUpdate();
                 javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!");
@@ -259,14 +274,13 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
                     return;
                 }
 
-                String sql = "INSERT INTO data_admin (ID_Admin, Nama, Username, Email, Password, Level) VALUES (?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO data_admin (ID_Admin, Nama, Username, Email, Password) VALUES (?, ?, ?, ?, ?)";
                 java.sql.PreparedStatement st = conn.prepareStatement(sql);
                 st.setString(1, id);
                 st.setString(2, nama);
                 st.setString(3, username);
                 st.setString(4, email);
                 st.setString(5, password);
-                st.setString(6, level);
 
                 st.executeUpdate();
                 javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
@@ -285,11 +299,19 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
         String nama = tfNamaPetugas.getText().trim();
         String username = tfUsernamePetugas.getText().trim();
         String email = tfEmailPetugas.getText().trim();
-        String password = new String(pfPasswordPetugas.getPassword());
-        String level = cbLevel.getSelectedItem().toString();
+        String password = new String(pfPasswordPetugas.getPassword()).trim(); // Tambah trim untuk password
+
+        // ================== VALIDASI TIDAK BOLEH KOSONG ==================
+        if (id.isEmpty() || nama.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Semua kolom data wajib diisi, tidak boleh kosong!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return; // Menghentikan proses ke bawah agar tidak masuk ke database
+        }
+        
+        // Validasi tambahan jika JComboBox level masih di pilihan default (misal indeks ke-0 adalah "-- Pilih Level --")
+        // =================================================================
 
         // 2. Query SQL
-        String sql = "INSERT INTO data_admin (ID_Admin, Nama, Username, Email, Password, Level) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO data_admin (ID_Admin, Nama, Username, Email, Password) VALUES (?, ?, ?, ?, ?)";
 
         try {
             // 3. Persiapkan koneksi
@@ -302,7 +324,6 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
             st.setString(3, username);
             st.setString(4, email);
             st.setString(5, password);
-            st.setString(6, level);
 
             // 5. Eksekusi
             st.executeUpdate();
@@ -319,7 +340,6 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
-    private javax.swing.JComboBox<String> cbLevel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
@@ -328,7 +348,6 @@ public class menuCRUDPetugas extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPasswordField pfPasswordPetugas;
     private javax.swing.JTextField tfEmailPetugas;
     private javax.swing.JTextField tfIdPetugas;

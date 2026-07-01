@@ -26,6 +26,7 @@ public class menuCRUDAnggota extends javax.swing.JPanel {
         btnSimpan.setVisible(false); // Sembunyikan Simpan, tampilkan Tambah
         btnTambah.setVisible(true);
         loadKelas();
+        txtTanggal.setDate(new java.util.Date());
     }
     
     public menuCRUDAnggota(String nis, String nama, String alamat, String telp, String email, String idKelas, String jk, java.util.Date tgl) {
