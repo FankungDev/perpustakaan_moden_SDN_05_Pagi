@@ -100,37 +100,6 @@ public class FormLogin extends javax.swing.JFrame {
         });
     }
     
-    private java.util.Map<String, String> checkLogin(String username, String password) {
-    java.util.Map<String, String> result = new java.util.HashMap<>();
-    
-    // Ambil instans koneksi global
-    java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
-    
-    if (conn != null) {
-        // Sesuaikan nama tabel 'data_admin' atau 'user' sesuai database kamu
-        String sql = "SELECT * FROM data_admin WHERE Username = ? AND Password = ?";
-        
-        try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, username);
-            ps.setString(2, password);
-            
-            try (java.sql.ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    // Masukkan data hasil query ke dalam Map sesuai kolom di DB kamu
-                    result.put("nama", rs.getString("nama"));
-                    result.put("level", rs.getString("level"));
-                    return result; // Kembalikan Map jika data ditemukan
-                }
-            }
-        } catch (java.sql.SQLException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memproses data: " + e.getMessage(), "Error Database", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "Koneksi database tidak tersedia!", "Error Database", javax.swing.JOptionPane.ERROR_MESSAGE);
-    }
-    
-    return null; // Mengembalikan null jika login gagal atau error
-}
     
     private void prosesLogin() {
         String username = txtUsername.getText().trim();
@@ -160,10 +129,9 @@ public class FormLogin extends javax.swing.JFrame {
             
             try (java.sql.ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    String namaAdmin = rs.getString("nama");         
-                    String level = rs.getString("level");
+                    String namaAdmin = rs.getString("nama");
                     
-                    javax.swing.JOptionPane.showMessageDialog(this, "Selamat Datang " + namaAdmin + " (" + level + ")!", "Login Berhasil", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Selamat Datang " + namaAdmin + " !", "Login Berhasil", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                     
                     // Membuka Frame MenuUtama / Dashboard
                     MenuUtama utama = new MenuUtama(namaAdmin);

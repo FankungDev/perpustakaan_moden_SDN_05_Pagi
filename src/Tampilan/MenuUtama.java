@@ -724,7 +724,7 @@ public class MenuUtama extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(1488, Short.MAX_VALUE)
+                .addContainerGap(1192, Short.MAX_VALUE)
                 .addComponent(lbDate)
                 .addGap(88, 88, 88)
                 .addComponent(lbProfileName)
@@ -759,7 +759,9 @@ public class MenuUtama extends javax.swing.JFrame {
         pDasar.setLayout(pDasarLayout);
         pDasarLayout.setHorizontalGroup(
             pDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1848, Short.MAX_VALUE)
+            .addGroup(pDasarLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1552, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         pDasarLayout.setVerticalGroup(
             pDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

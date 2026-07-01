@@ -342,18 +342,29 @@ public class menuPetugas extends javax.swing.JPanel {
 
         try {
             Connection conn = Koneksi.koneksi.getKoneksi();
+            String sql;
+            PreparedStatement st;
 
-            String sql = "SELECT * FROM data_admin "
-                       + "WHERE ID_Admin LIKE ? "
-                       + "OR Nama LIKE ? "
-                       + "OR Username LIKE ? "
-                       + "OR Email LIKE ? "
-                       + "OR Level LIKE ?";
+            // Cek apakah textfield pencarian kosong
+            if (cari.isEmpty()) {
+                // Jika kosong, tampilkan semua data urut berdasarkan ID_Admin
+                sql = "SELECT * FROM data_admin ORDER BY ID_Admin ASC";
+                st = conn.prepareStatement(sql);
+            } else {
+                // Jika ada text pencarian, lakukan filter LIKE (tanpa kolom Level)
+                sql = "SELECT * FROM data_admin "
+                    + "WHERE ID_Admin LIKE ? "
+                    + "OR Nama LIKE ? "
+                    + "OR Username LIKE ? "
+                    + "OR Email LIKE ? "
+                    + "ORDER BY ID_Admin ASC";
 
-            PreparedStatement st = conn.prepareStatement(sql);
+                st = conn.prepareStatement(sql);
 
-            for (int i = 1; i <= 5; i++) {
-                st.setString(i, "%" + cari + "%");
+                // Perulangan diubah sampai 4 karena parameter '?' sisa 4 buah
+                for (int i = 1; i <= 4; i++) {
+                    st.setString(i, "%" + cari + "%");
+                }
             }
 
             ResultSet rs = st.executeQuery();
@@ -365,8 +376,7 @@ public class menuPetugas extends javax.swing.JPanel {
                     rs.getString("ID_Admin"),
                     rs.getString("Nama"),
                     rs.getString("Username"),
-                    rs.getString("Email"),
-                    rs.getString("Level")
+                    rs.getString("Email") // rs.getString("Level") sudah dihapus
                 });
             }
 
