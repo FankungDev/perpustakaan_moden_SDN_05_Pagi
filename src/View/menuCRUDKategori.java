@@ -26,7 +26,43 @@ public class menuCRUDKategori extends javax.swing.JPanel {
         initComponents();
         btnSimpan.setVisible(false); // Sembunyikan Simpan, tampilkan Tambah
         btnTambah.setVisible(true);
+        generateIdKategori();
        
+    }
+    
+    private void generateIdKategori() {
+    // Mengambil ID Kategori terakhir dari tabel kategori_buku
+        String sql = "SELECT ID_Kategori FROM kategori_buku ORDER BY ID_Kategori DESC LIMIT 1";
+
+        try {
+            java.sql.Connection conn = Koneksi.koneksi.getKoneksi();
+            java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+            java.sql.ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                // Ambil ID Kategori terakhir (misal: "KTG001")
+                String lastId = rs.getString("ID_Kategori");
+
+                // Potong string "KTG" dan ambil angkanya ("001" -> 1)
+                int idNum = Integer.parseInt(lastId.substring(3));
+
+                // Tambah 1 untuk ID baru
+                idNum++;
+
+                // Format kembali menjadi 3 digit (misal: 2 -> "KTG002")
+                String newId = String.format("KTG%03d", idNum);
+                tfIdKategori.setText(newId);
+            } else {
+                // Jika database masih kosong, mulai dari KTG001
+                tfIdKategori.setText("KTG001");
+            }
+
+            // Kunci field ID agar tidak bisa diubah manual oleh user
+            tfIdKategori.setEditable(false);
+
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal generate ID: " + e.getMessage());
+        }
     }
     
     public menuCRUDKategori(String id, String nama, String deskripsi) {

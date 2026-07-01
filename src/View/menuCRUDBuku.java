@@ -36,7 +36,43 @@ public class menuCRUDBuku extends javax.swing.JPanel {
         btnTambah.setVisible(true);
         loadKategori();
         loadPenerbit();
+        generateIdBuku();
     }
+    
+    private void generateIdBuku() {
+    String sql = "SELECT Id_Buku FROM buku ORDER BY Id_Buku DESC LIMIT 1";
+    
+    try {
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        
+        if (rs.next()) {
+            // Ambil ID Buku terakhir (misal: "BKU005")
+            String lastId = rs.getString("Id_Buku");
+            
+            // Potong string "BKU" dan ambil angkanya saja ("005" -> 5)
+            int idNum = Integer.parseInt(lastId.substring(3));
+            
+            // Tambah 1 untuk ID baru
+            idNum++;
+            
+            // Format kembali menjadi 3 digit (misal: 6 -> "BKU006")
+            String newId = String.format("BKU%03d", idNum);
+            txtIdBuku.setText(newId);
+        } else {
+            // Jika database masih kosong, mulai dari BKU001
+            txtIdBuku.setText("BKU001");
+        }
+        
+        // Buat txtIdBuku tidak bisa diedit manual oleh user
+        txtIdBuku.setEditable(false);
+        
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal generate ID: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
     
     public menuCRUDBuku(String idBuku, String judul, String pengarang, String tahun, 
                     String idKategori, String idPenerbit, String jmlHalaman, 
@@ -451,42 +487,63 @@ public class menuCRUDBuku extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
     try {
-            if (txtImagePath.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Pilih gambar terlebih dahulu!");
-                return;
-            }
+        // 1. VALIDASI: Cek semua field tidak boleh kosong
+        if (txtIdBuku.getText().trim().isEmpty() ||
+            txtJudul.getText().trim().isEmpty() ||
+            txtPengarang.getText().trim().isEmpty() ||
+            txtTahunTerbit.getText().trim().isEmpty() ||
+            txtJumlahHalaman.getText().trim().isEmpty() ||
+            txtStok.getText().trim().isEmpty()) {
 
-            // Panggil copyFile dengan mengirimkan ID Buku untuk rename
-            File file = new File(txtImagePath.getText());
-            String pathUntukDB = copyFile(file, txtIdBuku.getText()); 
-
-            if (pathUntukDB == null) return; 
-
-            String sql = "INSERT INTO buku (Id_Buku, Judul_Buku, Pengarang, Tahun_Terbit, Id_Kategori, Id_Penerbit, Jumlah_Halaman, Stok, cover) VALUES (?,?,?,?,?,?,?,?,?)";
-
-            Connection conn = Koneksi.koneksi.getKoneksi();
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            ps.setString(1, txtIdBuku.getText());
-            ps.setString(2, txtJudul.getText());
-            ps.setString(3, txtPengarang.getText());
-            ps.setString(4, txtTahunTerbit.getText());
-            ps.setString(5, cbKategori.getSelectedItem().toString().split(" - ")[0]);
-            ps.setString(6, cbPenerbit.getSelectedItem().toString().split(" - ")[0]);
-            ps.setString(7, txtJumlahHalaman.getText());
-            ps.setString(8, txtStok.getText());
-            ps.setString(9, pathUntukDB);
-
-            ps.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Data Berhasil Disimpan!");
-
-            // Opsional: Kembali ke tabel
-            btnBatalActionPerformed(evt);
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal Simpan: " + e.getMessage());
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Semua data buku wajib diisi!");
+            return; // Hentikan proses jika ada yang kosong
         }
+
+        // Validasi Combo Box (jika belum memilih kategori/penerbit)
+        if (cbKategori.getSelectedIndex() == -1 || cbPenerbit.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Silahkan pilih Kategori dan Penerbit terlebih dahulu!");
+            return;
+        }
+
+        // Validasi Gambar
+        if (txtImagePath.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Pilih gambar terlebih dahulu!");
+            return;
+        }
+
+        // 2. PROSES COPY FILE
+        // Panggil copyFile dengan mengirimkan ID Buku untuk rename
+        File file = new File(txtImagePath.getText());
+        String pathUntukDB = copyFile(file, txtIdBuku.getText()); 
+
+        if (pathUntukDB == null) return; 
+
+        // 3. PROSES SIMPAN KE DATABASE
+        String sql = "INSERT INTO buku (Id_Buku, Judul_Buku, Pengarang, Tahun_Terbit, Id_Kategori, Id_Penerbit, Jumlah_Halaman, Stok, cover) VALUES (?,?,?,?,?,?,?,?,?)";
+
+        Connection conn = Koneksi.koneksi.getKoneksi();
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        ps.setString(1, txtIdBuku.getText());
+        ps.setString(2, txtJudul.getText());
+        ps.setString(3, txtPengarang.getText());
+        ps.setString(4, txtTahunTerbit.getText());
+        ps.setString(5, cbKategori.getSelectedItem().toString().split(" - ")[0]);
+        ps.setString(6, cbPenerbit.getSelectedItem().toString().split(" - ")[0]);
+        ps.setString(7, txtJumlahHalaman.getText());
+        ps.setString(8, txtStok.getText());
+        ps.setString(9, pathUntukDB);
+
+        ps.executeUpdate();
+        JOptionPane.showMessageDialog(this, "Data Berhasil Disimpan!");
+
+        // Kembali ke tabel / reset form
+        btnBatalActionPerformed(evt);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal Simpan: " + e.getMessage());
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
