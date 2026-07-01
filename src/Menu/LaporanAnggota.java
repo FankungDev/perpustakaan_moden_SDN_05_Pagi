@@ -33,6 +33,7 @@ public class LaporanAnggota extends javax.swing.JPanel {
         initComponents();
         setTabelModel();
         loadData();
+        loadKelas();
         
         btnBatal.setEnabled(false);
 
@@ -44,6 +45,36 @@ public class LaporanAnggota extends javax.swing.JPanel {
             }
         });
     }
+    
+    private void loadKelas() {
+
+    try {
+
+        Connection conn = koneksi.getKoneksi();
+
+        String sql = "SELECT * FROM data_kelas ORDER BY Kelas ASC";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        ResultSet rs = ps.executeQuery();
+
+        cbKelas.removeAllItems();
+
+        cbKelas.addItem("Semua Kelas");
+
+        while(rs.next()){
+
+            cbKelas.addItem(rs.getString("Id_Kelas"));
+
+        }
+
+    } catch (Exception e) {
+
+        JOptionPane.showMessageDialog(null, e.getMessage());
+
+    }
+
+}
     
     private void setTabelModel() {
     DefaultTableModel model = new DefaultTableModel();
@@ -66,29 +97,37 @@ public class LaporanAnggota extends javax.swing.JPanel {
 
         Connection conn = koneksi.getKoneksi();
 
-        String sql = "SELECT * FROM data_anggota WHERE 1=1";
+        String sql =
+                "SELECT da.*, dk.Kelas " +
+                "FROM data_anggota da " +
+                "INNER JOIN data_kelas dk ON da.Id_Kelas = dk.Id_Kelas " +
+                "WHERE 1=1";
 
         ArrayList<Object> param = new ArrayList<>();
 
-        // Filter tanggal
-        if (dcMulai.getDate() != null) {
-            sql += " AND Tanggal_Bergabung >= ?";
-            param.add(new java.sql.Date(dcMulai.getDate().getTime()));
-        }
+        // Filter kelas
+        if (cbKelas.getSelectedIndex() > 0) {
 
-        if (dcAkhir.getDate() != null) {
-            sql += " AND Tanggal_Bergabung <= ?";
-            param.add(new java.sql.Date(dcAkhir.getDate().getTime()));
+            sql += " AND da.Id_Kelas = ?";
+
+            param.add(cbKelas.getSelectedItem().toString());
+
         }
 
         // Filter pencarian
         if (!tfCari.getText().trim().isEmpty()) {
-            sql += " AND (nis LIKE ? OR Nama LIKE ? OR Email LIKE ?)";
+
+            sql += " AND (da.Nis LIKE ? OR da.Nama LIKE ? OR da.Email LIKE ?)";
+
             String cari = "%" + tfCari.getText().trim() + "%";
+
             param.add(cari);
             param.add(cari);
             param.add(cari);
+
         }
+
+        sql += " ORDER BY dk.Kelas, da.Nama";
 
         PreparedStatement ps = conn.prepareStatement(sql);
 
@@ -104,18 +143,21 @@ public class LaporanAnggota extends javax.swing.JPanel {
 
             model.addRow(new Object[]{
                 no++,
-                rs.getString("nis"),
+                rs.getString("Nis"),
                 rs.getString("Nama"),
                 rs.getString("Email"),
                 rs.getString("Jenis_Kelamin"),
+                rs.getString("Kelas"),
                 rs.getString("Tanggal_Bergabung")
             });
 
         }
 
     } catch (Exception e) {
+
         JOptionPane.showMessageDialog(this, e.getMessage());
         e.printStackTrace();
+
     }
 
 }
@@ -138,8 +180,7 @@ public class LaporanAnggota extends javax.swing.JPanel {
         btnBatal = new javax.swing.JButton();
         btnTampilkan = new javax.swing.JButton();
         btnPrint = new javax.swing.JButton();
-        dcMulai = new com.toedter.calendar.JDateChooser();
-        dcAkhir = new com.toedter.calendar.JDateChooser();
+        cbKelas = new javax.swing.JComboBox<>();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -193,9 +234,7 @@ public class LaporanAnggota extends javax.swing.JPanel {
             }
         });
 
-        dcMulai.setDateFormatString("yyyy-MM-dd");
-
-        dcAkhir.setDateFormatString("yyyy-MM-dd");
+        cbKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -211,10 +250,8 @@ public class LaporanAnggota extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel13))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(dcMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(dcAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(48, 48, 48)
+                        .addComponent(cbKelas, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(370, 370, 370)
                         .addComponent(btnTampilkan, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -235,14 +272,12 @@ public class LaporanAnggota extends javax.swing.JPanel {
                         .addComponent(jLabel2)
                         .addComponent(jLabel13)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dcMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dcAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnTampilkan, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnTampilkan, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbKelas, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 691, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -254,8 +289,7 @@ public class LaporanAnggota extends javax.swing.JPanel {
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        dcMulai.setDate(null);
-        dcAkhir.setDate(null);
+
         tfCari.setText("");
         loadData();
         btnBatal.setEnabled(false);
@@ -266,35 +300,38 @@ public class LaporanAnggota extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTampilkanActionPerformed
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-    try {
+        try {
 
-            Connection conn = Koneksi.koneksi.getKoneksi();
+        Connection conn = koneksi.getKoneksi();
 
-            String report = getClass().getResource("/Reports/LaporanAnggota.jasper").getPath();
+        String report = getClass()
+                .getResource("/Reports/LaporanAnggota.jasper")
+                .getPath();
 
-            Map<String, Object> parameter = new HashMap<>();
+        Map<String,Object> parameter = new HashMap<>();
 
-            if (dcMulai.getDate() != null) {
-                parameter.put("tanggalMulai",
-                        new java.sql.Date(dcMulai.getDate().getTime()));
-            }
+        if(cbKelas.getSelectedIndex()==0){
 
-            if (dcAkhir.getDate() != null) {
-                parameter.put("tanggalAkhir",
-                        new java.sql.Date(dcAkhir.getDate().getTime()));
-            }
+            parameter.put("idKelas", null);
 
-            JasperPrint jp = JasperFillManager.fillReport(
-                    report,
-                    parameter,
-                    conn);
+        }else{
 
-            JasperViewer.viewReport(jp, false);
+            parameter.put("idKelas",
+                    cbKelas.getSelectedItem().toString());
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                    "Gagal mencetak laporan\n" + e.getMessage());
-            e.printStackTrace();
+        }
+
+        JasperPrint jp = JasperFillManager.fillReport(
+                report,
+                parameter,
+                conn);
+
+        JasperViewer.viewReport(jp,false);
+
+    } catch (Exception e) {
+
+        JOptionPane.showMessageDialog(null,e.getMessage());
+
     }    }//GEN-LAST:event_btnPrintActionPerformed
 
 
@@ -302,8 +339,7 @@ public class LaporanAnggota extends javax.swing.JPanel {
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnTampilkan;
-    private com.toedter.calendar.JDateChooser dcAkhir;
-    private com.toedter.calendar.JDateChooser dcMulai;
+    private javax.swing.JComboBox<String> cbKelas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
