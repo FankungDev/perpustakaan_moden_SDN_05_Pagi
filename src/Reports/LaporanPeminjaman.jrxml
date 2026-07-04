@@ -69,21 +69,36 @@ ORDER BY
 	<title>
 		<band height="72">
 			<frame>
-				<reportElement mode="Opaque" x="-20" y="-21" width="842" height="93" backcolor="#006699" uuid="b9fa10ba-7d10-479b-b99a-643ceeda8c9a"/>
+				<reportElement mode="Opaque" x="-20" y="-21" width="842" height="93" backcolor="#FFFFFF" uuid="b9fa10ba-7d10-479b-b99a-643ceeda8c9a"/>
 				<staticText>
-					<reportElement x="238" y="21" width="408" height="43" forecolor="#FFFFFF" uuid="d100d9e6-f31f-40aa-be9c-03a6c01e1892"/>
-					<textElement>
-						<font size="34" isBold="true"/>
-					</textElement>
-					<text><![CDATA[LAPORAN PEMINJAMAN]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="341" y="64" width="152" height="20" forecolor="#FFFFFF" uuid="16939231-80d1-4f71-8ecb-60c568378ce3"/>
-					<textElement textAlignment="Right">
+					<reportElement x="134" y="73" width="561" height="20" forecolor="#0099FF" backcolor="#0099FF" uuid="a987ce31-ece3-48e3-a63c-4456fb1f5a35"/>
+					<textElement textAlignment="Center">
 						<font size="14" isBold="false"/>
 					</textElement>
-					<text><![CDATA[SDN 05 BIDARACINA]]></text>
+					<text><![CDATA[Jl.Tanjung Lengkong, Kec. Jatinegara, Kota Adm. Jakarta Timur, Prov. D.K.I. Jakarta]]></text>
 				</staticText>
+				<staticText>
+					<reportElement x="291" y="53" width="219" height="20" forecolor="#0099FF" backcolor="#0099FF" uuid="9957b718-1e57-4b08-8874-49b7dd79ab72"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[LAPORAN DATA PEMINJAMAN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="148" y="21" width="527" height="43" forecolor="#0099FF" backcolor="#0099FF" uuid="44363761-6bf8-462c-b69e-dc1f68238757"/>
+					<textElement textAlignment="Center">
+						<font size="27" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PERPUSTAKAAN SDN 05 BIDARACINA]]></text>
+				</staticText>
+				<image>
+					<reportElement x="717" y="0" width="99" height="90" uuid="1f2b9172-e360-4df0-bd9f-2f829dca93c9"/>
+					<imageExpression><![CDATA["C:\\Users\\ASUS\\Downloads\\tutwuri.jpg"]]></imageExpression>
+				</image>
+				<image>
+					<reportElement x="20" y="0" width="99" height="90" uuid="5b6e08e8-5209-41ba-bea2-20ee169ba4e0"/>
+					<imageExpression><![CDATA["C:\\Users\\ASUS\\OneDrive\\Documents\\NetBeansProjects\\perpustakaan_moden_SDN_05_Pagi\\src\\Gambar\\IconBuku.png"]]></imageExpression>
+				</image>
 			</frame>
 		</band>
 	</title>
