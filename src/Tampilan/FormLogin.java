@@ -43,6 +43,8 @@ public class FormLogin extends javax.swing.JFrame {
         // untuk Logo Mata
 }
     
+    
+    
     private java.util.Map<String, String> checkLogin(String username, String password) {
     java.util.Map<String, String> result = new java.util.HashMap<>();
     
@@ -150,6 +152,8 @@ public class FormLogin extends javax.swing.JFrame {
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal memproses data: " + e.getMessage(), "Error Database", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -163,7 +167,6 @@ public class FormLogin extends javax.swing.JFrame {
         custom_JPanelRounded1 = new palette.Custom_JPanelRounded();
         custom_JPanelRounded2 = new palette.Custom_JPanelRounded();
         jLabelIcon = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
         txtUsername = new palette.Custom_JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -184,27 +187,19 @@ public class FormLogin extends javax.swing.JFrame {
 
         jLabelIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambar/LoginPagePng.png"))); // NOI18N
 
-        jButton1.setBackground(new java.awt.Color(255, 51, 51));
-        jButton1.setText("X");
-        jButton1.addActionListener();
-
         javax.swing.GroupLayout custom_JPanelRounded2Layout = new javax.swing.GroupLayout(custom_JPanelRounded2);
         custom_JPanelRounded2.setLayout(custom_JPanelRounded2Layout);
         custom_JPanelRounded2Layout.setHorizontalGroup(
             custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addGroup(custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
-                    .addComponent(jLabelIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabelIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
         custom_JPanelRounded2Layout.setVerticalGroup(
             custom_JPanelRounded2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(custom_JPanelRounded2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(41, 41, 41)
                 .addComponent(jLabelIcon)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -270,10 +265,6 @@ public class FormLogin extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPasswordActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    dispose();        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -303,7 +294,6 @@ public class FormLogin extends javax.swing.JFrame {
     private palette.Custom_JButton btnLogin;
     private palette.Custom_JPanelRounded custom_JPanelRounded1;
     private palette.Custom_JPanelRounded custom_JPanelRounded2;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

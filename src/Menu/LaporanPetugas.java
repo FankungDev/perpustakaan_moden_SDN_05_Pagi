@@ -13,8 +13,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
@@ -46,99 +49,96 @@ public class LaporanPetugas extends javax.swing.JPanel {
     }
     
     private void setTabelModel() {
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        model.addColumn("No");
-        model.addColumn("ID Buku");
-        model.addColumn("Judul");
-        model.addColumn("Pengarang");
-        model.addColumn("Tahun Terbit");
-        model.addColumn("Kategori");
-        model.addColumn("Penerbit");
-        model.addColumn("Stok");
-        model.addColumn("Jumlah Halaman");
-        jTable1.setModel(model);
-    }
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    model.addColumn("No");
+    model.addColumn("ID Admin");
+    model.addColumn("Username");
+    model.addColumn("Nama");
+    model.addColumn("Email");
+
+    jTable1.setModel(model);
+}
     
     private void loadData() {
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0);
 
-        Connection conn = null;
-        PreparedStatement st = null;
-        ResultSet rs = null;
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0);
+
+    Connection conn = null;
+    PreparedStatement st = null;
+    ResultSet rs = null;
+
+    try {
+
+        conn = koneksi.getKoneksi();
+
+        String sql =
+                "SELECT Id_Admin, Username, nama, email " +
+                "FROM data_admin " +
+                "WHERE 1=1";
+
+        ArrayList<Object> param = new ArrayList<>();
+
+        if (!tfCari.getText().trim().isEmpty()) {
+
+            sql += " AND (Id_Admin LIKE ? OR Username LIKE ? OR nama LIKE ? OR email LIKE ?)";
+
+            String cari = "%" + tfCari.getText().trim() + "%";
+
+            param.add(cari);
+            param.add(cari);
+            param.add(cari);
+            param.add(cari);
+        }
+
+        sql += " ORDER BY nama ASC";
+
+        st = conn.prepareStatement(sql);
+
+        for (int i = 0; i < param.size(); i++) {
+            st.setObject(i + 1, param.get(i));
+        }
+
+        rs = st.executeQuery();
+
+        int no = 1;
+
+        while (rs.next()) {
+
+            model.addRow(new Object[]{
+                no++,
+                rs.getString("Id_Admin"),
+                rs.getString("Username"),
+                rs.getString("nama"),
+                rs.getString("email")
+            });
+
+        }
+
+    } catch (Exception e) {
+
+        JOptionPane.showMessageDialog(this, e.getMessage());
+        e.printStackTrace();
+
+    } finally {
 
         try {
-            conn = Koneksi.koneksi.getKoneksi();
-            if (conn == null) {
-                System.out.println("Gagal terhubung ke database. Cek konfigurasi koneksi Anda.");
-                return;
-            }
 
-            StringBuilder sql = new StringBuilder(
-                "SELECT b.id_buku, b.judul_buku, b.pengarang, b.tahun_terbit, " +
-                "k.nama_kategori, p.nama_penerbit, b.stok, b.jumlah_halaman " +
-                "FROM buku b " +
-                "JOIN kategori_buku k ON b.id_kategori = k.id_kategori " +
-                "JOIN penerbit p ON b.id_penerbit = p.id_penerbit"
-            );
+            if (rs != null) rs.close();
+            if (st != null) st.close();
 
-            List<String> conditions = new ArrayList<>();
-            String keyword = tfCari.getText().trim();
-
-            if (!keyword.isEmpty()) {
-                conditions.add("(b.id_buku LIKE ? OR b.judul_buku LIKE ? OR b.pengarang LIKE ? OR k.nama_kategori LIKE ? OR p.nama_penerbit LIKE ?)");
-            }
-
-            if (!conditions.isEmpty()) {
-                sql.append(" WHERE ").append(String.join(" AND ", conditions));
-            }
-
-            sql.append(" ORDER BY b.id_buku ASC");
-
-            st = conn.prepareStatement(sql.toString());
-            int paramIndex = 1;
-
-            if (!keyword.isEmpty()) {
-                String likeKeyword = "%" + keyword + "%";
-                st.setString(paramIndex++, likeKeyword);
-                st.setString(paramIndex++, likeKeyword);
-                st.setString(paramIndex++, likeKeyword);
-                st.setString(paramIndex++, likeKeyword);
-                st.setString(paramIndex++, likeKeyword);
-            }
-
-            rs = st.executeQuery();
-            int no = 1;
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    no++,
-                    rs.getString("id_buku"),
-                    rs.getString("judul_buku"),
-                    rs.getString("pengarang"),
-                    rs.getString("tahun_terbit"),
-                    rs.getString("nama_kategori"),
-                    rs.getString("nama_penerbit"),
-                    rs.getString("stok"),
-                    rs.getString("jumlah_halaman")
-                });
-            }
         } catch (Exception e) {
-            System.out.println("Error pada loadData: " + e.toString());
             e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (st != null) st.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
         }
+
     }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -256,11 +256,12 @@ public class LaporanPetugas extends javax.swing.JPanel {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-    try {
+        try {
+        Connection conn = koneksi.getKoneksi();
 
-        Connection conn = Koneksi.koneksi.getKoneksi();
-
-        String report = getClass().getResource("/Reports/LaporanPetugas.jasper").getPath();
+        String report = getClass()
+                .getResource("/Reports/LaporanPetugas.jasper")
+                .getPath();
 
         Map<String, Object> parameter = new HashMap<>();
 
@@ -271,10 +272,9 @@ public class LaporanPetugas extends javax.swing.JPanel {
 
         JasperViewer.viewReport(jp, false);
 
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null,
-                "Gagal mencetak laporan\n" + e.getMessage());
-        e.printStackTrace();
+    } catch (JRException ex) {
+        Logger.getLogger(LaporanPetugas.class.getName()).log(Level.SEVERE, null, ex);
+    
     }    }//GEN-LAST:event_btnPrintActionPerformed
 
 

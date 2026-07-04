@@ -11,10 +11,7 @@
     b.Pengarang,
     b.Tahun_Terbit,
     b.Stok,
-    b.Jumlah_Halaman,
-    p.id_penerbit,
-    p.nama_penerbit,
-    p.situs
+    p.nama_penerbit
 FROM buku b
 INNER JOIN penerbit p
     ON b.id_penerbit = p.id_penerbit
@@ -37,16 +34,7 @@ ORDER BY
 	<field name="Stok" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="Jumlah_Halaman" class="java.lang.Integer">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="id_penerbit" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
 	<field name="nama_penerbit" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="situs" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
@@ -89,60 +77,46 @@ ORDER BY
 				<text><![CDATA[ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="61" y="0" width="69" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="7f2780ec-705d-431c-a8b5-cb427f9294de"/>
+				<reportElement mode="Opaque" x="61" y="0" width="324" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="7f2780ec-705d-431c-a8b5-cb427f9294de"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Judul]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="130" y="0" width="109" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="c578394d-e3bb-46f1-881b-80e51cc68616"/>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Pengarang]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="239" y="0" width="61" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="df172b81-ad3f-45a4-a63b-df546423b045"/>
+				<reportElement mode="Opaque" x="494" y="0" width="61" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="df172b81-ad3f-45a4-a63b-df546423b045"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Terbit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="300" y="0" width="61" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="61be8da7-9735-47e9-8c28-f1ac57864d12"/>
+				<reportElement mode="Opaque" x="555" y="0" width="61" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="61be8da7-9735-47e9-8c28-f1ac57864d12"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Stok]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="361" y="0" width="82" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="5f91cc55-ff16-423b-9fee-3f8732261433"/>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Halaman]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="443" y="0" width="106" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="e1bda447-c53d-4c02-aa34-a898a095edc0"/>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[ID Penerbit]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="549" y="0" width="128" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="3cf6a3dd-26a6-43b5-a6df-fcbc90915cb2"/>
+				<reportElement mode="Opaque" x="616" y="0" width="186" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="3cf6a3dd-26a6-43b5-a6df-fcbc90915cb2"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nama Penerbit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="677" y="0" width="125" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="938b2315-8035-4afb-9986-76dc36040919"/>
+				<reportElement mode="Opaque" x="385" y="0" width="109" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="c578394d-e3bb-46f1-881b-80e51cc68616"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[situs]]></text>
+				<text><![CDATA[Pengarang]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="555" y="0" width="61" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="3ed7d888-8b43-4523-9eba-1cb9eefb9c19"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Stok]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -159,60 +133,39 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{Id_Buku}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="61" y="0" width="69" height="20" uuid="71e4f28f-63e7-4cca-b946-57f306ab5796"/>
+				<reportElement x="61" y="0" width="324" height="20" uuid="71e4f28f-63e7-4cca-b946-57f306ab5796"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Judul_Buku}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="130" y="0" width="109" height="20" uuid="729e7043-0668-4060-a6a4-7172439f8841"/>
-				<textElement textAlignment="Center">
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{Pengarang}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="239" y="0" width="61" height="20" uuid="e8153efb-2f8a-4be3-85f2-9ad8d9afca6a"/>
+				<reportElement x="494" y="0" width="61" height="20" uuid="e8153efb-2f8a-4be3-85f2-9ad8d9afca6a"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Tahun_Terbit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="300" y="0" width="61" height="20" uuid="601927c4-cc24-4da3-a160-fed0c01a63c6"/>
+				<reportElement x="555" y="0" width="61" height="20" uuid="601927c4-cc24-4da3-a160-fed0c01a63c6"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Stok}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="361" y="0" width="82" height="20" uuid="a98f17d9-5e66-44b8-825a-efb8cdcd1e3a"/>
-				<textElement textAlignment="Center">
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{Jumlah_Halaman}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="443" y="0" width="106" height="20" uuid="d9a5b04b-1642-4d7a-a9d0-b47b5fb4a607"/>
-				<textElement textAlignment="Center">
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{id_penerbit}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="549" y="0" width="128" height="20" uuid="cfdd6414-6bc9-41ed-a88e-ad6cb1be7e68"/>
+				<reportElement x="616" y="0" width="186" height="20" uuid="cfdd6414-6bc9-41ed-a88e-ad6cb1be7e68"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nama_penerbit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="677" y="0" width="125" height="20" uuid="baeee0cc-358d-4294-994e-204bbe8a41b3"/>
+				<reportElement x="385" y="1" width="119" height="19" uuid="729e7043-0668-4060-a6a4-7172439f8841"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{situs}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{Pengarang}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

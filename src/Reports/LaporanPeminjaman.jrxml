@@ -9,6 +9,9 @@
 	<parameter name="tanggalAkhir" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="statusPinjam" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT
     p.Id_Pinjam,
@@ -27,8 +30,15 @@ INNER JOIN detail_pinjam dp
     ON p.Id_Pinjam = dp.Id_Pinjam
 LEFT JOIN pengembalian pg
     ON p.Id_Pinjam = pg.id_peminjaman
-WHERE p.Tanggal_Pinjam BETWEEN $P{tanggalMulai} AND $P{tanggalAkhir}
-ORDER BY p.Tanggal_Pinjam DESC, p.Id_Pinjam DESC;]]>
+WHERE
+    p.Tanggal_Pinjam BETWEEN $P{tanggalMulai} AND $P{tanggalAkhir}
+    AND (
+        $P{statusPinjam} = 'Semua'
+        OR dp.status_pinjam = $P{statusPinjam}
+    )
+ORDER BY
+    p.Tanggal_Pinjam DESC,
+    p.Id_Pinjam DESC;]]>
 	</queryString>
 	<field name="Id_Pinjam" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>

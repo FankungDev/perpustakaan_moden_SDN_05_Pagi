@@ -250,8 +250,8 @@ public class LaporanAnggota extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel13))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(cbKelas, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(370, 370, 370)
+                        .addComponent(cbKelas, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(334, 334, 334)
                         .addComponent(btnTampilkan, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -307,6 +307,7 @@ public class LaporanAnggota extends javax.swing.JPanel {
         String report = getClass()
                 .getResource("/Reports/LaporanAnggota.jasper")
                 .getPath();
+        System.out.println(report);
 
         Map<String,Object> parameter = new HashMap<>();
 

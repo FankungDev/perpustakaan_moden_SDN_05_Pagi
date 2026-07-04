@@ -93,6 +93,7 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
             java.util.Date startDate = dcMulai.getDate();
             java.util.Date endDate = dcAkhir.getDate();
             String keyword = tfCari.getText().trim();
+            String status = cbStatus.getSelectedItem().toString();
 
             if (startDate != null && endDate != null) {
                 conditions.add("p.Tanggal_Pinjam BETWEEN ? AND ?");
@@ -100,6 +101,9 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
                 conditions.add("p.Tanggal_Pinjam >= ?");
             } else if (endDate != null) {
                 conditions.add("p.Tanggal_Pinjam <= ?");
+            }
+            if (!status.equals("Semua")) {
+                conditions.add("dp.status_pinjam = ?");
             }
 
             if (!keyword.isEmpty()) {
@@ -122,6 +126,9 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
                 st.setDate(paramIndex++, new java.sql.Date(startDate.getTime()));
             } else if (endDate != null) {
                 st.setDate(paramIndex++, new java.sql.Date(endDate.getTime()));
+            }
+            if (!status.equals("Semua")) {
+                st.setString(paramIndex++, status);
             }
 
             if (!keyword.isEmpty()) {
@@ -191,6 +198,9 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
         btnPrint = new javax.swing.JButton();
         dcMulai = new com.toedter.calendar.JDateChooser();
         dcAkhir = new com.toedter.calendar.JDateChooser();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        cbStatus = new javax.swing.JComboBox();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -223,6 +233,8 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
         jLabel13.setForeground(new java.awt.Color(153, 153, 153));
         jLabel13.setText("Laporan > Peminjaman");
 
+        btnBatal.setBackground(new java.awt.Color(255, 0, 0));
+        btnBatal.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         btnBatal.setText("BATAL");
         btnBatal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -230,6 +242,9 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
             }
         });
 
+        btnTampilkan.setBackground(new java.awt.Color(255, 153, 51));
+        btnTampilkan.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
+        btnTampilkan.setForeground(new java.awt.Color(255, 255, 255));
         btnTampilkan.setText("TAMPILKAN");
         btnTampilkan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -237,6 +252,9 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
             }
         });
 
+        btnPrint.setBackground(new java.awt.Color(0, 0, 255));
+        btnPrint.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        btnPrint.setForeground(new java.awt.Color(255, 255, 255));
         btnPrint.setText("PRINT");
         btnPrint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -248,6 +266,16 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
 
         dcAkhir.setDateFormatString("yyyy-MM-dd");
 
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setText("Tanggal Dari");
+
+        jLabel4.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("Tanggal Sampai");
+
+        cbStatus.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Semua", "Dipinjam", "Sudah dikembalikan" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -256,16 +284,12 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
                 .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel13))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(dcMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(dcAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(48, 48, 48)
+                        .addGap(18, 18, 18)
+                        .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(btnTampilkan, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -273,7 +297,21 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
                         .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1403, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1403, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(9, 9, 9)
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(116, 116, 116)
+                                .addComponent(jLabel4)
+                                .addGap(795, 795, 795)))
+                        .addComponent(jLabel13)))
                 .addContainerGap(29, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -285,7 +323,11 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2)
                         .addComponent(jLabel13)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dcMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dcAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -293,7 +335,8 @@ public class LaporanPeminjaman extends javax.swing.JPanel {
                         .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnTampilkan, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(30, 30, 30)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 691, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -321,7 +364,7 @@ try {
 
         Connection conn = Koneksi.koneksi.getKoneksi();
 
-        String report = getClass().getResource("/Reports/LaporanPeminjaman.jasper").getPath();
+        java.io.InputStream reportStream = getClass().getResourceAsStream("/Reports/LaporanPeminjaman.jasper");
 
         Map<String, Object> parameter = new HashMap<>();
 
@@ -335,8 +378,10 @@ try {
                     new java.sql.Date(dcAkhir.getDate().getTime()));
         }
 
+        parameter.put("statusPinjam", cbStatus.getSelectedItem().toString());
+
         JasperPrint jp = JasperFillManager.fillReport(
-                report,
+                reportStream,
                 parameter,
                 conn);
 
@@ -353,11 +398,14 @@ try {
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnTampilkan;
+    private javax.swing.JComboBox cbStatus;
     private com.toedter.calendar.JDateChooser dcAkhir;
     private com.toedter.calendar.JDateChooser dcMulai;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private palette.Custom_JTextField tfCari;
